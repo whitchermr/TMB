@@ -1,0 +1,534 @@
+{
+  "$schema": "tmb/waypoints/1",
+  "$comment": [
+    "Scenery and photography waypoints. Coordinates are from OpenStreetMap.",
+    "",
+    "Position along the trail is NOT stored here. The app projects each waypoint",
+    "onto the day's track at load time and derives distance-into-leg, elevation",
+    "and estimated arrival, so adding a waypoint only needs a name and a",
+    "coordinate. Anything more than 400 m from the day's track is treated as a",
+    "detour and shown with its own extra distance rather than as a point on the",
+    "line.",
+    "",
+    "kind:      col | lake | viewpoint | refuge | village | glacier | summit | heritage",
+    "bestLight: sunrise | morning | midday | afternoon | golden | sunset | blue | any",
+    "facing:    the direction you look to photograph the subject",
+    "priority:  1 = do not miss, 2 = strong, 3 = worth a frame if the light is there"
+  ],
+
+  "waypoints": [
+    {
+      "id": "col-de-voza",
+      "name": "Col de Voza",
+      "kind": "col",
+      "dayId": "day-01",
+      "lat": 45.87686,
+      "lon": 6.7614,
+      "elevation_m": 1653,
+      "priority": 2,
+      "photo": {
+        "subject": "First reveal of the Bionnassay glacier and the Aiguille du Goûter",
+        "facing": "NE",
+        "bestLight": "morning",
+        "notes": "Reached within the first hour, so the light is still low and side-on. The tramway tracks make a strong leading line toward the glacier."
+      }
+    },
+    {
+      "id": "bionnassay-glacier-view",
+      "name": "Bionnassay glacier viewpoint",
+      "kind": "glacier",
+      "dayId": "day-01",
+      "lat": 45.86449,
+      "lon": 6.75463,
+      "elevation_m": 1720,
+      "priority": 3,
+      "photo": {
+        "subject": "Séracs of the Glacier de Bionnassay above the Val Montjoie",
+        "facing": "N",
+        "bestLight": "morning",
+        "notes": "A long lens compresses the icefall nicely. Contrast is harsh once the sun clears the ridge."
+      }
+    },
+    {
+      "id": "notre-dame-de-la-gorge",
+      "name": "Notre-Dame de la Gorge",
+      "kind": "heritage",
+      "dayId": "day-02",
+      "lat": 45.79164,
+      "lon": 6.7161,
+      "elevation_m": 1210,
+      "priority": 1,
+      "photo": {
+        "subject": "Baroque chapel facade, then the Roman paved road climbing into the gorge",
+        "facing": "S",
+        "bestLight": "sunrise",
+        "notes": "Deep in the gorge and shaded until late morning, which is ideal — the wet cobbles and torrent hold detail in flat light. Bring the tripod for a slow shutter on the cascades."
+      }
+    },
+    {
+      "id": "nant-borrant",
+      "name": "Chalet de Nant Borrant",
+      "kind": "refuge",
+      "dayId": "day-02",
+      "lat": 45.77845,
+      "lon": 6.71425,
+      "elevation_m": 1459,
+      "priority": 3,
+      "photo": {
+        "subject": "Classic alpine chalet with pasture foreground",
+        "facing": "SE",
+        "bestLight": "morning",
+        "notes": "First real coffee stop. Cows and wildflowers in early July."
+      }
+    },
+    {
+      "id": "refuge-de-la-balme",
+      "name": "Refuge de la Balme",
+      "kind": "refuge",
+      "dayId": "day-02",
+      "lat": 45.75742,
+      "lon": 6.71097,
+      "elevation_m": 1706,
+      "priority": 3,
+      "photo": {
+        "subject": "Wide glacial valley opening toward the Bonhomme cols",
+        "facing": "S",
+        "bestLight": "morning",
+        "notes": "Last water and shelter before a long open climb. Good spot to shoot the group small against the valley."
+      }
+    },
+    {
+      "id": "col-du-bonhomme",
+      "name": "Col du Bonhomme",
+      "kind": "col",
+      "dayId": "day-02",
+      "lat": 45.73501,
+      "lon": 6.7066,
+      "elevation_m": 2329,
+      "priority": 2,
+      "photo": {
+        "subject": "Stark rock-and-scree panorama, often with snow patches into July",
+        "facing": "W",
+        "bestLight": "midday",
+        "notes": "Exposed and frequently windy. A polariser helps with the haze looking back over the Beaufortain."
+      }
+    },
+    {
+      "id": "croix-du-bonhomme",
+      "name": "Col de la Croix du Bonhomme",
+      "kind": "col",
+      "dayId": "day-02",
+      "lat": 45.72214,
+      "lon": 6.71874,
+      "elevation_m": 2433,
+      "priority": 1,
+      "photo": {
+        "subject": "High point of day 2, with the Mont Blanc massif stacked behind the ridges you just crossed",
+        "facing": "NE",
+        "bestLight": "afternoon",
+        "notes": "The trail tops out near 2,479 m just past the refuge. Afternoon light rakes across the ridgelines and separates the layers — a natural spot for a long-lens compression shot."
+      }
+    },
+    {
+      "id": "refuge-croix-du-bonhomme",
+      "name": "Refuge du Col de la Croix du Bonhomme",
+      "kind": "refuge",
+      "dayId": "day-02",
+      "lat": 45.72205,
+      "lon": 6.71732,
+      "elevation_m": 2443,
+      "priority": 3,
+      "photo": {
+        "subject": "Refuge perched on the col",
+        "facing": "SW",
+        "bestLight": "golden",
+        "notes": "If the group ever chooses to sleep here instead of descending, sunset from the col is exceptional."
+      }
+    },
+    {
+      "id": "refuge-des-mottets",
+      "name": "Refuge des Mottets",
+      "kind": "refuge",
+      "dayId": "day-03",
+      "lat": 45.73714,
+      "lon": 6.77904,
+      "elevation_m": 1870,
+      "priority": 3,
+      "photo": {
+        "subject": "Converted dairy farm at the head of the Vallée des Glaciers",
+        "facing": "E",
+        "bestLight": "morning",
+        "notes": "Where the walking starts on the shortcut day. The climb to Col de la Seigne begins immediately behind."
+      }
+    },
+    {
+      "id": "col-de-la-seigne",
+      "name": "Col de la Seigne",
+      "kind": "col",
+      "dayId": "day-03",
+      "lat": 45.75126,
+      "lon": 6.80721,
+      "elevation_m": 2515,
+      "priority": 1,
+      "photo": {
+        "subject": "The single best reveal on the tour — the entire Italian side of Mont Blanc, with the Aiguille Noire de Peuterey and the Brouillard face",
+        "facing": "NE",
+        "bestLight": "morning",
+        "notes": "You crest the France–Italy border and the south face of Mont Blanc appears all at once. Get here early: morning light is still front-lighting the face and the valley haze has not built. Budget real time here, not a snack stop."
+      }
+    },
+    {
+      "id": "rifugio-elisabetta",
+      "name": "Rifugio Elisabetta Soldini",
+      "kind": "refuge",
+      "dayId": "day-03",
+      "lat": 45.767,
+      "lon": 6.83744,
+      "elevation_m": 2194,
+      "priority": 2,
+      "photo": {
+        "subject": "Refuge tucked beneath the Glacier de la Lée Blanche and the Pyramides Calcaires",
+        "facing": "N",
+        "bestLight": "morning",
+        "notes": "The refuge reads small against the icefall — include it for scale. The Pyramides Calcaires are an unusual pale limestone against all that granite."
+      }
+    },
+    {
+      "id": "lac-combal",
+      "name": "Lacs de Combal",
+      "kind": "lake",
+      "dayId": "day-03",
+      "lat": 45.77535,
+      "lon": 6.86616,
+      "elevation_m": 1970,
+      "priority": 1,
+      "photo": {
+        "subject": "Braided outwash flats and shallow lakes reflecting the Mont Blanc south face",
+        "facing": "NE",
+        "bestLight": "sunrise",
+        "notes": "The reflection is the shot. Wind flattens it — still water is a morning phenomenon, so this rewards an early start or an overnight nearby. Get low to double the mountain in the water."
+      }
+    },
+    {
+      "id": "col-checrouit",
+      "name": "Col Chécrouit",
+      "kind": "col",
+      "dayId": "day-03",
+      "lat": 45.79085,
+      "lon": 6.93126,
+      "elevation_m": 1952,
+      "priority": 3,
+      "photo": {
+        "subject": "Val Veni behind, Courmayeur below",
+        "facing": "SW",
+        "bestLight": "afternoon",
+        "notes": "Looking back down the whole valley you have just walked. Good end-of-day summary frame."
+      }
+    },
+    {
+      "id": "rifugio-maison-vieille",
+      "name": "Rifugio Maison Vieille",
+      "kind": "refuge",
+      "dayId": "day-03",
+      "lat": 45.79078,
+      "lon": 6.93099,
+      "elevation_m": 1956,
+      "priority": 3,
+      "photo": {
+        "subject": "Characterful hut at the col with the Grandes Jorasses on the skyline",
+        "facing": "NE",
+        "bestLight": "afternoon",
+        "notes": "Famous for its terrace. A cold drink here is traditional."
+      }
+    },
+    {
+      "id": "rifugio-bertone",
+      "name": "Rifugio Giorgio Bertone",
+      "kind": "refuge",
+      "dayId": "day-04",
+      "lat": 45.80902,
+      "lon": 6.97844,
+      "elevation_m": 1970,
+      "priority": 2,
+      "photo": {
+        "subject": "Balcony viewpoint straight across to the Grandes Jorasses",
+        "facing": "NE",
+        "bestLight": "morning",
+        "notes": "Start of the Val Ferret balcony traverse. On the shortcut day the bus skips this — worth an evening walk up from Courmayeur if the light looks good."
+      }
+    },
+    {
+      "id": "rifugio-bonatti",
+      "name": "Rifugio Walter Bonatti",
+      "kind": "refuge",
+      "dayId": "day-04",
+      "lat": 45.84692,
+      "lon": 7.03366,
+      "elevation_m": 2030,
+      "priority": 1,
+      "photo": {
+        "subject": "The postcard Grandes Jorasses panorama, with Mont Blanc's Italian ridges running left",
+        "facing": "NW",
+        "bestLight": "sunrise",
+        "notes": "One of the great refuge views in the Alps. The Jorasses catch first light while the valley stays blue — a genuine reason to be here at dawn rather than midday."
+      }
+    },
+    {
+      "id": "arnouvaz",
+      "name": "Arnouvaz",
+      "kind": "village",
+      "dayId": "day-04",
+      "lat": 45.87319,
+      "lon": 7.05334,
+      "elevation_m": 1769,
+      "priority": 3,
+      "photo": {
+        "subject": "Head of the Italian Val Ferret where the climb to Grand Col Ferret begins",
+        "facing": "N",
+        "bestLight": "morning",
+        "notes": "Top of the Val Ferret bus line, and the start of walking on the shortcut day."
+      }
+    },
+    {
+      "id": "rifugio-elena",
+      "name": "Rifugio Elena",
+      "kind": "refuge",
+      "dayId": "day-04",
+      "lat": 45.88472,
+      "lon": 7.06564,
+      "elevation_m": 2055,
+      "priority": 2,
+      "photo": {
+        "subject": "Glacier de Pré de Bar tumbling down directly opposite",
+        "facing": "W",
+        "bestLight": "morning",
+        "notes": "The most accessible close-up glacier view of the tour. Last real stop before the col."
+      }
+    },
+    {
+      "id": "grand-col-ferret",
+      "name": "Grand Col Ferret",
+      "kind": "col",
+      "dayId": "day-04",
+      "lat": 45.88903,
+      "lon": 7.07786,
+      "elevation_m": 2537,
+      "priority": 1,
+      "photo": {
+        "subject": "Highest point of the classic route. Italy on one side, the Swiss Val Ferret on the other",
+        "facing": "SW",
+        "bestLight": "morning",
+        "notes": "Turn around at the top — the retrospective down Italian Val Ferret to the Mont Blanc massif is better than the forward view. Border-crossing group shot belongs here."
+      }
+    },
+    {
+      "id": "champex-lac-lake",
+      "name": "Champex lake",
+      "kind": "lake",
+      "dayId": "day-05",
+      "lat": 46.02907,
+      "lon": 7.11162,
+      "elevation_m": 1466,
+      "priority": 2,
+      "photo": {
+        "subject": "Small resort lake with the Grand Combin group on the skyline",
+        "facing": "SE",
+        "bestLight": "golden",
+        "notes": "Arrival-evening shot. Calm water at dusk and a very civilised place to be holding a camera."
+      }
+    },
+    {
+      "id": "alp-bovine",
+      "name": "Alp Bovine",
+      "kind": "viewpoint",
+      "dayId": "day-06",
+      "lat": 46.05219,
+      "lon": 7.05082,
+      "elevation_m": 1987,
+      "priority": 2,
+      "photo": {
+        "subject": "High pasture with the Rhône valley and Martigny far below",
+        "facing": "NE",
+        "bestLight": "midday",
+        "notes": "The big open view on the Bovine route. A completely different landscape register from the glacier days — pastoral, hazy, layered."
+      }
+    },
+    {
+      "id": "col-de-la-forclaz",
+      "name": "Col de la Forclaz",
+      "kind": "col",
+      "dayId": "day-06",
+      "lat": 46.05773,
+      "lon": 7.00135,
+      "elevation_m": 1527,
+      "priority": 3,
+      "photo": {
+        "subject": "Road col above Trient",
+        "facing": "SW",
+        "bestLight": "afternoon",
+        "notes": "Hotel and shop. Descend from here to Trient."
+      }
+    },
+    {
+      "id": "fenetre-darpette",
+      "name": "Fenêtre d'Arpette",
+      "kind": "col",
+      "dayId": "day-06",
+      "lat": 46.0191,
+      "lon": 7.03989,
+      "elevation_m": 2665,
+      "priority": 1,
+      "photo": {
+        "subject": "The Trient Glacier head-on from a knife-edge notch at 2,665 m",
+        "facing": "NW",
+        "bestLight": "morning",
+        "notes": "The standout photographic objective of the Swiss section and the highest point of the whole tour. Only on the Arpette variant, which trades roughly 400 m of extra climbing and a boulder-field descent for it. Needs settled weather and no lingering snow — decide the night before."
+      }
+    },
+    {
+      "id": "trient-church",
+      "name": "Trient church",
+      "kind": "heritage",
+      "dayId": "day-06",
+      "lat": 46.0577,
+      "lon": 6.99506,
+      "elevation_m": 1300,
+      "priority": 3,
+      "photo": {
+        "subject": "The bright pink neo-gothic church against dark forested slopes",
+        "facing": "E",
+        "bestLight": "golden",
+        "notes": "Unmistakable and slightly absurd. A saturated colour accent in an otherwise green-and-grey valley."
+      }
+    },
+    {
+      "id": "col-de-balme",
+      "name": "Col de Balme",
+      "kind": "col",
+      "dayId": "day-07",
+      "lat": 46.02637,
+      "lon": 6.97029,
+      "elevation_m": 2191,
+      "priority": 1,
+      "photo": {
+        "subject": "The full length of the Chamonix valley with Mont Blanc centred at the head of it",
+        "facing": "SW",
+        "bestLight": "morning",
+        "notes": "The great closing view of the tour and arguably the best single composition on the route — the valley funnels the eye straight to the summit. Old refuge on the border makes a foreground anchor. Haze builds through the day, so earlier is better."
+      }
+    },
+    {
+      "id": "aiguillette-des-posettes",
+      "name": "Aiguillette des Posettes",
+      "kind": "summit",
+      "dayId": "day-07",
+      "lat": 46.01143,
+      "lon": 6.9346,
+      "elevation_m": 2201,
+      "priority": 2,
+      "photo": {
+        "subject": "Ridge walk with the Argentière glacier basin and the Aiguille Verte opposite",
+        "facing": "S",
+        "bestLight": "morning",
+        "notes": "On the main route rather than the Le Tour shortcut. A rare spot where the trail itself is the subject — the ridge line leads into the frame."
+      }
+    },
+    {
+      "id": "le-tour-village",
+      "name": "Le Tour",
+      "kind": "village",
+      "dayId": "day-07",
+      "lat": 46.00269,
+      "lon": 6.94593,
+      "elevation_m": 1450,
+      "priority": 3,
+      "photo": {
+        "subject": "Hamlet at the head of the Chamonix valley under the Tour glacier",
+        "facing": "NE",
+        "bestLight": "afternoon",
+        "notes": "Where the shortcut day finishes and the bus back to Chamonix starts."
+      }
+    },
+    {
+      "id": "tre-le-champ",
+      "name": "Tré-le-Champ and the ladders",
+      "kind": "viewpoint",
+      "dayId": "day-07",
+      "lat": 45.99502,
+      "lon": 6.92786,
+      "elevation_m": 1417,
+      "priority": 2,
+      "photo": {
+        "subject": "The famous steel ladder and rung section up the Aiguillette d'Argentière slabs",
+        "facing": "SE",
+        "bestLight": "morning",
+        "notes": "Only on the classic final stage. Dramatic verticality and a great place to shoot people for scale, but it is a scramble — secure the camera before starting up."
+      }
+    },
+    {
+      "id": "lac-blanc",
+      "name": "Lac Blanc",
+      "kind": "lake",
+      "dayId": "day-07",
+      "lat": 45.98235,
+      "lon": 6.88966,
+      "elevation_m": 2352,
+      "priority": 1,
+      "isDetour": true,
+      "photo": {
+        "subject": "The most photographed reflection in the Alps — the Aiguille Verte, Les Drus and Mont Blanc mirrored in the lake",
+        "facing": "SE",
+        "bestLight": "sunrise",
+        "notes": "Roughly 900 m off the main route above La Flégère, so it is a deliberate detour with a real climb attached. The reflection needs still air, which in practice means sunrise or late evening; the refuge beside the lake takes bookings and is the only way to be there for that light. Often still partly frozen in early July, which is its own picture."
+      }
+    },
+    {
+      "id": "la-flegere",
+      "name": "La Flégère",
+      "kind": "viewpoint",
+      "dayId": "day-07",
+      "lat": 45.96,
+      "lon": 6.88729,
+      "elevation_m": 1895,
+      "priority": 2,
+      "photo": {
+        "subject": "Balcony traverse looking straight across at the Mer de Glace and the Aiguilles de Chamonix",
+        "facing": "SE",
+        "bestLight": "afternoon",
+        "notes": "Lift station, so it doubles as a bail-out point down to Chamonix. The whole massif is laid out opposite — a panorama stitch works well here."
+      }
+    },
+    {
+      "id": "le-brevent",
+      "name": "Le Brévent",
+      "kind": "summit",
+      "dayId": "day-07",
+      "lat": 45.94135,
+      "lon": 6.84353,
+      "elevation_m": 2368,
+      "priority": 1,
+      "photo": {
+        "subject": "The head-on Mont Blanc panorama, directly facing the summit across the valley",
+        "facing": "SE",
+        "bestLight": "sunset",
+        "notes": "The classic Chamonix viewpoint and the last high ground of the tour. Alpenglow on the summit from here is the trip's natural closing frame. Cable car down if legs are finished."
+      }
+    },
+    {
+      "id": "refuge-de-bellachat",
+      "name": "Refuge de Bellachat",
+      "kind": "refuge",
+      "dayId": "day-07",
+      "lat": 45.92218,
+      "lon": 6.82961,
+      "elevation_m": 2136,
+      "priority": 3,
+      "photo": {
+        "subject": "Small refuge on the final descent with Mont Blanc still filling the frame",
+        "facing": "E",
+        "bestLight": "sunset",
+        "notes": "Last stop on the classic route before the long drop to Les Houches."
+      }
+    }
+  ]
+}

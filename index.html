@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Route — Tour du Mont Blanc</title>
+    <meta
+      name="description"
+      content="Route visualisation, elevation profiles and day-by-day planning for our Tour du Mont Blanc hike."
+    />
+    <meta name="theme-color" content="#2f6f4e" />
+    <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/print.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
+  <body>
+    <main class="app-main">
+      <div class="page-head">
+        <div>
+          <h1>Tour du Mont Blanc</h1>
+          <p id="trip-summary" class="muted">Loading route…</p>
+        </div>
+        <div class="row row--tight">
+          <div class="btn-group" role="group" aria-label="Route variant" id="variant-toggle"></div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card__body">
+            <div class="stats" id="trip-stats"></div>
+          </div>
+        </section>
+
+        <div class="split split--sticky">
+          <div class="stack">
+            <section class="card">
+              <div class="card__head">
+                <h2>The loop</h2>
+                <div class="row row--tight" id="map-controls"></div>
+              </div>
+              <div class="card__body">
+                <div id="map" class="map map--tall"></div>
+                <div class="map-legend" id="map-legend"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head">
+                <h2>Whole-trip profile</h2>
+                <small class="faint">Every hiking day laid end to end</small>
+              </div>
+              <div class="card__body">
+                <div id="trip-profile"></div>
+                <p class="faint" style="margin: 0.5rem 0 0; font-size: 0.8rem">
+                  Vertical bands mark overnight stops. Drag across the profile to
+                  read distance and elevation; the marker follows on the map.
+                </p>
+              </div>
+            </section>
+          </div>
+
+          <section class="card">
+            <div class="card__head">
+              <h2>Itinerary</h2>
+              <a class="btn btn--sm" href="plan.html">Planner</a>
+            </div>
+            <div class="card__body card__body--flush">
+              <ul class="day-list" id="day-list" style="padding: 0.6rem"></ul>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <script src="assets/vendor/leaflet/leaflet.js"></script>
+    <script type="module" src="assets/js/pages/index.js"></script>
+  </body>
+</html>

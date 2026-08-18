@@ -1,0 +1,44 @@
+{
+  "$schema": "tmb/expenses/1",
+  "$comment": [
+    "One-off shared costs. Hotel nights are NOT listed here — those are derived",
+    "automatically from data/stays.json so a booking is only ever entered once.",
+    "",
+    "paidBy   : person id who actually paid",
+    "splitMode: equal   -> divided by `shares` across `participants`",
+    "           shares  -> weights in `splitValues` keyed by person id",
+    "           exact   -> absolute amounts in `splitValues`, must total `amount`",
+    "           percent -> percentages in `splitValues`, must total 100",
+    "participants defaults to everyone when omitted.",
+    "category : lodging | food | transport | luggage | gear | fees | other"
+  ],
+
+  "expenses": [
+    {
+      "id": "e1",
+      "date": "2026-07-05",
+      "description": "Les Chapieux navette tickets",
+      "category": "transport",
+      "amount": 20,
+      "currency": "EUR",
+      "paidBy": "p1",
+      "splitMode": "equal",
+      "participants": null,
+      "dayId": "day-03",
+      "note": "€5 per person return. Bought at the machine the evening before."
+    },
+    {
+      "id": "e2",
+      "date": "2026-07-03",
+      "description": "Luggage transfer — 2 shared bags",
+      "category": "luggage",
+      "amount": 400,
+      "currency": "EUR",
+      "paidBy": "p2",
+      "splitMode": "equal",
+      "participants": null,
+      "dayId": null,
+      "note": "Roughly $200 per bag. Two big bags shared by the group rather than one each."
+    }
+  ]
+}

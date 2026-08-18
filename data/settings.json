@@ -1,0 +1,28 @@
+{
+  "$schema": "tmb/settings/1",
+  "trip": {
+    "name": "Tour du Mont Blanc",
+    "base": "Chamonix-Mont-Blanc",
+    "startDate": "2026-07-02",
+    "startDateNote": "This is the arrival day, the first entry in the itinerary — not the first day of walking. Jul 2 arrival puts hiking day 1 on Jul 3 and the Courmayeur rest day on Jul 6.",
+    "notes": "7 hiking days plus one rest day in Courmayeur. Shuttles cover the sections we are skipping."
+  },
+  "units": "metric",
+  "defaultVariant": "shortcut",
+  "pace": {
+    "model": "naismith",
+    "flatSpeedKmh": 4,
+    "breakMinutesPerHour": 8,
+    "lunchMinutes": 45,
+    "startTime": "08:00"
+  },
+  "money": {
+    "baseCurrency": "USD",
+    "budgetPerPerson": 1200,
+    "budgetNote": "Food, shuttles and hotels on-trail. Excludes Chamonix nights before and after, and flights."
+  },
+  "map": {
+    "defaultBasemap": "opentopomap",
+    "showWaymarkedOverlay": false
+  }
+}

@@ -1,0 +1,353 @@
+[
+  {
+    "dayId": "day-01",
+    "variant": "shortcut",
+    "label": "With shortcuts",
+    "optional": false,
+    "stage": "Les Houches → Les Contamines",
+    "file": "data/route/legs/day-01-shortcut.json",
+    "hikingDistance_m": 17112.2,
+    "transitDistance_m": 0.0,
+    "pointCount": 612,
+    "stats": {
+      "distance_m": 17112.2,
+      "gain_m": 962,
+      "loss_m": 830,
+      "minElevation_m": 994,
+      "maxElevation_m": 1671,
+      "startElevation_m": 1005,
+      "endElevation_m": 1137
+    },
+    "elevationSource": {
+      "ign-rgealti": 612
+    }
+  },
+  {
+    "dayId": "day-01",
+    "variant": "classic",
+    "label": "Classic TMB",
+    "optional": false,
+    "stage": "Les Houches → Les Contamines",
+    "file": "data/route/legs/day-01-classic.json",
+    "hikingDistance_m": 17112.2,
+    "transitDistance_m": 0.0,
+    "pointCount": 612,
+    "stats": {
+      "distance_m": 17112.2,
+      "gain_m": 962,
+      "loss_m": 830,
+      "minElevation_m": 994,
+      "maxElevation_m": 1671,
+      "startElevation_m": 1005,
+      "endElevation_m": 1137
+    },
+    "elevationSource": {
+      "ign-rgealti": 612
+    }
+  },
+  {
+    "dayId": "day-02",
+    "variant": "shortcut",
+    "label": "With shortcuts",
+    "optional": false,
+    "stage": "Les Contamines → Les Chapieux",
+    "file": "data/route/legs/day-02-shortcut.json",
+    "hikingDistance_m": 18846.5,
+    "transitDistance_m": 0.0,
+    "pointCount": 773,
+    "stats": {
+      "distance_m": 18846.5,
+      "gain_m": 1366,
+      "loss_m": 948,
+      "minElevation_m": 1135,
+      "maxElevation_m": 2491,
+      "startElevation_m": 1137,
+      "endElevation_m": 1550
+    },
+    "elevationSource": {
+      "ign-rgealti": 773
+    }
+  },
+  {
+    "dayId": "day-02",
+    "variant": "classic",
+    "label": "Classic TMB",
+    "optional": false,
+    "stage": "Les Contamines → Les Chapieux",
+    "file": "data/route/legs/day-02-classic.json",
+    "hikingDistance_m": 18846.5,
+    "transitDistance_m": 0.0,
+    "pointCount": 773,
+    "stats": {
+      "distance_m": 18846.5,
+      "gain_m": 1366,
+      "loss_m": 948,
+      "minElevation_m": 1135,
+      "maxElevation_m": 2491,
+      "startElevation_m": 1137,
+      "endElevation_m": 1550
+    },
+    "elevationSource": {
+      "ign-rgealti": 773
+    }
+  },
+  {
+    "dayId": "day-03",
+    "variant": "shortcut",
+    "label": "With shortcuts",
+    "optional": false,
+    "stage": "Les Chapieux → Courmayeur",
+    "file": "data/route/legs/day-03-shortcut.json",
+    "hikingDistance_m": 10840.2,
+    "transitDistance_m": 19067.8,
+    "pointCount": 430,
+    "stats": {
+      "distance_m": 10840.2,
+      "gain_m": 666,
+      "loss_m": 569,
+      "minElevation_m": 1868,
+      "maxElevation_m": 2515,
+      "startElevation_m": 1868,
+      "endElevation_m": 1969
+    },
+    "elevationSource": {
+      "ign-rgealti": 429,
+      "opentopodata-srtm30m": 1
+    }
+  },
+  {
+    "dayId": "day-03",
+    "variant": "classic",
+    "label": "Classic TMB",
+    "optional": false,
+    "stage": "Les Chapieux → Courmayeur",
+    "file": "data/route/legs/day-03-classic.json",
+    "hikingDistance_m": 29907.9,
+    "transitDistance_m": 0.0,
+    "pointCount": 1139,
+    "stats": {
+      "distance_m": 29907.9,
+      "gain_m": 1502,
+      "loss_m": 1845,
+      "minElevation_m": 1175,
+      "maxElevation_m": 2515,
+      "startElevation_m": 1550,
+      "endElevation_m": 1208
+    },
+    "elevationSource": {
+      "ign-rgealti": 1138,
+      "opentopodata-srtm30m": 1
+    }
+  },
+  {
+    "dayId": "day-04",
+    "variant": "shortcut",
+    "label": "With shortcuts",
+    "optional": false,
+    "stage": "Courmayeur → La Fouly",
+    "file": "data/route/legs/day-04-shortcut.json",
+    "hikingDistance_m": 14029.9,
+    "transitDistance_m": 17573.8,
+    "pointCount": 540,
+    "stats": {
+      "distance_m": 14029.9,
+      "gain_m": 781,
+      "loss_m": 960,
+      "minElevation_m": 1602,
+      "maxElevation_m": 2530,
+      "startElevation_m": 1776,
+      "endElevation_m": 1603
+    },
+    "elevationSource": {
+      "swisstopo-alti3d": 74,
+      "ign-rgealti": 466
+    }
+  },
+  {
+    "dayId": "day-04",
+    "variant": "classic",
+    "label": "Classic TMB",
+    "optional": false,
+    "stage": "Courmayeur → La Fouly",
+    "file": "data/route/legs/day-04-classic.json",
+    "hikingDistance_m": 31603.7,
+    "transitDistance_m": 0.0,
+    "pointCount": 1217,
+    "stats": {
+      "distance_m": 31603.7,
+      "gain_m": 1969,
+      "loss_m": 1577,
+      "minElevation_m": 1208,
+      "maxElevation_m": 2530,
+      "startElevation_m": 1208,
+      "endElevation_m": 1603
+    },
+    "elevationSource": {
+      "ign-rgealti": 908,
+      "swisstopo-alti3d": 309
+    }
+  },
+  {
+    "dayId": "day-05",
+    "variant": "shortcut",
+    "label": "With shortcuts",
+    "optional": false,
+    "stage": "La Fouly → Champex-Lac",
+    "file": "data/route/legs/day-05-shortcut.json",
+    "hikingDistance_m": 14887.3,
+    "transitDistance_m": 0.0,
+    "pointCount": 563,
+    "stats": {
+      "distance_m": 14887.3,
+      "gain_m": 567,
+      "loss_m": 694,
+      "minElevation_m": 1055,
+      "maxElevation_m": 1605,
+      "startElevation_m": 1603,
+      "endElevation_m": 1476
+    },
+    "elevationSource": {
+      "ign-rgealti": 563
+    }
+  },
+  {
+    "dayId": "day-05",
+    "variant": "classic",
+    "label": "Classic TMB",
+    "optional": false,
+    "stage": "La Fouly → Champex-Lac",
+    "file": "data/route/legs/day-05-classic.json",
+    "hikingDistance_m": 14887.3,
+    "transitDistance_m": 0.0,
+    "pointCount": 563,
+    "stats": {
+      "distance_m": 14887.3,
+      "gain_m": 567,
+      "loss_m": 694,
+      "minElevation_m": 1055,
+      "maxElevation_m": 1605,
+      "startElevation_m": 1603,
+      "endElevation_m": 1476
+    },
+    "elevationSource": {
+      "ign-rgealti": 563
+    }
+  },
+  {
+    "dayId": "day-06",
+    "variant": "shortcut",
+    "label": "With shortcuts",
+    "optional": false,
+    "stage": "Champex-Lac → Trient",
+    "file": "data/route/legs/day-06-shortcut.json",
+    "hikingDistance_m": 15985.9,
+    "transitDistance_m": 0.0,
+    "pointCount": 613,
+    "stats": {
+      "distance_m": 15985.9,
+      "gain_m": 806,
+      "loss_m": 983,
+      "minElevation_m": 1304,
+      "maxElevation_m": 2047,
+      "startElevation_m": 1476,
+      "endElevation_m": 1304
+    },
+    "elevationSource": {
+      "ign-rgealti": 514,
+      "swisstopo-alti3d": 99
+    }
+  },
+  {
+    "dayId": "day-06",
+    "variant": "classic",
+    "label": "Classic TMB",
+    "optional": false,
+    "stage": "Champex-Lac → Trient",
+    "file": "data/route/legs/day-06-classic.json",
+    "hikingDistance_m": 15985.9,
+    "transitDistance_m": 0.0,
+    "pointCount": 613,
+    "stats": {
+      "distance_m": 15985.9,
+      "gain_m": 806,
+      "loss_m": 983,
+      "minElevation_m": 1304,
+      "maxElevation_m": 2047,
+      "startElevation_m": 1476,
+      "endElevation_m": 1304
+    },
+    "elevationSource": {
+      "ign-rgealti": 514,
+      "swisstopo-alti3d": 99
+    }
+  },
+  {
+    "dayId": "day-06",
+    "variant": "arpette",
+    "label": "Fenêtre d'Arpette variant",
+    "optional": true,
+    "stage": "Champex-Lac → Trient",
+    "file": "data/route/legs/day-06-arpette.json",
+    "hikingDistance_m": 9993.8,
+    "transitDistance_m": 0.0,
+    "pointCount": 570,
+    "stats": {
+      "distance_m": 9993.8,
+      "gain_m": 1057,
+      "loss_m": 1138,
+      "minElevation_m": 1516,
+      "maxElevation_m": 2647,
+      "startElevation_m": 1599,
+      "endElevation_m": 1516
+    },
+    "elevationSource": {
+      "ign-rgealti": 570
+    }
+  },
+  {
+    "dayId": "day-07",
+    "variant": "shortcut",
+    "label": "With shortcuts",
+    "optional": false,
+    "stage": "Trient → finish",
+    "file": "data/route/legs/day-07-shortcut.json",
+    "hikingDistance_m": 11982.4,
+    "transitDistance_m": 13690.3,
+    "pointCount": 473,
+    "stats": {
+      "distance_m": 11982.4,
+      "gain_m": 957,
+      "loss_m": 841,
+      "minElevation_m": 1289,
+      "maxElevation_m": 2206,
+      "startElevation_m": 1304,
+      "endElevation_m": 1416
+    },
+    "elevationSource": {
+      "ign-rgealti": 473
+    }
+  },
+  {
+    "dayId": "day-07",
+    "variant": "classic",
+    "label": "Classic TMB",
+    "optional": false,
+    "stage": "Trient → finish",
+    "file": "data/route/legs/day-07-classic.json",
+    "hikingDistance_m": 37667.3,
+    "transitDistance_m": 0.0,
+    "pointCount": 1876,
+    "stats": {
+      "distance_m": 37667.3,
+      "gain_m": 2646,
+      "loss_m": 2942,
+      "minElevation_m": 978,
+      "maxElevation_m": 2486,
+      "startElevation_m": 1304,
+      "endElevation_m": 1005
+    },
+    "elevationSource": {
+      "ign-rgealti": 1876
+    }
+  }
+]

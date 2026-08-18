@@ -1,0 +1,64 @@
+---
+alwaysApply: true
+---
+
+# Planning Methodology
+
+When creating an execution plan (in Plan mode or when the user requests a plan), work through all six phases below before presenting the plan. Do not present a plan that skips phases. Surface decisions to the user only when there are genuine choices with meaningful trade-offs — apply the methodology automatically for everything else.
+
+## Phase 1 — Scope & Authority
+
+- Clarify the ask: What is the expected deliverable? What does "done" look like?
+- Identify authoritative sources: Which rules, specs, templates, or agents govern this work? Load and read them.
+- Check for conflicts: Does the current state match what the authoritative sources prescribe? If not, present the conflict and resolution options to the user before proceeding.
+- Define scope boundaries: What is explicitly in scope and out of scope?
+- Define safety rules: What must NOT be changed during execution (e.g., verbatim text, existing data)?
+
+## Phase 2 — Inventory & Current State
+
+- Enumerate the complete set of work items (files, features, tickets, etc.).
+- Cross-reference against authoritative lists (traceability tables, feature lists) to catch missing items.
+- Sample current items to understand the existing representation and classify divergence patterns.
+- Record the inventory in the plan so it can be verified during execution.
+
+## Phase 3 — Transformation Design
+
+- Define the precise transformation spec: not conceptual, but exact and repeatable.
+- Identify edge cases (multi-source references, platform variants, missing data) and specify handling for each.
+- Assess content loss risk: will the transformation remove information? If so, define a preservation mechanism.
+- State what is preserved unchanged and what changes — be explicit.
+
+## Phase 4 — Execution Sequencing
+
+- Define work order and batching strategy.
+- Design for context management: batch work into self-contained units (per folder, per feature, per domain) so earlier context is not needed when processing later batches. Load resources per-batch, not all at once.
+- Identify what can be parallelized (reads, analysis) vs. what must be sequential (edits, validation).
+- Include a pilot/gate step before bulk operations: apply the transformation to one item, present the before/after for user approval, then proceed only after sign-off.
+- Include a rollback strategy (version control, backup) before any destructive operations.
+- Consider sub-agent delegation for large batches — parallelize reads and analysis, keep edits sequential.
+
+## Phase 5 — Quality Control Architecture
+
+- Define specific, mechanical QC checks (structural, content, cross-reference).
+- For each QC check, specify what is compared against what. Use in-memory snapshots of pre-transformation state (captured before editing, not written to disk) as the comparison baseline.
+- Include a correction loop: if QC fails, fix the issue, then re-run ALL checks (not just the failed one — a fix may introduce new issues). Loop up to 10 iterations per item. If still failing after 10, mark as unresolved and report.
+- Include a cross-reference QC after all items: verify the full inventory was processed and nothing was missed.
+- Track QC iteration count per item for the change summary.
+
+## Phase 6 — Plan Self-Audit
+
+Before presenting the plan, verify:
+
+- Does the plan address the original ask? Is the deliverable clear?
+- Does it maintain fidelity to the authoritative sources identified in Phase 1?
+- Are risks identified with mitigations? At minimum consider: incomplete discovery, content corruption, context exhaustion, downstream sync, and rollback.
+- Is the plan proportional to the task? A 3-file rename does not need a 200-line plan.
+- Is the change summary well-defined? It should report: per-item classification (compliant/remediated/failed/not found), pre/post comparison from snapshots, QC iteration counts, and unresolved issues.
+
+## Proportionality
+
+Not every plan needs every phase at full depth. Scale the methodology to the task:
+
+- **Small tasks (< 5 items, simple transformation):** Phases 1-3 can be brief. Phase 4 may not need a pilot. Phase 5 needs basic QC but may not need the full correction loop.
+- **Medium tasks (5-20 items, moderate complexity):** All phases apply. Pilot gate recommended. QC correction loop applies.
+- **Large tasks (20+ items, complex transformation, multiple sources):** Full depth on all phases. Context management and sub-agent delegation are critical. Pilot gate is mandatory.

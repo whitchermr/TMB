@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Money — Tour du Mont Blanc</title>
+    <meta name="theme-color" content="#2f6f4e" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/print.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
+  <body>
+    <main class="app-main">
+      <div class="page-head">
+        <div>
+          <h1>Money</h1>
+          <p class="muted">
+            Who paid for what, what everyone owes, and the shortest set of
+            transfers that squares it up at the end.
+          </p>
+        </div>
+        <div class="row row--tight">
+          <button class="btn" id="add-expense" type="button">Add expense</button>
+        </div>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card__body">
+            <div class="stats" id="money-stats"></div>
+          </div>
+        </section>
+
+        <div class="split">
+          <div class="stack">
+            <section class="card">
+              <div class="card__head">
+                <h2>Balances</h2>
+                <small class="faint" id="balance-note"></small>
+              </div>
+              <div class="card__body">
+                <div class="balance-list" id="balances"></div>
+              </div>
+            </section>
+
+            <section class="card card--accent">
+              <div class="card__head">
+                <h2>Settle up</h2>
+                <small class="faint">Fewest transfers that clears everyone</small>
+              </div>
+              <div class="card__body">
+                <div class="stack stack--tight" id="settle"></div>
+              </div>
+            </section>
+          </div>
+
+          <div class="stack">
+            <section class="card">
+              <div class="card__head">
+                <h2>Where the money goes</h2>
+              </div>
+              <div class="card__body">
+                <div class="stack stack--tight" id="categories"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head">
+                <h2>People</h2>
+                <button class="btn btn--sm" id="add-person" type="button">Add</button>
+              </div>
+              <div class="card__body card__body--flush">
+                <div id="people-list"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head">
+                <h2>Exchange rates</h2>
+                <small class="faint" id="rates-asof"></small>
+              </div>
+              <div class="card__body">
+                <div class="stack stack--tight" id="rates-list"></div>
+                <p class="faint" style="margin: 0.6rem 0 0; font-size: 0.78rem">
+                  Rates are pinned by hand rather than fetched live, so a settle-up
+                  computed today gives the same answer next month. Set them to
+                  whatever the cards actually charged.
+                </p>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <section class="card">
+          <div class="card__head">
+            <h2>Expenses</h2>
+            <small class="faint">Lodging rows come from the Stays page</small>
+          </div>
+          <div class="card__body card__body--flush">
+            <div class="table-wrap">
+              <table class="data" id="expense-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Paid by</th>
+                    <th>Split</th>
+                    <th class="num">Amount</th>
+                    <th class="num">In USD</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <dialog id="expense-dialog">
+      <form method="dialog" class="dialog__head">
+        <h2 id="expense-title">Expense</h2>
+        <button class="btn btn--sm" value="cancel">Close</button>
+      </form>
+      <div class="dialog__body">
+        <div class="stack stack--tight">
+          <div class="field">
+            <label for="expense-desc">Description</label>
+            <input type="text" id="expense-desc" required />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="expense-amount">Amount</label>
+              <input type="number" id="expense-amount" min="0" step="0.01" />
+            </div>
+            <div class="field">
+              <label for="expense-currency">Currency</label>
+              <select id="expense-currency"></select>
+            </div>
+            <div class="field">
+              <label for="expense-date">Date</label>
+              <input type="date" id="expense-date" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="expense-category">Category</label>
+              <select id="expense-category"></select>
+            </div>
+            <div class="field">
+              <label for="expense-paidby">Paid by</label>
+              <select id="expense-paidby"></select>
+            </div>
+            <div class="field">
+              <label for="expense-split">Split</label>
+              <select id="expense-split">
+                <option value="equal">Equally</option>
+                <option value="shares">By shares</option>
+                <option value="exact">Exact amounts</option>
+                <option value="percent">Percentages</option>
+              </select>
+            </div>
+          </div>
+          <fieldset style="border: 1px solid var(--c-border); border-radius: 6px; padding: 0.6rem">
+            <legend style="font-size: 0.8rem; color: var(--c-text-soft)">Who shares this</legend>
+            <div id="expense-participants" class="stack stack--tight"></div>
+            <p class="faint" id="split-check" style="margin: 0.5rem 0 0; font-size: 0.78rem"></p>
+          </fieldset>
+          <div class="field">
+            <label for="expense-note">Note</label>
+            <textarea id="expense-note"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="dialog__foot">
+        <button class="btn btn--danger" type="button" id="expense-delete">Delete</button>
+        <button class="btn btn--primary" type="button" id="expense-save">Save</button>
+      </div>
+    </dialog>
+
+    <script type="module" src="assets/js/pages/money.js"></script>
+  </body>
+</html>

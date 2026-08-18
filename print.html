@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Trail brief — Tour du Mont Blanc</title>
+    <meta
+      name="description"
+      content="Printable day-by-day trail brief for our Tour du Mont Blanc hike: distances, climbs, timings, scenery stops and lodging."
+    />
+    <meta name="theme-color" content="#2f6f4e" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" href="assets/css/print.css" />
+  </head>
+  <body>
+    <main class="app-main">
+      <div class="page-head print-hide">
+        <div>
+          <h1>Trail brief</h1>
+          <p class="muted">
+            Everything for the trail on one printable sheet per day — carry it as
+            a backup for a dead phone or no signal.
+          </p>
+        </div>
+        <div class="row row--tight">
+          <button class="btn" type="button" id="export-all">Download all data</button>
+          <button class="btn btn--primary" type="button" id="print">Print</button>
+        </div>
+      </div>
+
+      <section class="card print-hide">
+        <div class="card__body">
+          <div class="row row--tight">
+            <label class="checkbox">
+              <input type="checkbox" id="opt-scenery" checked />
+              Scenery and light
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" id="opt-lodging" checked />
+              Lodging
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" id="opt-profile" checked />
+              Elevation profiles
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" id="opt-money" />
+              Money summary
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <div class="brief" id="brief">
+        <p class="center-note">Loading trip…</p>
+      </div>
+
+      <div class="brief__foot" id="brief-foot"></div>
+    </main>
+
+    <script type="module" src="assets/js/pages/print.js"></script>
+  </body>
+</html>

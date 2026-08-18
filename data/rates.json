@@ -1,0 +1,20 @@
+{
+  "$schema": "tmb/rates/1",
+  "$comment": [
+    "Fixed FX rates expressed as: 1 unit of `currency` = `toBase` units of the",
+    "base currency in settings.money.baseCurrency (USD).",
+    "",
+    "Deliberately hand-entered rather than fetched live, so that a settle-up",
+    "computed today gives the same answer next month. Update `asOf` and the",
+    "values when the group agrees on a rate — typically whatever the cards",
+    "actually charged."
+  ],
+  "base": "USD",
+  "asOf": "2026-06-01",
+  "rates": [
+    { "currency": "USD", "symbol": "$", "toBase": 1.0 },
+    { "currency": "EUR", "symbol": "€", "toBase": 1.09 },
+    { "currency": "CHF", "symbol": "CHF", "toBase": 1.12 },
+    { "currency": "GBP", "symbol": "£", "toBase": 1.27 }
+  ]
+}

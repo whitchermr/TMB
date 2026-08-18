@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Day — Tour du Mont Blanc</title>
+    <meta name="theme-color" content="#2f6f4e" />
+    <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/print.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
+  <body>
+    <main class="app-main">
+      <div class="page-head">
+        <div>
+          <p class="day-item__date" id="day-date">&nbsp;</p>
+          <h1 id="day-title">Loading…</h1>
+          <p class="muted" id="day-note"></p>
+        </div>
+        <div class="row row--tight">
+          <button class="btn btn--icon" id="prev-day" type="button" aria-label="Previous day">‹</button>
+          <select id="day-select" aria-label="Choose day" style="min-width: 190px"></select>
+          <button class="btn btn--icon" id="next-day" type="button" aria-label="Next day">›</button>
+        </div>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card__head">
+            <div class="btn-group" role="group" aria-label="Route option" id="variant-toggle"></div>
+            <label class="checkbox" id="compare-wrap" hidden>
+              <input type="checkbox" id="compare-toggle" /> Compare options
+            </label>
+          </div>
+          <div class="card__body">
+            <div class="stats" id="day-stats"></div>
+          </div>
+        </section>
+
+        <div class="split split--sticky">
+          <div class="stack">
+            <section class="card">
+              <div class="card__head">
+                <h2>Map</h2>
+                <div class="row row--tight" id="map-controls"></div>
+              </div>
+              <div class="card__body">
+                <div id="map" class="map"></div>
+                <div class="map-legend" id="map-legend"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head">
+                <h2>Elevation</h2>
+                <small class="faint" id="profile-hint"></small>
+              </div>
+              <div class="card__body">
+                <div id="profile"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head"><h2>How the day is made up</h2></div>
+              <div class="card__body">
+                <div class="segments" id="segments"></div>
+              </div>
+            </section>
+          </div>
+
+          <div class="stack">
+            <section class="card card--accent">
+              <div class="card__head">
+                <h2>Light</h2>
+                <small class="faint" id="sun-place"></small>
+              </div>
+              <div class="card__body">
+                <div class="stats" id="sun-stats"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head">
+                <h2>Scenery</h2>
+                <button class="btn btn--sm" id="add-waypoint" type="button">Add</button>
+              </div>
+              <div class="card__body card__body--flush">
+                <ul class="wp-list" id="waypoint-list"></ul>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <dialog id="wp-dialog">
+      <form method="dialog" class="dialog__head">
+        <h2 id="wp-dialog-title">Scenery note</h2>
+        <button class="btn btn--sm" value="cancel">Close</button>
+      </form>
+      <div class="dialog__body">
+        <div class="stack stack--tight">
+          <div class="field-row">
+            <div class="field">
+              <label for="wp-name">Name</label>
+              <input type="text" id="wp-name" required />
+            </div>
+            <div class="field">
+              <label for="wp-kind">Kind</label>
+              <select id="wp-kind">
+                <option value="viewpoint">Viewpoint</option>
+                <option value="col">Col / pass</option>
+                <option value="lake">Lake</option>
+                <option value="glacier">Glacier</option>
+                <option value="summit">Summit</option>
+                <option value="refuge">Refuge</option>
+                <option value="village">Village</option>
+                <option value="heritage">Heritage</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="wp-lat">Latitude</label>
+              <input type="number" id="wp-lat" step="0.00001" required />
+            </div>
+            <div class="field">
+              <label for="wp-lon">Longitude</label>
+              <input type="number" id="wp-lon" step="0.00001" required />
+            </div>
+            <div class="field">
+              <label for="wp-elev">Elevation (m)</label>
+              <input type="number" id="wp-elev" step="1" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="wp-priority">Priority</label>
+              <select id="wp-priority">
+                <option value="1">1 — do not miss</option>
+                <option value="2">2 — strong</option>
+                <option value="3">3 — if the light is there</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="wp-light">Best light</label>
+              <select id="wp-light">
+                <option value="any">Any</option>
+                <option value="sunrise">Sunrise</option>
+                <option value="golden">Golden hour</option>
+                <option value="morning">Morning</option>
+                <option value="midday">Midday</option>
+                <option value="afternoon">Afternoon</option>
+                <option value="sunset">Sunset</option>
+                <option value="blue">Blue hour</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="wp-facing">Facing</label>
+              <select id="wp-facing">
+                <option value="">—</option>
+                <option value="N">N</option>
+                <option value="NE">NE</option>
+                <option value="E">E</option>
+                <option value="SE">SE</option>
+                <option value="S">S</option>
+                <option value="SW">SW</option>
+                <option value="W">W</option>
+                <option value="NW">NW</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="wp-subject">Subject</label>
+            <input type="text" id="wp-subject" placeholder="What you are photographing" />
+          </div>
+          <div class="field">
+            <label for="wp-notes">Notes</label>
+            <textarea id="wp-notes" placeholder="Light, timing, composition, access"></textarea>
+          </div>
+          <label class="checkbox"><input type="checkbox" id="wp-detour" /> Off-route detour</label>
+        </div>
+      </div>
+      <div class="dialog__foot">
+        <button class="btn btn--danger" type="button" id="wp-delete">Delete</button>
+        <button class="btn btn--primary" type="button" id="wp-save">Save</button>
+      </div>
+    </dialog>
+
+    <script src="assets/vendor/leaflet/leaflet.js"></script>
+    <script type="module" src="assets/js/pages/day.js"></script>
+  </body>
+</html>

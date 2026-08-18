@@ -1,0 +1,110 @@
+{
+  "$schema": "tmb/itinerary/1",
+  "$comment": [
+    "Ordered day-by-day schedule. Dates are NOT stored — they are derived by",
+    "walking this list from settings.trip.startDate, so changing the start date",
+    "or toggling a rest day reflows everything automatically.",
+    "",
+    "kind: hike  -> pairs with data/route/legs/<legId>-<variant>.json",
+    "      rest  -> no walking; still occupies a calendar day and a night",
+    "      travel-> getting to or from the trailhead",
+    "",
+    "stayAt is the anchor key where the group sleeps that night, and is what",
+    "data/stays.json keys its lodging options against."
+  ],
+
+  "days": [
+    {
+      "id": "arrive",
+      "kind": "travel",
+      "label": "Arrive Chamonix",
+      "stayAt": "chamonix",
+      "note": "Fly in, settle, gear check. Carte d'Hôte from the hotel makes valley buses free.",
+      "includeInBudget": false
+    },
+    {
+      "id": "day-01",
+      "kind": "hike",
+      "legId": "day-01",
+      "stage": "Les Houches → Les Contamines",
+      "from": "les-houches",
+      "to": "les-contamines",
+      "stayAt": "les-contamines"
+    },
+    {
+      "id": "day-02",
+      "kind": "hike",
+      "legId": "day-02",
+      "stage": "Les Contamines → Les Chapieux",
+      "from": "les-contamines",
+      "to": "les-chapieux",
+      "stayAt": "les-chapieux",
+      "note": "Longest climb of the first half. Col de la Croix du Bonhomme at 2,433 m."
+    },
+    {
+      "id": "day-03",
+      "kind": "hike",
+      "legId": "day-03",
+      "stage": "Les Chapieux → Courmayeur",
+      "from": "les-chapieux",
+      "to": "courmayeur",
+      "stayAt": "courmayeur",
+      "note": "Navette up to Ville des Glaciers. Buy tickets the evening before — they sell out."
+    },
+    {
+      "id": "rest-01",
+      "kind": "rest",
+      "label": "Rest day — Courmayeur",
+      "stayAt": "courmayeur",
+      "note": "Four-star resort and spa. Laundry, resupply, and an easy afternoon."
+    },
+    {
+      "id": "day-04",
+      "kind": "hike",
+      "legId": "day-04",
+      "stage": "Courmayeur → La Fouly",
+      "from": "courmayeur",
+      "to": "la-fouly",
+      "stayAt": "la-fouly",
+      "note": "Val Ferret bus to Arnouvaz, then over Grand Col Ferret into Switzerland."
+    },
+    {
+      "id": "day-05",
+      "kind": "hike",
+      "legId": "day-05",
+      "stage": "La Fouly → Champex-Lac",
+      "from": "la-fouly",
+      "to": "champex-lac",
+      "stayAt": "champex-lac",
+      "note": "Gentlest day. Valley walking through Swiss hamlets."
+    },
+    {
+      "id": "day-06",
+      "kind": "hike",
+      "legId": "day-06",
+      "stage": "Champex-Lac → Trient",
+      "from": "champex-lac",
+      "to": "trient",
+      "stayAt": "trient",
+      "note": "Bovine route by default. Fenêtre d'Arpette is the high alternative — see the variant toggle."
+    },
+    {
+      "id": "day-07",
+      "kind": "hike",
+      "legId": "day-07",
+      "stage": "Trient → finish",
+      "from": "trient",
+      "to": "chamonix",
+      "stayAt": "chamonix",
+      "note": "Over Col de Balme to Le Tour, then Chamonix Bus line 1 back to town."
+    },
+    {
+      "id": "depart",
+      "kind": "travel",
+      "label": "Chamonix → home",
+      "stayAt": null,
+      "note": "Buffer day for celebrating and flying out.",
+      "includeInBudget": false
+    }
+  ]
+}

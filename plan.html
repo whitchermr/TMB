@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Planner — Tour du Mont Blanc</title>
+    <meta name="theme-color" content="#2f6f4e" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/print.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
+  <body>
+    <main class="app-main">
+      <div class="page-head">
+        <div>
+          <h1>Planner</h1>
+          <p class="muted">
+            Shift the start date, add or remove rest days, and see how pace changes
+            each day. Nothing here is stored as a fixed date — every day is derived
+            from the start, so one change reflows the whole trip.
+          </p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="split">
+          <section class="card">
+            <div class="card__head"><h2>Pace and timing</h2></div>
+            <div class="card__body stack stack--tight">
+              <div class="field-row">
+                <div class="field">
+                  <label for="start-date">Start date</label>
+                  <input type="date" id="start-date" />
+                </div>
+                <div class="field">
+                  <label for="start-time">Leave each morning at</label>
+                  <input type="time" id="start-time" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="pace">
+                  Flat-ground pace — <span id="pace-value" class="numeric"></span>
+                </label>
+                <input type="range" id="pace" min="2.5" max="5.5" step="0.1" />
+                <small class="faint">
+                  Speed on level ground. Climbing and descending time is added per
+                  segment from the elevation profile, not averaged over the day.
+                </small>
+              </div>
+
+              <div class="field">
+                <label for="model">Timing model</label>
+                <select id="model">
+                  <option value="naismith">Naismith with Langmuir descent correction</option>
+                  <option value="tobler">Tobler hiking function</option>
+                </select>
+                <small class="faint" id="model-note"></small>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="breaks">Break minutes per hour</label>
+                  <input type="number" id="breaks" min="0" max="30" step="1" />
+                </div>
+                <div class="field">
+                  <label for="lunch">Lunch stop (minutes)</label>
+                  <input type="number" id="lunch" min="0" max="180" step="5" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="variant">Default route option</label>
+                <select id="variant">
+                  <option value="shortcut">With shortcuts</option>
+                  <option value="classic">Classic TMB</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <div class="stack">
+            <section class="card">
+              <div class="card__head"><h2>Trip shape</h2></div>
+              <div class="card__body">
+                <div class="stats" id="plan-stats"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head">
+                <h2>Rest days</h2>
+                <button class="btn btn--sm" id="add-rest" type="button">Add rest day</button>
+              </div>
+              <div class="card__body card__body--flush">
+                <div id="rest-list"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head"><h2>Model comparison</h2></div>
+              <div class="card__body">
+                <div id="model-compare"></div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <section class="card">
+          <div class="card__head">
+            <h2>Day by day</h2>
+            <small class="faint">Times assume the morning start above</small>
+          </div>
+          <div class="card__body card__body--flush">
+            <div class="table-wrap">
+              <table class="data" id="plan-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Stage</th>
+                    <th>Option</th>
+                    <th class="num">Distance</th>
+                    <th class="num">Ascent</th>
+                    <th class="num">Descent</th>
+                    <th class="num">On foot</th>
+                    <th class="num">Finish</th>
+                    <th class="num">Sunset</th>
+                    <th class="num">Margin</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card__head">
+            <h2>Light windows</h2>
+            <small class="faint">Priority scenery and whether we arrive in the right light</small>
+          </div>
+          <div class="card__body card__body--flush">
+            <div class="table-wrap">
+              <table class="data" id="light-table">
+                <thead>
+                  <tr>
+                    <th>Day</th>
+                    <th>Place</th>
+                    <th class="num">Into day</th>
+                    <th class="num">Arrive</th>
+                    <th>Wants</th>
+                    <th>Gets</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="assets/js/pages/plan.js"></script>
+  </body>
+</html>

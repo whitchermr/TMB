@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>About — Tour du Mont Blanc</title>
+    <meta name="theme-color" content="#2f6f4e" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/print.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
+  <body>
+    <main class="app-main">
+      <div class="page-head">
+        <div>
+          <h1>About this planner</h1>
+          <p class="muted">
+            Where the data comes from, how accurate it is, and how to change it.
+          </p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card__head"><h2>Data sources and attribution</h2></div>
+          <div class="card__body stack stack--tight">
+            <p>
+              The trail is not drawn by hand. It is the actual
+              <a href="https://www.openstreetmap.org/relation/9678362" target="_blank" rel="noopener noreferrer">
+                Tour du Mont Blanc main itinerary relation</a>
+              from OpenStreetMap — a single continuous closed loop of 736 ways and
+              16,999 points measuring 166.01 km — cut into daily legs by projecting
+              each overnight stop onto it.
+            </p>
+
+            <div class="table-wrap">
+              <table class="data">
+                <thead>
+                  <tr><th>Layer</th><th>Source</th><th>Licence</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Trail geometry</td>
+                    <td>
+                      OpenStreetMap relation 9678362, plus variant relations from
+                      superroute 124456
+                    </td>
+                    <td>ODbL — © OpenStreetMap contributors</td>
+                  </tr>
+                  <tr>
+                    <td>Elevation, 94.6%</td>
+                    <td>
+                      <a href="https://geoservices.ign.fr/" target="_blank" rel="noopener noreferrer">IGN Géoplateforme</a>
+                      RGE ALTI, 1 m
+                    </td>
+                    <td>IGN open licence</td>
+                  </tr>
+                  <tr>
+                    <td>Elevation, 5.4%</td>
+                    <td>
+                      <a href="https://www.swisstopo.admin.ch/" target="_blank" rel="noopener noreferrer">swisstopo</a>
+                      swissALTI3D, 2 m
+                    </td>
+                    <td>© swisstopo</td>
+                  </tr>
+                  <tr>
+                    <td>Elevation, remainder</td>
+                    <td>
+                      <a href="https://www.opentopodata.org/" target="_blank" rel="noopener noreferrer">OpenTopoData</a>
+                      SRTM 30 m
+                    </td>
+                    <td>Public domain / CC-BY</td>
+                  </tr>
+                  <tr>
+                    <td>Topographic basemap</td>
+                    <td>
+                      <a href="https://opentopomap.org/" target="_blank" rel="noopener noreferrer">OpenTopoMap</a>
+                    </td>
+                    <td>CC-BY-SA, data © OpenStreetMap contributors</td>
+                  </tr>
+                  <tr>
+                    <td>Satellite basemap</td>
+                    <td>Esri World Imagery</td>
+                    <td>© Esri, Maxar, Earthstar Geographics</td>
+                  </tr>
+                  <tr>
+                    <td>Swiss basemap</td>
+                    <td>swisstopo pixelkarte-farbe</td>
+                    <td>© swisstopo</td>
+                  </tr>
+                  <tr>
+                    <td>Trail waymark overlay</td>
+                    <td>
+                      <a href="https://hiking.waymarkedtrails.org/" target="_blank" rel="noopener noreferrer">Waymarked Trails</a>
+                    </td>
+                    <td>CC-BY-SA</td>
+                  </tr>
+                  <tr>
+                    <td>Map library</td>
+                    <td>Leaflet 1.9.4, bundled locally</td>
+                    <td>BSD 2-Clause</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card__head"><h2>How accurate are the numbers?</h2></div>
+          <div class="card__body stack stack--tight">
+            <p>
+              Elevation was checked against surveyed col heights along the route.
+              Mean absolute error is about <strong>3.7 m</strong>: Col de la Seigne
+              came out 0.2 m low against a surveyed 2,515 m, Col du Brévent 0.3 m
+              high against 2,368 m, and the worst case was Grand Col Ferret at 8.7 m
+              low.
+            </p>
+            <p>
+              Cumulative ascent is smoothed before being summed. Adding up every
+              positive step in a raw elevation series inflates climbing badly,
+              because metre-scale sampling noise accumulates over thousands of
+              points, so a run of same-direction steps only counts once it exceeds
+              5 m. Computed ascent lands 1–7% below the group's original planning
+              spreadsheet, which is the expected signature of that filter. Both
+              figures are shown side by side rather than one overriding the other.
+            </p>
+            <p>
+              Walking times are computed segment by segment along the elevation
+              profile rather than from a day's totals, because a day with one long
+              climb takes considerably longer than a day with the same ascent spread
+              thinly. Two models are available on the Planner: Naismith's rule with
+              Langmuir's descent correction, and Tobler's hiking function. Where
+              they disagree sharply the day has sustained steep ground and the
+              estimate deserves to be read as a range.
+            </p>
+            <p class="faint">
+              Full calibration tables, including the two places where our plan and
+              the geometry disagree, are in <code class="mono">docs/data-notes.md</code>.
+            </p>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card__head"><h2>Editing and sharing changes</h2></div>
+          <div class="card__body stack stack--tight">
+            <p>
+              There is no server and no database. The committed JSON files under
+              <code class="mono">data/</code> are the shared source of truth, and
+              anything you change in the browser is kept as a draft in this device's
+              local storage. That is why an <em>unsaved</em> badge appears in the
+              header once you edit something — the change is real, but only here.
+            </p>
+            <p>
+              To share an edit with the group, open that badge, copy the JSON, and
+              commit it over the matching file in the repository. Anyone else can
+              pull the change, or use <strong>Import</strong> to load a file someone
+              sent them. Discarding a draft returns the page to whatever is committed.
+            </p>
+            <p class="notice">
+              Drafts live in one browser on one device. Clearing site data will
+              discard them, so export anything you want to keep.
+            </p>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card__head"><h2>Using it on the trail</h2></div>
+          <div class="card__body stack stack--tight">
+            <p>
+              Leaflet and all trip data are served from this site rather than a CDN,
+              and a service worker caches the whole planner on first visit, so every
+              page keeps working with no signal. Add it to your home screen and it
+              opens like an app.
+            </p>
+            <p>
+              Map tiles are the part that genuinely needs downloading ahead of time.
+              Use the panel below over wifi before you leave, and the map still
+              draws in the middle of the Val Ferret.
+            </p>
+            <p>
+              Every page works at phone width, and the elevation profile responds to
+              touch — drag along it to read distance, height and elapsed time, and
+              the marker tracks your finger on the map above.
+            </p>
+            <p class="faint">
+              Print a paper copy from the <a href="print.html">trail brief</a> as a
+              backup for a flat battery.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="offline">
+          <div class="card__head">
+            <h2>Offline maps</h2>
+            <small class="faint" id="offline-version"></small>
+          </div>
+          <div class="card__body stack stack--tight">
+            <p id="offline-state" class="muted">Checking offline support…</p>
+
+            <div class="stats" id="offline-stats"></div>
+
+            <div class="field-row" id="offline-controls" hidden>
+              <label class="field">
+                <span>Basemap</span>
+                <select id="offline-basemap"></select>
+              </label>
+              <label class="field">
+                <span>Detail</span>
+                <select id="offline-zoom">
+                  <option value="13">Overview — zoom 11–13</option>
+                  <option value="14" selected>Trail detail — zoom 11–14</option>
+                  <option value="15">Maximum — zoom 11–15</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="row row--tight" id="offline-actions" hidden>
+              <button class="btn btn--primary" type="button" id="offline-download">
+                Estimate and download
+              </button>
+              <button class="btn btn--danger" type="button" id="offline-clear">
+                Clear cached tiles
+              </button>
+            </div>
+
+            <div id="offline-progress" hidden>
+              <div class="bar"><i id="offline-bar" style="width:0%"></i></div>
+              <p class="faint" id="offline-progress-text" style="margin:.35rem 0 0"></p>
+            </div>
+
+            <p class="notice">
+              Tiles come from community servers that ask nobody to bulk-download,
+              so this fetches a corridor along the route rather than a whole
+              region, four requests at a time. Run it once per basemap and leave
+              it alone.
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="assets/js/pages/about.js"></script>
+  </body>
+</html>

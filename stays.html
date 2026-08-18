@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Stays — Tour du Mont Blanc</title>
+    <meta name="theme-color" content="#2f6f4e" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/print.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
+  <body>
+    <main class="app-main">
+      <div class="page-head">
+        <div>
+          <h1>Stays</h1>
+          <p class="muted">
+            Options under consideration and what we actually booked, per overnight
+            stop. Whatever is marked booked flows straight into the money page as a
+            lodging expense, so nothing gets entered twice.
+          </p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card__body">
+            <div class="stats" id="stay-stats"></div>
+          </div>
+        </section>
+
+        <div id="stops" class="stack"></div>
+      </div>
+    </main>
+
+    <dialog id="option-dialog">
+      <form method="dialog" class="dialog__head">
+        <h2 id="option-title">Lodging option</h2>
+        <button class="btn btn--sm" value="cancel">Close</button>
+      </form>
+      <div class="dialog__body">
+        <div class="stack stack--tight">
+          <div class="field">
+            <label for="option-name">Name</label>
+            <input type="text" id="option-name" required placeholder="Hotel or refuge name" />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="option-type">Type</label>
+              <select id="option-type">
+                <option value="hotel">Hotel</option>
+                <option value="refuge">Refuge</option>
+                <option value="gite">Gîte</option>
+                <option value="apartment">Apartment</option>
+                <option value="dormitory">Dormitory</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="option-price">Price per person / night</label>
+              <input type="number" id="option-price" min="0" step="1" />
+            </div>
+            <div class="field">
+              <label for="option-currency">Currency</label>
+              <select id="option-currency"></select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="option-status">Status</label>
+              <select id="option-status">
+                <option value="idea">Idea</option>
+                <option value="contacted">Contacted</option>
+                <option value="held">Held</option>
+                <option value="booked">Booked</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="option-paidby">Paid by</label>
+              <select id="option-paidby"></select>
+            </div>
+            <div class="field">
+              <label for="option-ref">Booking reference</label>
+              <input type="text" id="option-ref" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="option-url">Link</label>
+            <input type="url" id="option-url" placeholder="https://" />
+          </div>
+          <div class="field">
+            <label for="option-note">Notes</label>
+            <textarea id="option-note" placeholder="Room configuration, cancellation terms, what is included"></textarea>
+          </div>
+          <label class="checkbox">
+            <input type="checkbox" id="option-halfboard" /> Half board (dinner and breakfast included)
+          </label>
+        </div>
+      </div>
+      <div class="dialog__foot">
+        <button class="btn btn--danger" type="button" id="option-delete">Delete</button>
+        <button class="btn btn--primary" type="button" id="option-save">Save</button>
+      </div>
+    </dialog>
+
+    <script type="module" src="assets/js/pages/stays.js"></script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+# Development-process kit — kept locally, not part of the published site
+Generalized Product Development Processes/
+
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Editor
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Pipeline scratch: raw Overpass payloads and the elevation lookup cache.
+# Regenerable via tools/run-pipeline.sh; too large and noisy to version.
+data/route/raw/
+data/route/cache/
+
+# Logs
+*.log

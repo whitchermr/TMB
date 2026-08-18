@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img"
+  aria-label="Tour du Mont Blanc planner">
+  <title>Tour du Mont Blanc</title>
+  <!-- Safe zone: all meaningful shapes stay inside the central 80% so the icon
+       survives being masked to a circle or squircle on Android and iOS. -->
+  <rect width="512" height="512" fill="#2f6f4e" />
+  <circle cx="368" cy="140" r="42" fill="#f2c777" />
+  <!-- Back ridge -->
+  <path d="M0 392 L128 236 L214 336 L262 280 L360 392 Z" fill="#245a3f" />
+  <!-- Mont Blanc, snow cap picked out in the same cream as the type -->
+  <path d="M104 424 L268 168 L432 424 Z" fill="#1c4632" />
+  <path d="M268 168 L214 252 L246 240 L272 268 L300 236 L322 252 Z" fill="#f4f6f2" />
+  <!-- The loop: a circuit around the massif rather than a there-and-back -->
+  <ellipse cx="268" cy="404" rx="150" ry="46" fill="none" stroke="#f4f6f2"
+    stroke-width="16" stroke-linecap="round" stroke-dasharray="34 26" opacity="0.92" />
+</svg>

@@ -1,0 +1,72 @@
+---
+globs: "**/Specs/**/*.md,**/specs/**/*.md,**/stories/**/*.md,**/tasks/**/*.md"
+---
+
+# Spec Voice & Tone
+
+When writing or editing prose in spec, story, task, or analysis files, follow these voice directives. They apply to agent-generated prose; they do NOT apply to verbatim content (ACs, quotes, direct excerpts from source material).
+
+## Directives
+
+### Lead with the change
+
+The first sentence of a section says what changes, what ships, or what decides. Not "this section describes…"
+
+### Cut throat-clearing
+
+Delete phrases that add no information:
+- "It is important to note that…"
+- "In order to…"
+- "As mentioned above…"
+- "It should be understood that…"
+- "This section will…"
+- "We will need to…"
+
+### Use plain verbs
+
+- "makes a determination of" → "determines"
+- "is responsible for" → describe what it does
+- "utilizes" → "uses"
+- "facilitates" → "handles"
+- "provides functionality for" → say what the functionality is
+
+### Vary sentence openings
+
+Do not start every sentence with "The." Mix in clause-first, verb-first, and subject-first openings.
+
+### Preserve decision rationale
+
+When the prose notes a decision, include the actual constraint behind it, not a generic justification.
+
+**Bad:** "We use Redis because we need caching."
+**Good:** "Sessions live in Redis to survive API pod restarts."
+
+### Prefer specifics over abstractions
+
+- "handles errors" → name the retry/fallback behavior
+- "is performant" → state the specific budget
+- "integrates with X" → name the endpoint/flow
+
+### Active voice when the actor matters
+
+"The header is shown to signed-in users" → "Signed-in users see the header."
+
+Passive is acceptable when the actor is genuinely irrelevant.
+
+### One idea per sentence
+
+Split compound sentences that bury their load-bearing clause.
+
+## Scope
+
+Applies to:
+- Story prose (Context section, Notes section)
+- Task descriptions and implementation notes
+- Analysis reports, findings blocks, executive summaries
+- Commit messages and PR descriptions
+
+Does NOT apply to:
+- Acceptance Criteria (Gherkin, written by humans)
+- Tables, bullet lists, enum values
+- Direct quotes from source material
+- The User Story "As a…" line (human-authored)

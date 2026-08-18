@@ -1,0 +1,135 @@
+{
+  "total_m": 166010.8,
+  "anchors": {
+    "les-houches": {
+      "name": "Les Houches",
+      "lat": 45.89151,
+      "lon": 6.79914,
+      "country": "FR",
+      "note": null,
+      "isStageStop": true,
+      "position_m": 0.0,
+      "offset_m": 12.2
+    },
+    "les-contamines": {
+      "name": "Les Contamines-Montjoie",
+      "lat": 45.82109,
+      "lon": 6.72751,
+      "country": "FR",
+      "note": null,
+      "isStageStop": true,
+      "position_m": 17112.2,
+      "offset_m": 99.7
+    },
+    "les-chapieux": {
+      "name": "Les Chapieux",
+      "lat": 45.69668,
+      "lon": 6.73358,
+      "country": "FR",
+      "note": null,
+      "isStageStop": true,
+      "position_m": 35958.6,
+      "offset_m": 6.1
+    },
+    "courmayeur": {
+      "name": "Courmayeur",
+      "lat": 45.78742,
+      "lon": 6.97306,
+      "country": "IT",
+      "note": "The main itinerary passes above the town rather than through the centre, so the leg boundary sits at the trail's closest approach (~390 m north).",
+      "isStageStop": true,
+      "position_m": 65866.6,
+      "offset_m": 387.4
+    },
+    "la-fouly": {
+      "name": "La Fouly",
+      "lat": 45.93312,
+      "lon": 7.09897,
+      "country": "CH",
+      "note": null,
+      "isStageStop": true,
+      "position_m": 97470.3,
+      "offset_m": 24.9
+    },
+    "champex-lac": {
+      "name": "Champex-Lac",
+      "lat": 46.03058,
+      "lon": 7.11682,
+      "country": "CH",
+      "note": null,
+      "isStageStop": true,
+      "position_m": 112357.6,
+      "offset_m": 55.5
+    },
+    "trient": {
+      "name": "Trient",
+      "lat": 46.05595,
+      "lon": 6.99537,
+      "country": "CH",
+      "note": null,
+      "isStageStop": true,
+      "position_m": 128343.5,
+      "offset_m": 19.5
+    },
+    "le-tour": {
+      "name": "Le Tour",
+      "lat": 46.00269,
+      "lon": 6.94593,
+      "country": "FR",
+      "note": "Reached via the Le Tour variant relation, not the main itinerary — the main route stays high over the Aiguillette des Posettes toward Tré-le-Champ.",
+      "isStageStop": true,
+      "position_m": 140194.2,
+      "offset_m": 1007.4
+    },
+    "les-mottets": {
+      "name": "Les Mottets",
+      "lat": 45.73714,
+      "lon": 6.77904,
+      "country": "FR",
+      "note": "Refuge des Mottets, 1,870 m. The navette from Les Chapieux terminates at Ville des Glaciers just below; it is a short road walk up to here before the Col de la Seigne climb begins.",
+      "isStageStop": false,
+      "position_m": 42146.5,
+      "offset_m": 6.9
+    },
+    "lac-combal": {
+      "name": "Lac Combal",
+      "lat": 45.77535,
+      "lon": 6.86616,
+      "country": "IT",
+      "note": "Val Veni bus stop at the Combal dam",
+      "isStageStop": false,
+      "position_m": 52986.7,
+      "offset_m": 145.1
+    },
+    "arnouvaz": {
+      "name": "Arnouvaz",
+      "lat": 45.87319,
+      "lon": 7.05334,
+      "country": "IT",
+      "note": "Top of the Val Ferret bus line",
+      "isStageStop": false,
+      "position_m": 83440.4,
+      "offset_m": 118.9
+    },
+    "col-de-balme": {
+      "name": "Col de Balme",
+      "lat": 46.02637,
+      "lon": 6.97029,
+      "country": "CH/FR",
+      "note": "Border col above Le Tour",
+      "isStageStop": false,
+      "position_m": 134136.2,
+      "offset_m": 105.0
+    },
+    "chamonix": {
+      "name": "Chamonix-Mont-Blanc",
+      "lat": 45.9231,
+      "lon": 6.87,
+      "country": "FR",
+      "note": "Trip base. Not on the trail — reached by bus or train.",
+      "isStageStop": false,
+      "position_m": 153884.5,
+      "offset_m": 2308.7
+    }
+  }
+}

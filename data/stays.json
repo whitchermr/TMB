@@ -1,0 +1,142 @@
+{
+  "$schema": "tmb/stays/1",
+  "$comment": [
+    "Lodging per overnight stop. `stopId` matches `stayAt` in itinerary.json.",
+    "",
+    "Each stop holds a list of candidate options. Set `bookedOptionId` once a",
+    "decision is made; until then the Stays page shows the candidates side by",
+    "side and the budget uses the cheapest as a placeholder estimate.",
+    "",
+    "pricePerPerson is per person per night in `currency`. Set `halfBoard` when",
+    "dinner and breakfast are included, which is the norm in refuges and changes",
+    "how much food money to budget separately.",
+    "",
+    "status: idea | contacted | held | booked | rejected"
+  ],
+
+  "stops": [
+    {
+      "stopId": "chamonix",
+      "label": "Chamonix (before and after)",
+      "nights": 1,
+      "includeInBudget": false,
+      "note": "Excluded from the on-trail budget by agreement. Carte d'Hôte from any valley hotel makes the buses free.",
+      "bookedOptionId": null,
+      "options": []
+    },
+    {
+      "stopId": "les-contamines",
+      "label": "Les Contamines-Montjoie",
+      "nights": 1,
+      "bookedOptionId": null,
+      "options": [
+        {
+          "id": "lc-1",
+          "name": "Hotel in the village",
+          "type": "hotel",
+          "pricePerPerson": 95,
+          "currency": "EUR",
+          "halfBoard": false,
+          "status": "idea",
+          "url": "",
+          "note": "Village has several small hotels. Walk-in is realistic midweek but not in July."
+        }
+      ]
+    },
+    {
+      "stopId": "les-chapieux",
+      "label": "Les Chapieux",
+      "nights": 1,
+      "bookedOptionId": null,
+      "options": [
+        {
+          "id": "ch-1",
+          "name": "Auberge de la Nova",
+          "type": "refuge",
+          "pricePerPerson": 70,
+          "currency": "EUR",
+          "halfBoard": true,
+          "status": "idea",
+          "url": "",
+          "note": "Effectively the only option in the hamlet, and where the navette ticket machine is. Books out months ahead for July — this is the highest-risk night of the trip."
+        }
+      ]
+    },
+    {
+      "stopId": "courmayeur",
+      "label": "Courmayeur (2 nights, includes the rest day)",
+      "nights": 2,
+      "bookedOptionId": null,
+      "options": [
+        {
+          "id": "cm-1",
+          "name": "Four-star resort and spa",
+          "type": "hotel",
+          "pricePerPerson": 180,
+          "currency": "EUR",
+          "halfBoard": false,
+          "status": "idea",
+          "url": "",
+          "note": "The planned rest-day splurge. Two nights, so it carries double weight in the budget."
+        }
+      ]
+    },
+    {
+      "stopId": "la-fouly",
+      "label": "La Fouly",
+      "nights": 1,
+      "bookedOptionId": null,
+      "options": [
+        {
+          "id": "lf-1",
+          "name": "Village hotel or gîte",
+          "type": "hotel",
+          "pricePerPerson": 110,
+          "currency": "CHF",
+          "halfBoard": true,
+          "status": "idea",
+          "url": "",
+          "note": "First Swiss night — prices step up here."
+        }
+      ]
+    },
+    {
+      "stopId": "champex-lac",
+      "label": "Champex-Lac",
+      "nights": 1,
+      "bookedOptionId": null,
+      "options": [
+        {
+          "id": "cx-1",
+          "name": "Lakeside hotel",
+          "type": "hotel",
+          "pricePerPerson": 120,
+          "currency": "CHF",
+          "halfBoard": false,
+          "status": "idea",
+          "url": "",
+          "note": "Proper resort village with choice. Good place to be for an evening lake shot."
+        }
+      ]
+    },
+    {
+      "stopId": "trient",
+      "label": "Trient",
+      "nights": 1,
+      "bookedOptionId": null,
+      "options": [
+        {
+          "id": "tr-1",
+          "name": "Gîte in Trient",
+          "type": "gite",
+          "pricePerPerson": 85,
+          "currency": "CHF",
+          "halfBoard": true,
+          "status": "idea",
+          "url": "",
+          "note": "Tiny hamlet, very limited beds. Col de la Forclaz just above is the fallback."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,265 @@
+/*
+ * Print rules, linked from every page.
+ *
+ * Scoped entirely to @media print so it can never affect the screen layout.
+ * Two jobs: make any page printable in a pinch, and make print.html produce a
+ * clean paper brief to carry on the trail as a backup for a dead phone.
+ *
+ * Dark mode is forced off — the tokens are re-declared as light values because
+ * a printer given a dark theme wastes ink and renders faint text.
+ */
+
+@media print {
+  :root {
+    --c-bg: #ffffff;
+    --c-surface: #ffffff;
+    --c-surface-2: #f4f4f2;
+    --c-border: #b8bdb8;
+    --c-border-strong: #8d948d;
+    --c-text: #000000;
+    --c-text-soft: #33383a;
+    --c-text-faint: #5a605c;
+    --c-accent: #1d4d35;
+    --c-accent-soft: #eaf1ec;
+    --c-accent-text: #143324;
+    --c-warm: #7c4512;
+    --c-warm-soft: #f6efe7;
+    --c-danger: #7a2222;
+    --c-danger-soft: #f6e9e9;
+    --c-info: #274d73;
+    --c-info-soft: #eaf0f6;
+    --shadow-sm: none;
+    --shadow-md: none;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 14mm 12mm;
+  }
+
+  html,
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 9.5pt;
+    line-height: 1.35;
+  }
+
+  /* Interactive chrome has no meaning on paper. */
+  .app-header,
+  .app-nav,
+  .app-footer,
+  .dirty-badge,
+  .btn,
+  .btn-group,
+  button,
+  select,
+  input,
+  textarea,
+  dialog,
+  .map,
+  .map-legend,
+  .leaflet-container,
+  .print-hide,
+  #map-controls,
+  #variant-toggle {
+    display: none !important;
+  }
+
+  .app-main {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Cards become plain sections; the paper is already the surface. */
+  .card {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+    margin: 0 0 4mm;
+  }
+
+  .card__head {
+    border-bottom: 0.4pt solid var(--c-border-strong);
+    padding: 0 0 1mm;
+    margin-bottom: 2mm;
+  }
+
+  .card__body,
+  .card__body--flush {
+    padding: 0;
+  }
+
+  .split,
+  .grid {
+    display: block;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+
+  /* Spell out link targets that a reader cannot click. */
+  .print-url a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 7.5pt;
+    color: var(--c-text-faint);
+    word-break: break-all;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.5pt;
+  }
+
+  th,
+  td {
+    border-bottom: 0.3pt solid var(--c-border);
+    padding: 1mm 1.5mm;
+    text-align: left;
+  }
+
+  thead {
+    display: table-header-group; /* repeat headers across page breaks */
+  }
+
+  tr,
+  .stat,
+  .segment,
+  .waypoint {
+    break-inside: avoid;
+  }
+
+  h1 {
+    font-size: 16pt;
+    margin: 0 0 1mm;
+  }
+
+  h2 {
+    font-size: 11.5pt;
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 10pt;
+    margin: 0;
+  }
+
+  .chip,
+  .badge {
+    border: 0.3pt solid var(--c-border-strong);
+    padding: 0 1mm;
+    font-size: 7.5pt;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* print.html brief                                                 */
+  /* ---------------------------------------------------------------- */
+
+  .brief__day {
+    break-before: page;
+    break-inside: avoid-page;
+  }
+
+  .brief__day:first-of-type {
+    break-before: auto;
+  }
+
+  .brief__profile {
+    /* The canvas profile is the one graphic worth the ink. */
+    display: block !important;
+    width: 100%;
+    height: 26mm;
+  }
+
+  .brief__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+  }
+
+  .brief__foot {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 7pt;
+    color: var(--c-text-faint);
+    border-top: 0.3pt solid var(--c-border);
+    padding-top: 1mm;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* on screen, print.html reads as a preview of the paper output       */
+/* ------------------------------------------------------------------ */
+
+.brief {
+  max-width: 210mm;
+  margin: 0 auto;
+}
+
+.brief__day {
+  border-top: 2px solid var(--c-border);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.brief__day:first-of-type {
+  border-top: 0;
+  margin-top: 0;
+}
+
+.brief__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 720px) {
+  .brief__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.brief__profile {
+  width: 100%;
+  height: 120px;
+  display: block;
+}
+
+.brief__foot {
+  display: none;
+}
+
+.brief-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.brief-table th,
+.brief-table td {
+  border-bottom: 1px solid var(--c-border);
+  padding: 0.25rem 0.4rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.brief-table th {
+  color: var(--c-text-faint);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.brief-table td.num,
+.brief-table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

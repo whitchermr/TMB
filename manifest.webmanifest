@@ -1,0 +1,51 @@
+{
+  "name": "Tour du Mont Blanc — trip planner",
+  "short_name": "TMB",
+  "description": "Route, elevation profiles, day timings, scenery stops, lodging and shared expenses for our Tour du Mont Blanc hike.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f6f7f5",
+  "theme_color": "#2f6f4e",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Today's leg",
+      "short_name": "Day",
+      "url": "day.html"
+    },
+    {
+      "name": "Planner",
+      "short_name": "Plan",
+      "url": "plan.html"
+    },
+    {
+      "name": "Trail brief",
+      "short_name": "Brief",
+      "url": "print.html"
+    }
+  ]
+}
