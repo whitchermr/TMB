@@ -186,6 +186,7 @@
       "lon": 6.71874,
       "elevation_m": 2433,
       "priority": 1,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "High point of day 2, with the Mont Blanc massif stacked behind the ridges you just crossed",
         "facing": "NE",
@@ -248,12 +249,25 @@
       "lon": 6.80721,
       "elevation_m": 2515,
       "priority": 1,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "The single best reveal on the tour — the entire Italian side of Mont Blanc, with the Aiguille Noire de Peuterey and the Brouillard face",
         "facing": "NE",
         "bestLight": "morning",
         "notes": "You crest the France–Italy border and the south face of Mont Blanc appears all at once. Get here early: morning light is still front-lighting the face and the valley haze has not built. Budget real time here, not a snack stop."
       }
+    },
+    {
+      "id": "casermetta-seigne",
+      "name": "La Casermetta",
+      "kind": "heritage",
+      "dayId": "day-03",
+      "lat": 45.75248,
+      "lon": 6.81623,
+      "elevation_m": 2365,
+      "priority": 2,
+      "roles": ["historic"],
+      "$comment": "Coordinate and elevation from the OSM node tagged La Casermetta (alpine_hut, ele=2365), which matches the 2,365 m in the Espace Mont-Blanc document and falls within 20 m of the day-3 track vertex at that height, about 800 m past the col."
     },
     {
       "id": "rifugio-elisabetta",
@@ -264,6 +278,7 @@
       "lon": 6.83744,
       "elevation_m": 2194,
       "priority": 2,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "Refuge tucked beneath the Glacier de la Lée Blanche and the Pyramides Calcaires",
         "facing": "N",
@@ -280,6 +295,7 @@
       "lon": 6.86616,
       "elevation_m": 1970,
       "priority": 1,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "Braided outwash flats and shallow lakes reflecting the Mont Blanc south face",
         "facing": "NE",

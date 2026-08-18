@@ -418,6 +418,44 @@
       ]
     },
     {
+      "waypointId": "croix-du-bonhomme",
+      "summary": "The col looks out over the pastures that make Beaufort cheese, and the whole crest around it was eventually given legal protection — not as wilderness, but to keep it being farmed. The engineered path down towards the Gittaz dates from 1892, and the damaged 1935 orientation table that once stood here is now kept on the refuge balcony.",
+      "eras": [
+        {
+          "year": "1892",
+          "label": "A path cut into the rock",
+          "text": "The descent from the col towards the Gittaz was engineered in 1892, cut as a walkway into the rock face rather than zig-zagged across the scree. It is a piece of nineteenth-century mountain path-building of the same ambition as the Crête des Gittes military path twenty years later, and it is oddly the one thing here left outside the protected area drawn around everything else."
+        },
+        {
+          "year": "1935",
+          "label": "An orientation table in enamelled lava",
+          "text": "A table d'orientation was set at the col to name the summits of the two massifs it looks between, the Beaufortain and the Tarentaise. Like all of them from that period it was made of enamelled Volvic lava, a volcanic stone from the Auvergne that takes a fired glaze and survives being left outdoors at altitude for decades. This one did not survive intact; the damaged original is now kept under cover on the refuge balcony and a modern version stands in its place."
+        },
+        {
+          "year": "1940s",
+          "label": "The pastures put under protection",
+          "text": "The col and the ground on both sides of the Crête des Gittes were made a site classé — the French listing that protects a landscape from being altered — covering 576 hectares across the communes of Beaufort-sur-Doron and Bourg-Saint-Maurice. The orientation table had been listed separately a couple of years before, a protection repealed in 1944 once the larger one absorbed it. What the listing exists to keep is agricultural: the alpage grass between about 1,700 and 2,479 m, grazed by brown, black-eyed Tarine cattle, whose milk becomes Beaufort — a cooked, pressed cheese with its own protected designation of origin. The landscape you are looking at from the col is a working one, and is protected as such rather than as wilderness."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Col de la Croix du Bonhomme — site classé, table d'orientation et alpages",
+          "publisher": "Haute-Tarentaise, patrimoine et sites naturels",
+          "url": "https://www.hautetarentaise.fr/apidae/5437077/5318-col-de-la-croix-du-bonhomme.htm"
+        },
+        {
+          "title": "Randonnée au refuge du col de la Croix du Bonhomme — histoire et patrimoine",
+          "publisher": "Office de tourisme d'Arêches-Beaufort",
+          "url": "https://www.areches-beaufort.com/equipement/randonnee-au-refuge-du-col-de-la-croix-du-bonhomme/"
+        },
+        {
+          "title": "Col de la Croix du Bonhomme",
+          "publisher": "Explore Savoie — Savoie Mont Blanc",
+          "url": "https://www.explore-savoie.com/sites-naturels/col-de-la-croix-du-bonhomme-5437077/"
+        }
+      ]
+    },
+    {
       "waypointId": "refuge-croix-du-bonhomme",
       "summary": "Built in 1922 as a luxury for its day — double rooms and a telephone at 2,443 m — then bombed to a ruin in the war and left for twenty-five years until volunteers rebuilt it by hand. The stone shell they saved is still inside the building you are looking at.",
       "eras": [
@@ -511,6 +549,180 @@
           "title": "La cérémonie des Chapieux célèbre les 80 ans de la Résistance",
           "publisher": "Le Dauphiné Libéré",
           "url": "https://www.ledauphine.com/defense-guerre-conflit/2024/09/15/la-ceremonie-des-chapieux-celebre-les-80-ans-de-la-resistance"
+        }
+      ]
+    },
+    {
+      "waypointId": "col-de-la-seigne",
+      "summary": "The frontier itself, and for most of its history a working one: a pass named in medieval charters, a smuggling route the Sardinian customs patrolled, the viewpoint an Alpine Club president singled out in 1863, and in June 1940 the line an Italian division crossed to attack a France that had already lost.",
+      "eras": [
+        {
+          "year": "before 1300",
+          "label": "A named crossing into the Aosta valley",
+          "text": "The col was in use in Roman times and stayed in use through the medieval centuries, when it acquired the name it still carries. Medieval documents give it as Mons Senae, Collium de Senia and Alpis Seniae. High passes like this one were open for several months a year in that period, and the Seigne was one of the doors into the Aosta valley for people and goods moving to and from France — which is why it was worth naming in a charter at all."
+        },
+        {
+          "year": "18th–19th century",
+          "label": "Smugglers and the men paid to stop them",
+          "text": "The Seigne, like the Petit-Saint-Bernard and the Col du Mont, was for a long time a smugglers' road. What crossed it was tobacco and alcohol, salt, silk and lace, and on occasion livestock driven over the top. Against them were the gabelous, the customs men of the Sardinian salt monopoly, and a good number of smugglers were caught. There was once a building down at Les Mottets, where our day begins, that housed the customs officers posted to watch this side of the col."
+        },
+        {
+          "year": "1863",
+          "label": "John Ball puts it in the guidebook",
+          "text": "The tour of Mont Blanc and this col in particular took hold in the accounts of English travellers and alpinists from 1863. John Ball, first president of the Alpine Club, named the Col de la Seigne among the finest viewpoints on the whole circuit, writing that it would always make this part of the road extremely interesting to any true lover of nature. The judgement has held: the reveal of the Italian face of Mont Blanc from the top is still the reason to be here early."
+        },
+        {
+          "year": "1940",
+          "label": "The attack that came over the top",
+          "text": "Italy declared war on 11 June 1940 but did not move until the 21st. At the Seigne the advance met two sections of scout-skiers, one from the 80th fortress alpine battalion and one from the 7th battalion of chasseurs alpins, who fought a delaying action and pulled back across the valley on 22 June — to the Col du Bonhomme and the Col d'Enclave respectively. The Edolo battalion of the 5th Alpini came over the col in bad weather and under accurate French artillery, took the Bellaval work on 22 June where sous-lieutenant de Castex was killed resisting, and was stopped short of Séloge. Fortifications and firing positions from that summer are still recognisable on the ground around the col."
+        }
+      ],
+      "caveat": "The name has two competing explanations and no settled answer. The medieval forms point to the Latin signum, a signal, giving a col of the signal-fire. But the Celtic word sange means marshy ground, which describes the Combal flats further down rather than the col itself. Nobody has established which is right.",
+      "sources": [
+        {
+          "title": "La Casermetta au Col de la Seigne — histoire du col et de la Casermetta",
+          "publisher": "Fondazione Montagna Sicura",
+          "url": "https://www.fondazionemontagnasicura.org/fr/la-casermetta"
+        },
+        {
+          "title": "L'offensive italienne au col de la Seigne — Armée des Alpes, juin 1940",
+          "publisher": "La Bataille des Alpes, chemin de mémoire",
+          "url": "https://www.labatailledesalpes.fr/sites/savoie-tarentaise/le-chemin-de-memoire-en-savoie-tarentaise/loffensive-italienne-au-col-de-la-seigne/"
+        },
+        {
+          "title": "Le col de la Seigne (fiche randonnée et patrimoine)",
+          "publisher": "Office de tourisme de Bourg-Saint-Maurice les Arcs",
+          "url": "https://static.apidae-tourisme.com/filestore/objets-touristiques/documents/191/41/7547327/col_seigne.pdf"
+        },
+        {
+          "title": "Col de la Seigne",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/Col_de_la_Seigne"
+        }
+      ]
+    },
+    {
+      "waypointId": "casermetta-seigne",
+      "summary": "A small barracks built in the 1930s to watch the French border, used as a jumping-off point for the 1940 attack, then raided after the war for the skis the retreating Germans left behind — which is how the Mont Blanc ski school got started again. It is now a cross-border education centre and you can go in.",
+      "eras": [
+        {
+          "year": "1930s",
+          "label": "An outpost on a nervous border",
+          "text": "The Casermetta — the little barracks — was built as a permanently garrisoned post on the Italian side of the frontier, at 2,365 m in the commune of Courmayeur. Through the 1930s, as relations between the two countries deteriorated, the Mont Blanc sector became a training ground for large and deliberately visible high-altitude military exercises. The building belongs to that decade of standing watch on a border nobody expected to stay quiet."
+        },
+        {
+          "year": "1940",
+          "label": "The darkest thing it saw",
+          "text": "In June 1940 the Col de la Seigne was one of the axes of the Italian attack on a France already beaten by Germany, and the Casermetta sat directly behind it. This is the episode its own custodians describe as the darkest in the building's history. The remains of fortifications and gun positions from that summer are still visible in the ground around it."
+        },
+        {
+          "year": "1945",
+          "label": "Skis taken off a retreating army",
+          "text": "In the winter of 1945 a group of trainee ski instructors under Francis Salluard set out to restart the Scuola di Sci Monte Bianco. They had almost no money and no equipment. What they did have was the white ash skis the German army had abandoned at the Col de la Seigne during its hurried retreat after 25 April, and they took them. The ski school was rebuilt on salvaged military kit."
+        },
+        {
+          "year": "2000s",
+          "label": "Rebuilt as somewhere to learn",
+          "text": "By the start of the 2000s the building was in poor condition. It was rebuilt as a visitor and environmental education centre with European money under the Interreg IIIA Alcotra France–Italy programme, and now runs entirely on renewable energy. It belongs to the Autonomous Region of Valle d'Aosta and is managed by the Fondazione Montagna Sicura, doubles as a station for the regional forestry corps and the Sentinelles des Alpes network, and is where the count of walkers passing on the Tour du Mont-Blanc is actually taken. Inside there is a relief model of the massif and a set of panels on what is around you."
+        }
+      ],
+      "sources": [
+        {
+          "title": "La Casermetta au Col de la Seigne",
+          "publisher": "Fondazione Montagna Sicura",
+          "url": "https://www.fondazionemontagnasicura.org/la-casermetta"
+        },
+        {
+          "title": "Approvisionnement énergétique de la Casermetta Espace Mont-Blanc",
+          "publisher": "Observatoire du développement durable, Espace Mont-Blanc",
+          "url": "https://observatoire.espace-mont-blanc.com/d/221/approvisionnement-energetique-de-la-casermetta-emb.pdf"
+        },
+        {
+          "title": "La Casermetta — history of the building",
+          "publisher": "Abitare l'estremo",
+          "url": "https://www.abitarelestremo.it/la-casermetta-eng/"
+        }
+      ]
+    },
+    {
+      "waypointId": "rifugio-elisabetta",
+      "summary": "A refuge an engineer built as a memorial to two women in his family who died in these mountains — his wife Elisabetta, whose name it carries, and his sister Teresa. He gave it to the Milan section of the Italian Alpine Club, which still owns it.",
+      "eras": [
+        {
+          "year": "1953",
+          "label": "Built for Elisabetta and Teresa",
+          "text": "The refuge was commissioned by the engineer Giuseppe Soldini in memory of his wife, Elisabetta Montanaro, after whom it is named, and of his sister, Teresa Grandi, who was killed in the mountains. It was inaugurated in 1953 and given to the Milan section of the Club Alpino Italiano, which owns it still. Its full name, rarely used, is the Rifugio Elisabetta Soldini Montanaro. It stands on the grass terrace of the Alpe Inférieure de la Lex Blanche, under the Pyramides Calcaires and in view of the Aiguille des Glaciers."
+        },
+        {
+          "year": "1983",
+          "label": "Enlarged for the walkers",
+          "text": "The building was substantially rebuilt and extended, gaining modern services and a large winter room that stays open when the refuge is not staffed. The work turned a memorial hut into one of the working links in the chain of refuges that make the Italian side of the Tour du Mont-Blanc walkable in stages. It is also the final stage of the Alta Via della Valle d'Aosta number 2, and now sleeps around eighty."
+        }
+      ],
+      "caveat": "Where Elisabetta died is not firmly established. The Milan section's own page attaches the phrase killed in the mountains to Giuseppe's sister Teresa and does not say how Elisabetta died; a hiking gazetteer states that Elisabetta fell on the Mont de la Saxe, the ridge above Courmayeur that day 4 climbs. The memorial to both women is not in doubt, but that detail rests on the weaker source.",
+      "sources": [
+        {
+          "title": "Rifugio Elisabetta",
+          "publisher": "Club Alpino Italiano, sezione di Milano",
+          "url": "https://www.caimilano.org/rifugio-elisabetta/"
+        },
+        {
+          "title": "Rifugio Elisabetta Soldini Montanaro",
+          "publisher": "Wikipedia in italiano",
+          "url": "https://it.wikipedia.org/wiki/Rifugio_Elisabetta_Soldini_Montanaro"
+        },
+        {
+          "title": "Rifugio Elisabetta Soldini",
+          "publisher": "Inalto — catasto dei rifugi alpini",
+          "url": "https://www.inalto.org/punti-di-interesse/rifugio-elisabetta-soldini"
+        }
+      ]
+    },
+    {
+      "waypointId": "lac-combal",
+      "summary": "These flats are where alpine glaciology was partly worked out. De Saussure looked at the Miage in 1779, Forbes mapped the lake in 1843, and Italian geologists surveyed it every few decades after that — which is why there is a continuous record of this one lake going back over 160 years, and why we know the larger lake that once filled the valley here has gone.",
+      "eras": [
+        {
+          "year": "1779",
+          "label": "Saussure comes to look at the ice",
+          "text": "Horace-Bénédict de Saussure made the first scientific observation of the Miage glacier, the debris-covered tongue whose lateral moraine walls the right-hand side of these flats. It is the third largest glacier in Italy, and it carries so much rock on its surface that below about 2,500 m the ice is hidden completely. Saussure is the same naturalist who noticed the out-of-place sandstones up at the Col du Bonhomme on our second day."
+        },
+        {
+          "year": "1843",
+          "label": "Forbes maps a lake nobody had drawn",
+          "text": "The earliest record of the ice-contact lake held against the Miage moraine is the 1:25,000 map made by James David Forbes, the Scottish physicist whose Alps work argued that glaciers flow like a viscous fluid. His map shows a small lake on the west side of the present basin with ice filling the rest. Martino Baretti's survey of 1880 found three basins totalling 22,000 square metres; the Courmayeur cadastral map of 1893 shows the lake cut to 10,000 after the glacier pushed 110 m into it. Federico Sacco surveyed it again in 1917 and 1918."
+        },
+        {
+          "year": "early 20th century",
+          "label": "The big lake drains away",
+          "text": "The Lac de Combal proper was a far larger body of water, dammed across the Val Veny by the Miage glacier and its right-lateral moraine. It survived into the early twentieth century and then went, leaving the marshy plain we walk across, drained by the meltwater of the Allée Blanche and Estellette glaciers. The braided flats and the shallow pools are the sediment trap the lake left behind, filled in."
+        },
+        {
+          "year": "2004 onward",
+          "label": "Still being measured, now for the risk",
+          "text": "The observation has not stopped, but the reason for it has changed. A slow drainage of the Miage lake in September 2004 was documented in detail; a far more violent outburst on 26 August 2014 sent enough water down the valley to damage the river embankments below. After nearly a century of little change, the lake grew quickly between 2015 and 2019, and it is now monitored by drone and satellite survey to estimate how much water could come out at once."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Calving processes and lake evolution at Miage glacier, Mont Blanc, Italian Alps",
+          "publisher": "Annals of Glaciology, International Glaciological Society",
+          "url": "https://doi.org/10.3189/172756405781813690"
+        },
+        {
+          "title": "Amphithéâtre morainique du lac du Miage : la dynamique du glacier du Miage pendant l'Holocène",
+          "publisher": "Environnements dynamiques et territoires de la montagne, via Persée",
+          "url": "https://www.persee.fr/doc/edyte_1762-4304_2005_num_3_1_918"
+        },
+        {
+          "title": "Miage Glacier Lake: GLOF hazard assessment from UAV and GNSS survey",
+          "publisher": "European Geosciences Union, EGU2020",
+          "url": "https://presentations.copernicus.org/EGU2020/EGU2020-5454_presentation.pdf"
+        },
+        {
+          "title": "Lake of Miage",
+          "publisher": "Courmayeur Mont Blanc, office du tourisme",
+          "url": "https://www.courmayeurmontblanc.it/en/sport/trekking-and-hiking/lake-of-miage/"
         }
       ]
     }
