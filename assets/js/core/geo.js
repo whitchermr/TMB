@@ -150,6 +150,30 @@ export function locateWaypoints(waypoints, track, cum, elevations, detourThresho
     .sort((a, b) => a.position_m - b.position_m);
 }
 
+/* ------------------------------------------------------------------ */
+/* waypoint roles                                                      */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Why a waypoint is on the map: worth photographing, worth knowing about, or both.
+ *
+ * Absent means photographic, because every waypoint predating the history feature
+ * was a photo stop. That keeps the default implicit rather than restating it on
+ * thirty-odd entries that would then have to be kept in step.
+ */
+export function roles(waypoint) {
+  const value = waypoint?.roles;
+  return Array.isArray(value) && value.length ? value : ['photographic'];
+}
+
+export function isPhotographic(waypoint) {
+  return roles(waypoint).includes('photographic');
+}
+
+export function isHistoric(waypoint) {
+  return roles(waypoint).includes('historic');
+}
+
 /** Compass label from a bearing string or degrees, for photo facing hints. */
 export function facingLabel(facing) {
   const names = {

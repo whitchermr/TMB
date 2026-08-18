@@ -375,6 +375,11 @@ function kebab(name) {
   return name.replace(/[A-Z]/g, (character) => `-${character.toLowerCase()}`);
 }
 
+// Which element last had focus() called on it, surfaced as document.activeElement.
+// Tracked because a control that rebuilds its own markup has to put focus back,
+// and a no-op focus() would let that regress without any test noticing.
+let focused = null;
+
 class Element extends Node {
   constructor(tagName) {
     super();
@@ -468,6 +473,17 @@ class Element extends Node {
     else this.removeAttribute('hidden');
   }
 
+  // Reflects the attribute for both <details> and <dialog>, which is what a real
+  // browser does and what makes the open state visible to serialize().
+  get open() {
+    return this.hasAttribute('open');
+  }
+
+  set open(value) {
+    if (value) this.setAttribute('open', '');
+    else this.removeAttribute('open');
+  }
+
   get disabled() {
     return this.hasAttribute('disabled');
   }
@@ -556,9 +572,13 @@ class Element extends Node {
     };
   }
 
-  focus() {}
+  focus() {
+    focused = this;
+  }
 
-  blur() {}
+  blur() {
+    if (focused === this) focused = null;
+  }
 
   scrollIntoView() {}
 
@@ -567,7 +587,16 @@ class Element extends Node {
   releasePointerCapture() {}
 
   click() {
-    this.dispatchEvent(new SyntheticEvent('click', { bubbles: true }));
+    if (!this.dispatchEvent(new SyntheticEvent('click', { bubbles: true }))) return;
+    // A summary's default action is to fold its <details>. Emulated because it is
+    // browser behaviour rather than page code, and without it a disclosure built
+    // on <details> could not be tested here at all. Real browsers fire toggle on
+    // the next task; firing it inline keeps the harness synchronous.
+    if (this.tagName === 'summary' && this.parentNode?.tagName === 'details') {
+      const details = this.parentNode;
+      details.open = !details.open;
+      details.dispatchEvent(new SyntheticEvent('toggle', { bubbles: false }));
+    }
   }
 
   /* dialog */
@@ -795,6 +824,14 @@ export function installDom(html, config = {}) {
   document.head = head;
   document.body = body;
 
+  // A real document reports body until something takes focus, so match that
+  // rather than starting at null and inviting a page to guess wrongly.
+  focused = null;
+  Object.defineProperty(document, 'activeElement', {
+    configurable: true,
+    get: () => focused || body,
+  });
+
   document.createElement = (tagName) => new Element(tagName);
   document.createTextNode = (data) => new TextNode(data);
   document.createDocumentFragment = () => new DocumentFragment();
@@ -1019,7 +1056,14 @@ function makeFetch(config, errors) {
  * Every call is recorded so tests can assert a track was actually drawn.
  */
 function makeLeaflet(document) {
-  const record = { maps: 0, tileLayers: 0, polylines: [], markers: [], fitBounds: 0 };
+  const record = {
+    maps: 0,
+    tileLayers: 0,
+    polylines: [],
+    markers: [],
+    fitBounds: 0,
+    panTo: 0,
+  };
 
   class Layer {
     addTo(map) {
@@ -1079,6 +1123,12 @@ function makeLeaflet(document) {
         },
         fitBounds() {
           record.fitBounds += 1;
+          return map;
+        },
+        // Counted rather than ignored: whether selecting something moves the map
+        // is behaviour worth asserting, in both directions.
+        panTo() {
+          record.panTo += 1;
           return map;
         },
         setView() {

@@ -9,11 +9,16 @@ import * as store from '../core/store.js';
 import * as units from '../core/units.js';
 import * as schedule from '../core/schedule.js';
 import * as sun from '../core/sun.js';
-import { locateWaypoints } from '../core/geo.js';
+import { locateWaypoints, isHistoric, isPhotographic } from '../core/geo.js';
 import { escapeHtml } from '../ui/map.js';
+import * as photos from '../ui/photo.js';
+import * as history from '../ui/history.js';
 import { mountChrome, showLoadError, onRefresh } from '../ui/nav.js';
 
-const state = { legs: new Map(), calendar: [] };
+// openHistoryDay lives here rather than in the DOM because render() rebuilds the
+// whole table body on any settings change — dragging the pace slider would
+// otherwise close a panel someone was reading.
+const state = { legs: new Map(), calendar: [], openHistoryDay: null };
 
 async function main() {
   mountChrome();
@@ -21,6 +26,7 @@ async function main() {
 
   state.legIndex = await store.loadRouteFile('legIndex');
   state.anchors = (await store.loadRouteFile('anchors')).anchors;
+  await Promise.all([photos.load(), history.load()]);
 
   await loadLegs();
   wireControls();
@@ -283,11 +289,14 @@ function renderTable(settings) {
               ? `<span class="chip chip--warm">${units.duration(margin)}</span>`
               : `<span class="numeric">${units.duration(margin)}</span>`;
 
+      const landmarks = landmarksFor(day, leg, settings, startHour);
+      const isOpen = state.openHistoryDay === day.id;
+
       return `
-        <tr>
+        <tr${isOpen ? ' class="is-expanded"' : ''}>
           <td>${schedule.formatDate(day.date)}</td>
           <td class="num">${day.hikeNumber}</td>
-          <td>${escapeHtml(day.stage || '')}</td>
+          <td>${stageCell(day, landmarks.length, isOpen)}</td>
           <td>
             <select data-variant-for="${day.id}" aria-label="Route option for day ${day.hikeNumber}">
               ${options
@@ -307,9 +316,12 @@ function renderTable(settings) {
           <td class="num">${sun.formatHour(finish)}</td>
           <td class="num">${sun.formatHour(times?.sunset)}</td>
           <td class="num">${marginCell}</td>
-        </tr>`;
+        </tr>
+        ${historyRow(day, landmarks, isOpen)}`;
     })
     .join('');
+
+  history.wire(body);
 
   body.querySelectorAll('[data-variant-for]').forEach((select) => {
     select.addEventListener('change', () => {
@@ -319,6 +331,118 @@ function renderTable(settings) {
       });
     });
   });
+
+  body.querySelectorAll('[data-history-for]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const id = button.dataset.historyFor;
+      // One panel at a time: seven stages of open writeups would bury the numbers
+      // this table exists to show.
+      state.openHistoryDay = state.openHistoryDay === id ? null : id;
+      renderTable(store.get('settings'));
+      // Re-rendering replaces the button that was just activated, so focus has to
+      // be put back or a keyboard user is returned to the top of the document and
+      // a screen reader never hears the state it just changed.
+      const toggle = document.querySelector(`[data-history-for="${id}"]`);
+      toggle?.focus();
+      if (state.openHistoryDay === id) toggle?.scrollIntoView({ block: 'nearest' });
+    });
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* landmark history                                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The day's historic landmarks, placed on the selected variant's track and given
+ * an arrival time, in walking order.
+ *
+ * A landmark only reachable from the other variant still projects onto this one,
+ * where it shows up as a detour — which is the honest answer, since it is off the
+ * route we have chosen for the day.
+ */
+function landmarksFor(day, leg, settings, startHour) {
+  const historic = store
+    .get('waypoints')
+    .waypoints.filter((waypoint) => waypoint.dayId === day.id && isHistoric(waypoint));
+  if (!historic.length) return [];
+
+  const timing = schedule.legDuration(leg, settings.pace);
+  return locateWaypoints(historic, leg.track, leg.cumulative_m, leg.elevation_m).map(
+    (waypoint) => ({
+      waypoint,
+      entry: history.forWaypoint(waypoint.id),
+      arrival: startHour + schedule.elapsedAt(leg, settings.pace, waypoint.position_m, timing),
+    })
+  );
+}
+
+function stageCell(day, count, isOpen) {
+  const label = escapeHtml(day.stage || '');
+  if (!count) return `<span class="stage-toggle__quiet">${label}</span>`;
+
+  return `
+    <button type="button" class="stage-toggle" data-history-for="${day.id}"
+      aria-expanded="${isOpen}" aria-controls="history-${day.id}">
+      <span class="stage-toggle__chevron" aria-hidden="true"></span>
+      <span class="stage-toggle__label">${label}</span>
+      <span class="stage-toggle__count">
+        ${history.icon('historic')}${count}
+      </span>
+    </button>
+  `;
+}
+
+function historyRow(day, landmarks, isOpen) {
+  if (!landmarks.length) return '';
+  return `
+    <tr class="stage-history" id="history-${day.id}"${isOpen ? '' : ' hidden'}>
+      <td colspan="11">
+        <div class="stage-history__inner">
+          ${landmarks.map(landmarkBlock).join('')}
+        </div>
+      </td>
+    </tr>
+  `;
+}
+
+function landmarkBlock({ waypoint, entry, arrival }) {
+  const meta = [
+    units.distance(waypoint.position_m),
+    sun.formatHour(arrival),
+    waypoint.elevation_m != null ? units.elevation(waypoint.elevation_m) : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
+  const chips = [
+    waypoint.isDetour
+      ? `<span class="chip chip--info">off route +${units.distance(
+          waypoint.detour?.distance_m ?? 0
+        )}</span>`
+      : '',
+    isPhotographic(waypoint)
+      ? `<span class="chip chip--warm">${history.icon('photographic')} photo stop</span>`
+      : '',
+  ]
+    .filter(Boolean)
+    .join('');
+
+  return `
+    <article class="landmark">
+      <header class="landmark__head">
+        <h3>${escapeHtml(waypoint.name)}</h3>
+        <span class="landmark__meta numeric">${meta}</span>
+        ${chips}
+      </header>
+      ${photos.figure(photos.forWaypoint(waypoint.id), { className: 'landmark__photo' })}
+      ${
+        entry
+          ? history.body(entry)
+          : '<p class="empty">No writeup for this landmark yet.</p>'
+      }
+    </article>
+  `;
 }
 
 function renderModelComparison(settings) {
@@ -373,8 +497,11 @@ function renderLightTable(settings) {
       const leg = legFor(day, settings);
       if (!leg) return;
 
+      // Only photo stops belong here: this table answers "do we arrive in the
+      // right light", which a landmark with nothing to photograph cannot fail.
       const dayWaypoints = allWaypoints.filter(
-        (waypoint) => waypoint.dayId === day.id && waypoint.priority === 1
+        (waypoint) =>
+          waypoint.dayId === day.id && waypoint.priority === 1 && isPhotographic(waypoint)
       );
       if (!dayWaypoints.length) return;
 

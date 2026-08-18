@@ -23,6 +23,13 @@
   --c-info: #3b6ea5;
   --c-info-soft: #e6eef7;
 
+  /* Historic landmarks. Blue against the warm accent is the pairing that survives
+     the common forms of colour-vision deficiency, which matters because it is
+     carrying meaning on the map. Its own token rather than an alias of --c-info so
+     the two can diverge without disturbing the info chips. */
+  --c-historic: #3b6ea5;
+  --c-historic-soft: #e6eef7;
+
   /* Route variants stay visually distinct wherever they appear together. */
   --c-shortcut: #2f6f4e;
   --c-classic: #b5651d;
@@ -66,6 +73,9 @@
     --c-danger-soft: #3a2222;
     --c-info: #7aa8d6;
     --c-info-soft: #1e2c3a;
+
+    --c-historic: #7aa8d6;
+    --c-historic-soft: #1e2c3a;
 
     --c-shortcut: #5fae83;
     --c-classic: #d9924c;

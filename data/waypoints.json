@@ -1,7 +1,9 @@
 {
   "$schema": "tmb/waypoints/1",
   "$comment": [
-    "Scenery and photography waypoints. Coordinates are from OpenStreetMap.",
+    "Waypoints along the route: places worth photographing, places worth knowing",
+    "about, and places that are both. Coordinates are from OpenStreetMap unless a",
+    "note on the entry says otherwise.",
     "",
     "Position along the trail is NOT stored here. The app projects each waypoint",
     "onto the day's track at load time and derives distance-into-leg, elevation",
@@ -10,6 +12,12 @@
     "detour and shown with its own extra distance rather than as a point on the",
     "line.",
     "",
+    "roles:     photographic | historic, or both. Omitted means photographic,",
+    "           which is what every waypoint was before landmarks existed.",
+    "           A historic waypoint carries its writeup and sources in",
+    "           data/history.json, keyed by this id; a photographic one carries",
+    "           its photo block below. Neither is required of the other, so a",
+    "           landmark nobody wants to photograph omits `photo` entirely.",
     "kind:      col | lake | viewpoint | refuge | village | glacier | summit | heritage",
     "bestLight: sunrise | morning | midday | afternoon | golden | sunset | blue | any",
     "facing:    the direction you look to photograph the subject",
@@ -17,6 +25,18 @@
   ],
 
   "waypoints": [
+    {
+      "id": "christ-roi",
+      "name": "Statue du Christ-Roi",
+      "kind": "heritage",
+      "dayId": "day-01",
+      "lat": 45.90269,
+      "lon": 6.8018,
+      "elevation_m": 1190,
+      "priority": 2,
+      "roles": ["historic"],
+      "$comment": "Coordinate is the centre of OSM way 90540919; elevation from IGN RGE ALTI. Across the Arve from the route, so it projects onto the start of day 1 as a detour — see the writeup, which says so."
+    },
     {
       "id": "col-de-voza",
       "name": "Col de Voza",
@@ -26,6 +46,7 @@
       "lon": 6.7614,
       "elevation_m": 1653,
       "priority": 2,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "First reveal of the Bionnassay glacier and the Aiguille du Goûter",
         "facing": "NE",
@@ -42,12 +63,26 @@
       "lon": 6.75463,
       "elevation_m": 1720,
       "priority": 3,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "Séracs of the Glacier de Bionnassay above the Val Montjoie",
         "facing": "N",
         "bestLight": "morning",
         "notes": "A long lens compresses the icefall nicely. Contrast is harsh once the sun clears the ridge."
       }
+    },
+    {
+      "id": "les-contamines-sainte-trinite",
+      "name": "Église de la Sainte-Trinité",
+      "kind": "heritage",
+      "dayId": "day-01",
+      "lat": 45.82109,
+      "lon": 6.72785,
+      "elevation_m": 1167,
+      "priority": 2,
+      "roles": ["historic"],
+      "$comment": "Coordinate is the centre of OSM way 98063406, traced from the French cadastre; elevation from IGN RGE ALTI.",
+      "isDetour": false
     },
     {
       "id": "notre-dame-de-la-gorge",
@@ -58,12 +93,26 @@
       "lon": 6.7161,
       "elevation_m": 1210,
       "priority": 1,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "Baroque chapel facade, then the Roman paved road climbing into the gorge",
         "facing": "S",
         "bestLight": "sunrise",
         "notes": "Deep in the gorge and shaded until late morning, which is ideal — the wet cobbles and torrent hold detail in flat light. Bring the tripod for a slow shutter on the cascades."
       }
+    },
+    {
+      "id": "voie-romaine",
+      "name": "Voie romaine des Rochassets",
+      "kind": "heritage",
+      "dayId": "day-02",
+      "lat": 45.78669,
+      "lon": 6.71438,
+      "elevation_m": 1360,
+      "priority": 1,
+      "roles": ["historic"],
+      "$comment": "Coordinate is the centre of the stone-surfaced OSM way 93907207 (name=Voie Romaine, surface=stone); elevation from IGN RGE ALTI. A point on the paved climb rather than a single object, so the exact metre is not meaningful.",
+      "isDetour": false
     },
     {
       "id": "nant-borrant",
@@ -74,6 +123,7 @@
       "lon": 6.71425,
       "elevation_m": 1459,
       "priority": 3,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "Classic alpine chalet with pasture foreground",
         "facing": "SE",
@@ -98,6 +148,19 @@
       }
     },
     {
+      "id": "plan-des-dames",
+      "name": "Plan des Dames",
+      "kind": "heritage",
+      "dayId": "day-02",
+      "lat": 45.74476,
+      "lon": 6.71629,
+      "elevation_m": 2044,
+      "priority": 2,
+      "roles": ["historic"],
+      "$comment": "Coordinate is the centre of OSM way 1428087777 (historic=archaeological_site, archaeological_site=tumulus). Its OSM ele tag of 2043 m and IGN RGE ALTI at 2044 m agree, which is reassuring for a cairn rather than a surveyed point.",
+      "isDetour": false
+    },
+    {
       "id": "col-du-bonhomme",
       "name": "Col du Bonhomme",
       "kind": "col",
@@ -106,6 +169,7 @@
       "lon": 6.7066,
       "elevation_m": 2329,
       "priority": 2,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "Stark rock-and-scree panorama, often with snow patches into July",
         "facing": "W",
@@ -138,12 +202,26 @@
       "lon": 6.71732,
       "elevation_m": 2443,
       "priority": 3,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "Refuge perched on the col",
         "facing": "SW",
         "bestLight": "golden",
         "notes": "If the group ever chooses to sleep here instead of descending, sunset from the col is exceptional."
       }
+    },
+    {
+      "id": "les-chapieux",
+      "name": "Les Chapieux",
+      "kind": "village",
+      "dayId": "day-02",
+      "lat": 45.69668,
+      "lon": 6.73358,
+      "elevation_m": 1553,
+      "priority": 1,
+      "roles": ["historic"],
+      "$comment": "Coordinate is OSM node 440903287 (place=hamlet, wikidata=Q20108329); elevation from IGN RGE ALTI, which puts it 7 m below the OSM ele tag of 1560.",
+      "isDetour": false
     },
     {
       "id": "refuge-des-mottets",

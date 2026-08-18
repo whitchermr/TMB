@@ -76,6 +76,8 @@ const rates = json('data/rates.json');
 const stays = json('data/stays.json');
 const expensesFile = json('data/expenses.json');
 const photos = json('data/photos.json').photos;
+const history = json('data/history.json').entries;
+const { isPhotographic, isHistoric } = geo;
 const leg = (dayId, variant) => json(`data/route/legs/${dayId}-${variant}.json`);
 
 print('TMB logic tests');
@@ -581,13 +583,26 @@ ok(
 /* ------------------------------------------------------------------ */
 describe('waypoint photographs');
 
-// The scenery list is meant to show what we are walking towards, so a stop with
-// no picture is a gap in the feature rather than a harmless omission.
+// The scenery list is meant to show what we are walking towards, so a photo stop
+// with no picture is a gap in the feature rather than a harmless omission. Scoped
+// to photographic waypoints: a historic landmark earns its place with a writeup,
+// and requiring a photograph of it too would only invite a decorative one.
 const photoIds = new Set(photos.map((entry) => entry.waypointId));
+const photoStops = waypoints.filter(isPhotographic);
 ok(
-  waypoints.every((w) => photoIds.has(w.id)),
+  photoStops.every((w) => photoIds.has(w.id)),
   'every scenery stop has a photograph',
-  `${photos.length} of ${waypoints.length}`
+  `${photoStops.filter((w) => photoIds.has(w.id)).length} of ${photoStops.length}`
+);
+// The other direction still holds for everything: a photo block without a
+// photograph, or the reverse, means the two files have drifted apart.
+ok(
+  waypoints.every((w) => isPhotographic(w) === Boolean(w.photo)),
+  'a photo block appears exactly on the waypoints that claim to be photographic',
+  waypoints
+    .filter((w) => isPhotographic(w) !== Boolean(w.photo))
+    .map((w) => w.id)
+    .join(', ')
 );
 ok(
   photos.every((entry) => waypointIds.includes(entry.waypointId)),
@@ -609,6 +624,136 @@ ok(
 );
 ok(new Set(people.people.map((p) => p.id)).size === people.people.length,
   'person ids are unique');
+
+/* ------------------------------------------------------------------ */
+describe('landmark history');
+
+// The two files are joined only by this id, so a typo in either one silently
+// removes a writeup from the site rather than failing anywhere visible.
+const historicIds = waypoints.filter(isHistoric).map((w) => w.id);
+const historyIds = history.map((entry) => entry.waypointId);
+ok(
+  historicIds.every((id) => historyIds.includes(id)),
+  'every historic landmark has a writeup',
+  historicIds.filter((id) => !historyIds.includes(id)).join(', ')
+);
+ok(
+  historyIds.every((id) => waypointIds.includes(id)),
+  'no writeup points at a waypoint that no longer exists',
+  historyIds.filter((id) => !waypointIds.includes(id)).join(', ')
+);
+ok(
+  historyIds.every((id) => historicIds.includes(id)),
+  'no writeup is attached to a waypoint that is not marked historic',
+  historyIds.filter((id) => !historicIds.includes(id)).join(', ')
+);
+ok(new Set(historyIds).size === historyIds.length, 'one writeup per landmark');
+
+// A writeup that renders as an empty panel is worse than no panel, because the
+// pin promises something the page does not deliver.
+ok(
+  history.every((entry) => entry.summary && entry.summary.trim().length > 40),
+  'every writeup opens with a real summary'
+);
+ok(
+  history.every((entry) => entry.eras?.length >= 2),
+  'every writeup has at least two eras',
+  history.filter((entry) => !(entry.eras?.length >= 2)).map((e) => e.waypointId).join(', ')
+);
+ok(
+  history.every((entry) =>
+    entry.eras.every((era) => era.year && era.text && era.text.trim().length > 60)
+  ),
+  'every era carries a date and enough text to stand on its own offline'
+);
+// The panel renders eras in file order, so the file order has to be the
+// chronology. Sorting at render time would hide an authoring mistake instead.
+const startYear = (era) => {
+  const match = String(era.year).match(/\d{3,4}/);
+  return match ? Number(match[0]) : null;
+};
+ok(
+  history.every((entry) => {
+    const years = entry.eras.map(startYear).filter((year) => year !== null);
+    return years.every((year, index) => index === 0 || years[index - 1] <= year);
+  }),
+  'eras are written in chronological order',
+  history
+    .filter((entry) => {
+      const years = entry.eras.map(startYear).filter((y) => y !== null);
+      return !years.every((y, i) => i === 0 || years[i - 1] <= y);
+    })
+    .map((e) => e.waypointId)
+    .join(', ')
+);
+// Sources are the whole basis for trusting any of this.
+ok(
+  history.every((entry) => entry.sources?.length >= 1),
+  'every writeup cites at least one source'
+);
+ok(
+  history.every((entry) =>
+    entry.sources.every(
+      (source) => source.title && source.publisher && /^https:\/\//.test(source.url)
+    )
+  ),
+  'every source has a title, a publisher and an https link'
+);
+// A landmark is placed by projecting it onto whichever variant is selected, so one
+// that only lands on the classic line would vanish from the map on a shortcut day.
+const landmarkDays = [...new Set(waypoints.filter(isHistoric).map((w) => w.dayId))];
+landmarkDays.forEach((dayId) => {
+  const variants = legIndex.filter((entry) => entry.dayId === dayId).map((e) => e.variant);
+  const landmarks = waypoints.filter((w) => w.dayId === dayId && isHistoric(w));
+  variants.forEach((variant) => {
+    const data = leg(dayId, variant);
+    const placed = geo.locateWaypoints(
+      landmarks,
+      data.track,
+      data.cumulative_m,
+      data.elevation_m
+    );
+    ok(
+      placed.length === landmarks.length &&
+        placed.every((w) => Number.isFinite(w.position_m)),
+      `${dayId}-${variant}: every landmark is placed on this variant`
+    );
+  });
+});
+
+// A landmark far enough off the trail to need a decision about visiting it has to
+// say so in words, because a "detour +2.5 km" chip computed from the straight-line
+// offset can be a wild underestimate of the walking actually involved.
+const detourLandmarks = waypoints
+  .filter(isHistoric)
+  .filter((w) => {
+    const entry = legIndex.find((e) => e.dayId === w.dayId);
+    const data = leg(entry.dayId, entry.variant);
+    const [placed] = geo.locateWaypoints([w], data.track, data.cumulative_m, data.elevation_m);
+    return placed.isDetour;
+  });
+ok(
+  detourLandmarks.length > 0,
+  'at least one landmark is off the line, so the check below is not vacuous'
+);
+ok(
+  detourLandmarks.every((w) => {
+    const entry = history.find((e) => e.waypointId === w.id);
+    return /off route|not on the|across the valley|from the village|before we|side trip|visible from/i.test(
+      entry.summary
+    );
+  }),
+  'an off-route landmark explains in words how to reach or see it',
+  detourLandmarks
+    .filter((w) => {
+      const entry = history.find((e) => e.waypointId === w.id);
+      return !/off route|not on the|across the valley|from the village|before we|side trip|visible from/i.test(
+        entry.summary
+      );
+    })
+    .map((w) => w.id)
+    .join(', ')
+);
 
 const stopIds = new Set(stays.stops.map((s) => s.stopId));
 const stayTargets = itinerary.days.map((d) => d.stayAt).filter(Boolean);

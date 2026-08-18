@@ -7,9 +7,10 @@ import * as store from '../core/store.js';
 import * as units from '../core/units.js';
 import * as schedule from '../core/schedule.js';
 import * as sun from '../core/sun.js';
-import { locateWaypoints, facingLabel } from '../core/geo.js';
+import { locateWaypoints, facingLabel, isHistoric, isPhotographic } from '../core/geo.js';
 import * as mapUi from '../ui/map.js';
 import * as photos from '../ui/photo.js';
+import * as history from '../ui/history.js';
 import { createElevationChart } from '../ui/elevation.js';
 import { mountChrome, showLoadError, onRefresh, openChangesDialog } from '../ui/nav.js';
 
@@ -42,7 +43,7 @@ async function main() {
   state.hikeDays = state.calendar.filter((day) => day.kind === 'hike');
   state.legIndex = await store.loadRouteFile('legIndex');
   state.anchors = (await store.loadRouteFile('anchors')).anchors;
-  await photos.load();
+  await Promise.all([photos.load(), history.load()]);
 
   const requested = new URLSearchParams(window.location.search).get('d');
   state.day = state.hikeDays.find((day) => day.id === requested) || state.hikeDays[0];
@@ -192,6 +193,7 @@ function drawMap({ fit }) {
   state.markers.push(
     ...mapUi.addWaypointMarkers(state.handle.map, state.located, {
       onClick: (waypoint) => focusWaypoint(waypoint.id),
+      summaryFor: (waypoint) => history.forWaypoint(waypoint.id)?.summary,
     })
   );
 
@@ -210,7 +212,10 @@ function drawMap({ fit }) {
     state.leg.transitDistance_m
       ? `<span style="color:${mapUi.VARIANT_COLORS.transit}"><i class="dashed"></i> Bus / navette</span>`
       : '',
-    '<span style="color:var(--c-warm)"><i></i> Scenery stop</span>',
+    '<span style="color:var(--c-warm)"><i class="dot"></i> Scenery stop</span>',
+    state.located.some((waypoint) => isHistoric(waypoint) && !isPhotographic(waypoint))
+      ? '<span style="color:var(--c-historic)"><i class="square"></i> Historic landmark</span>'
+      : '',
   ]
     .filter(Boolean)
     .join('');
@@ -415,7 +420,8 @@ function renderWaypoints() {
 
   if (!state.located.length) {
     list.innerHTML = `<li class="empty">
-      No scenery notes for this day yet. Use <strong>Add</strong> to record a viewpoint.
+      Nothing noted for this day yet. Use <strong>Add</strong> to record a viewpoint
+      or a landmark.
     </li>`;
     return;
   }
@@ -429,16 +435,30 @@ function renderWaypoints() {
         state.timing
       );
       const arrival = start + elapsed;
-      const match = sun.lightMatch(waypoint.photo?.bestLight, arrival, state.sunTimes);
+      const photographic = isPhotographic(waypoint);
+      const historic = isHistoric(waypoint);
+      const entry = historic ? history.forWaypoint(waypoint.id) : null;
+
+      // Light only matters where there is a picture to take, so a landmark with no
+      // photo block gets no light chips rather than a chip claiming it wants "any".
+      const match = photographic
+        ? sun.lightMatch(waypoint.photo?.bestLight, arrival, state.sunTimes)
+        : null;
       const window = sun.lightWindowAt(arrival, state.sunTimes);
 
       const tags = [
         waypoint.priority === 1 ? '<span class="chip priority-1">Do not miss</span>' : '',
+        historic
+          ? `<span class="chip chip--historic">${history.icon('historic')} historic</span>`
+          : '',
+        photographic && historic
+          ? `<span class="chip chip--warm">${history.icon('photographic')} photo stop</span>`
+          : '',
         waypoint.kind ? `<span class="chip">${waypoint.kind}</span>` : '',
-        waypoint.photo?.bestLight && waypoint.photo.bestLight !== 'any'
+        photographic && waypoint.photo?.bestLight && waypoint.photo.bestLight !== 'any'
           ? `<span class="chip chip--warm">best at ${waypoint.photo.bestLight}</span>`
           : '',
-        waypoint.photo?.facing
+        photographic && waypoint.photo?.facing
           ? `<span class="chip">looks ${facingLabel(waypoint.photo.facing)}</span>`
           : '',
         match === 'match'
@@ -480,16 +500,33 @@ function renderWaypoints() {
                 : ''
             }
             <div class="wp__tags">${tags}</div>
+            ${history.body(entry)}
           </div>
         </li>
       `;
     })
     .join('');
 
+  history.wire(list);
+
+  // The row is itself a button that pans the map, and the writeup inside it has
+  // its own disclosure and links. Without this guard a click meant for the
+  // disclosure would also pan the map, Enter and Space would be swallowed before
+  // the disclosure ever saw them, and double-clicking a word to select it would
+  // open the edit dialog.
+  const inWriteup = (event) => event.target.closest('.history');
+
   list.querySelectorAll('.wp').forEach((item) => {
-    item.addEventListener('click', () => focusWaypoint(item.dataset.id));
-    item.addEventListener('dblclick', () => openWaypointDialog(item.dataset.id));
+    item.addEventListener('click', (event) => {
+      if (inWriteup(event)) return;
+      focusWaypoint(item.dataset.id);
+    });
+    item.addEventListener('dblclick', (event) => {
+      if (inWriteup(event)) return;
+      openWaypointDialog(item.dataset.id);
+    });
     item.addEventListener('keydown', (event) => {
+      if (inWriteup(event)) return;
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         focusWaypoint(item.dataset.id);
@@ -598,7 +635,7 @@ function wireWaypointDialog() {
 
   document.getElementById('wp-delete').addEventListener('click', () => {
     if (!state.editing) return dialog.close();
-    if (!window.confirm('Delete this scenery note?')) return;
+    if (!window.confirm('Delete this map note?')) return;
     store.update('waypoints', (data) => {
       data.waypoints = data.waypoints.filter((entry) => entry.id !== state.editing);
     });
@@ -615,8 +652,8 @@ function openWaypointDialog(id) {
     : null;
 
   document.getElementById('wp-dialog-title').textContent = waypoint
-    ? 'Edit scenery note'
-    : 'New scenery note';
+    ? 'Edit map note'
+    : 'New map note';
   document.getElementById('wp-delete').hidden = !waypoint;
 
   const set = (elementId, value) => {
@@ -637,6 +674,13 @@ function openWaypointDialog(id) {
   set('wp-notes', waypoint?.photo?.notes);
   document.getElementById('wp-detour').checked = waypoint?.isDetour === true;
 
+  // A new note defaults to photographic, matching what the Add button is for and
+  // what every waypoint was before landmarks existed.
+  document.getElementById('wp-role-photographic').checked = waypoint
+    ? isPhotographic(waypoint)
+    : true;
+  document.getElementById('wp-role-historic').checked = waypoint ? isHistoric(waypoint) : false;
+
   dialog.showModal();
 }
 
@@ -647,6 +691,27 @@ function readDialog() {
     return raw === '' ? null : Number(raw);
   };
 
+  const checked = (id) => document.getElementById(id).checked;
+
+  const roles = [
+    checked('wp-role-photographic') ? 'photographic' : '',
+    checked('wp-role-historic') ? 'historic' : '',
+  ].filter(Boolean);
+  // Left absent when it matches the default, so editing an ordinary scenery note
+  // does not add a line to the draft diff that says nothing.
+  const isDefaultRoles = roles.length <= 1 && roles[0] !== 'historic';
+
+  const photo = {
+    subject: value('wp-subject'),
+    facing: value('wp-facing'),
+    bestLight: value('wp-light'),
+    notes: value('wp-notes'),
+  };
+  // bestLight always has a value because its select has no empty option, so an
+  // otherwise blank form would still write a photo block onto a landmark nobody
+  // means to photograph. Judge emptiness on the fields someone actually typed.
+  const hasPhoto = Boolean(photo.subject || photo.notes || photo.facing);
+
   return {
     name: value('wp-name'),
     kind: value('wp-kind'),
@@ -654,13 +719,9 @@ function readDialog() {
     lon: number('wp-lon'),
     elevation_m: number('wp-elev'),
     priority: Number(value('wp-priority')) || 2,
-    isDetour: document.getElementById('wp-detour').checked,
-    photo: {
-      subject: value('wp-subject'),
-      facing: value('wp-facing'),
-      bestLight: value('wp-light'),
-      notes: value('wp-notes'),
-    },
+    isDetour: checked('wp-detour'),
+    roles: isDefaultRoles ? undefined : roles,
+    photo: hasPhoto ? photo : undefined,
   };
 }
 

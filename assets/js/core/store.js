@@ -24,11 +24,16 @@ export const FILES = {
 // directly without a draft layer. Photos live here rather than in FILES because
 // tools/fetch_photos.py owns the file, and because the attribution in it is a
 // licence condition rather than something anyone should be editing by hand.
+//
+// History is here for a different reason: it is researched prose with citations,
+// and a draft layer would serialise the whole of it into localStorage on every
+// unrelated waypoint edit.
 const READ_ONLY = {
   anchors: 'data/route/anchors.json',
   legIndex: 'data/route/legs/index.json',
   loop: 'data/route/tmb-loop-oriented.geojson',
   photos: 'data/photos.json',
+  history: 'data/history.json',
 };
 
 const committed = new Map();

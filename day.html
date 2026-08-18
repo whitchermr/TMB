@@ -86,7 +86,7 @@
 
             <section class="card">
               <div class="card__head">
-                <h2>Scenery</h2>
+                <h2>Scenery and landmarks</h2>
                 <button class="btn btn--sm" id="add-waypoint" type="button">Add</button>
               </div>
               <div class="card__body card__body--flush">
@@ -100,7 +100,7 @@
 
     <dialog id="wp-dialog">
       <form method="dialog" class="dialog__head">
-        <h2 id="wp-dialog-title">Scenery note</h2>
+        <h2 id="wp-dialog-title">Map note</h2>
         <button class="btn btn--sm" value="cancel">Close</button>
       </form>
       <div class="dialog__body">
@@ -123,6 +123,21 @@
                 <option value="heritage">Heritage</option>
               </select>
             </div>
+          </div>
+          <div class="field">
+            <span class="field__legend">Why it is on the map</span>
+            <div class="field-row">
+              <label class="checkbox">
+                <input type="checkbox" id="wp-role-photographic" /> Worth photographing
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" id="wp-role-historic" /> Historic landmark
+              </label>
+            </div>
+            <small class="faint">
+              A landmark's writeup and sources are researched into data/history.json
+              rather than edited here.
+            </small>
           </div>
           <div class="field-row">
             <div class="field">

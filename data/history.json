@@ -1,0 +1,518 @@
+{
+  "$schema": "tmb/history/1",
+  "$comment": [
+    "What happened at the places we walk past, and who it happened to.",
+    "",
+    "Keyed by waypointId against data/waypoints.json. A waypoint with the",
+    "'historic' role must have an entry here, and an entry here must point at a",
+    "waypoint that exists; tools/test/run-tests.js asserts both.",
+    "",
+    "This is hand-researched prose, not generated, and it has to stand on its own:",
+    "the guide is read on a trail with no signal, so a writeup that only makes",
+    "sense with a browser open has failed. Sources are for reading afterwards, not",
+    "for filling gaps in the text.",
+    "",
+    "summary: one or two sentences on why the place matters at all.",
+    "eras:    the story in chronological order, one entry per period. Split rather",
+    "         than blended, because a place that matters for four unrelated reasons",
+    "         reads as a muddle if the reasons are woven together.",
+    "         `year` sorts and labels the era; `text` is self-contained prose.",
+    "caveat:  claims that are widely repeated and not actually supported. These are",
+    "         load-bearing. Several stories along this route are told confidently by",
+    "         signage and guidebooks on evidence that does not exist, and quietly",
+    "         passing them on would make everything else here less trustworthy.",
+    "sources: for deeper reading. Prefer the authority that owns the fact — a",
+    "         heritage register over an encyclopaedia, a journal over a blog."
+  ],
+
+  "entries": [
+    {
+      "waypointId": "christ-roi",
+      "summary": "A 25-metre concrete Christ on a rock spur above Les Houches, put up by a village priest on public subscription and inaugurated in 1934 as the dictatorships rose in Europe. It is across the valley from our route, not a detour off it: reach it on foot from Le Coupeau, either on the afternoon we arrive in Chamonix or before we start walking on day 1. Trying to reach it from the trail would mean dropping to the valley floor and climbing back.",
+      "eras": [
+        {
+          "year": "1926",
+          "label": "A priest and a mountaineering pope",
+          "text": "Claude-Marie Delassiat, parish priest of Les Houches, wanted a monument proclaiming the universal kingship of Christ — the theme of Pius XI's encyclical Quas Primas of 1925 — and he wanted it dedicated to that pope in particular. Pius XI had been Achille Ratti, a keen amateur alpinist who climbed Mont Blanc from the Italian side in 1890 and had stayed at Les Houches on his way. Delassiat launched a public subscription and spent about three years raising the money, backed by the bishop of Annecy, the Vatican and the people of the valley. The statue was intended to stand around forty metres tall; the subscription would not stretch that far, so it was cut to twenty-five."
+        },
+        {
+          "year": "1933",
+          "label": "Building it without a road",
+          "text": "Georges Serraz, a Paris sculptor who specialised in religious work, won the commission by competition; Viggo Feveile, an architect based in the valley, oversaw the interior and a separate campanile for the Peace bell. There was no road to the site, so the workers laid rails and hauled everything up in tipper wagons and lived on the spot. The base was cast as concrete slices and assembled in place, while the head, arms and torso were modelled in clay, cast into plaster moulds and filled with concrete, with the last details worked straight into it while wet. The first stone was laid in August 1933, work stopped for the winter, and the finished statue — 500 tonnes on a plinth with walls 48 cm thick, to keep it standing in the wind — was inaugurated on 19 August 1934 and dedicated to peace. It is still the second tallest statue in France, after the Virgin at Mas-Rillier near Lyon, which Serraz also made."
+        },
+        {
+          "year": "2020",
+          "label": "Listed",
+          "text": "The statue, its carillon and the surrounding parcels were inscribed on the French register of historic monuments, which means any restoration now has to be approved. An interior stair of eighty-four larch steps climbs to a platform hidden behind the halo; it is open by appointment only."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Statue du Christ-Roi (Les Houches)",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/Statue_du_Christ-Roi_(Les_Houches)"
+        },
+        {
+          "title": "Sur la commune des Houches une statue monumentale : le Christ Roi",
+          "publisher": "Histoire et patrimoine de la vallée de Chamonix",
+          "url": "https://www.blogdechristineachamonix.fr/sur-la-commune-des-houches-une-statue-monumentale-le-christ-roi/"
+        },
+        {
+          "title": "Le Christ-Roi des Houches inscrit aux monuments historiques",
+          "publisher": "France Bleu / ICI",
+          "url": "https://www.ici.fr/infos/insolite/en-haute-savoie-le-christ-roi-des-houches-inscrit-aux-monuments-historiques-1589639318"
+        }
+      ]
+    },
+    {
+      "waypointId": "col-de-voza",
+      "summary": "The saddle behind Les Houches has been a working crossing for two thousand years: a Roman legate set a provincial boundary stone on this ridge, Turner stopped here to draw, and in 1909 a rack railway arrived that was supposed to carry tourists to the summit of Mont Blanc.",
+      "eras": [
+        {
+          "year": "AD 74",
+          "label": "Where two Roman provinces met",
+          "text": "A gneiss pillar was cut and set up on this ridge on the authority of the emperor Vespasian, placed by his legate Cnaeus Pinarius Cornelius Clemens, commander of the army of Upper Germany. Its inscription says that Clemens “fixed the boundary between the Viennenses and the Ceutrones” — the Allobroges of Vienne on one side, the Ceutrones of the Tarentaise on the other. It was not only a line between two peoples: Vienne belonged to the province of Narbonensis, and the Ceutrones to the small alpine province of Alpes Graiae created by Augustus when Rome took the alpine passes. The stone was found in 1852 at Larioz, near the Col de la Forclaz-du-Prarion, and classified as a historic monument in 1875."
+        },
+        {
+          "year": "1802",
+          "label": "Turner comes over on foot",
+          "text": "J.M.W. Turner walked from Chamonix towards Courmayeur in 1802, having carried a very large grey-washed sketchbook all the way from England for exactly this kind of country. He came through Les Houches and up through the woods to this col — the high point of his first day — and drew here before going on down the Val Montjoie, where he also sketched the bell tower of the church at Les Contamines. The sketchbook survives in the Turner Bequest at Tate Britain, and several of the Chamonix drawings became watercolours for his patron Walter Fawkes, shown at Fawkes's London house in 1819."
+        },
+        {
+          "year": "1909",
+          "label": "The railway that was going to climb Mont Blanc",
+          "text": "In 1904 the Haute-Savoie council approved the engineer Henri Duportal's scheme for a rack railway from Le Fayet to the summit of Mont Blanc by way of the Aiguille du Goûter, entirely in the open air. Work began in 1906, and the first section reached this col — 1,653 m — where it was inaugurated on 25 July 1909 and opened to the public three days later. That year it carried an average of 103 people a day and took less than half what it cost to run. The line got as far as a temporary platform and refreshment stall at what was named the Nid d'Aigle, 2,372 m, on 1 August 1913, with the route beyond staked out towards Tête Rousse. The summer of 1914 began well and President Poincaré was expected in July; the war ended the project instead, and the post-war finances killed it for good in 1919. The tracks you cross here are the surviving part of it."
+        }
+      ],
+      "caveat": "Neither older claim is quite as tidy as it sounds. The boundary stone was found at the Col de la Forclaz-du-Prarion, further along the same ridge and not at this col, and it has not been there since the 1850s: the original stands under a shelter at Passy, with a facsimile beside the church at Les Plagnes since 1999. The Turner drawings are catalogued by the Tate without a location, and their identification as views from this col comes from recent research by Prue and John Bishop, who place them here because the tip of the Brévent only appears from this point. It is persuasive, but it is a re-attribution rather than the Tate's own title.",
+      "sources": [
+        {
+          "title": "Borne de la Forclaz-du-Prarion",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/Borne_de_la_Forclaz-du-Prarion"
+        },
+        {
+          "title": "St Gothard and Mont Blanc Sketchbook 1802 (Turner Bequest LXXV)",
+          "publisher": "Tate",
+          "url": "https://www.tate.org.uk/art/research-publications/jmw-turner/st-gothard-and-mont-blanc-sketchbook-r1146469"
+        },
+        {
+          "title": "Missing Turner Sketches: his 1802 trek around Mont Blanc",
+          "publisher": "The British Art Journal",
+          "url": "https://britishartjournal.co.uk/missing-turner-sketches/"
+        },
+        {
+          "title": "Histoire du Tramway du Mont-Blanc",
+          "publisher": "Compagnie du Tramway du Mont-Blanc",
+          "url": "https://www.tramwaydumontblanc.fr/histoire-du-tramway/"
+        },
+        {
+          "title": "Tramway du Mont-Blanc",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/Tramway_du_Mont-Blanc"
+        }
+      ]
+    },
+    {
+      "waypointId": "bionnassay-glacier-view",
+      "summary": "On 12 July 1892 a pocket of water inside the small Tête Rousse glacier, high on the slope you are looking at, burst and destroyed much of Saint-Gervais in half an hour. It remains the deadliest glacial flood recorded in the French Alps, and the reason the glacier is drained and monitored to this day.",
+      "eras": [
+        {
+          "year": "1892",
+          "label": "Thirty-three minutes to the valley floor",
+          "text": "Shortly after midnight on 12 July, about 200,000 cubic metres of water and shattered ice broke out of a cavern inside the Tête Rousse glacier at roughly 3,100 m. It stripped the ground bare going over the Rognes, gathering rock, soil, turf and fifty sheep, and became a debris flow — a lava of mud and gravel — as it swept along the right-hand moraine of the Bionnassay glacier below you and into the bed of the Bon Nant. By the time it reached the plain it had moved something like a million cubic metres of material and covered 77 hectares. It took roughly thirty-three minutes to travel the fourteen kilometres. In the gorge above Bionnay the flow stood twenty-nine metres deep; the hamlet was partly destroyed. Ten minutes after the burst it hit the thermal baths at Saint-Gervais, wrecking six of the eight buildings and killing at least 130 people there. The total dead and missing is usually given as at least 175. Bodies were carried down the Arve as far as Geneva."
+        },
+        {
+          "year": "1898",
+          "label": "The man who went and looked",
+          "text": "Joseph Vallot, the Mont Blanc scientist who built and ran the observatory high on the mountain, investigated the empty cavity and left the measurements the story still rests on: a chamber roughly 20 by 38 metres, narrowing into a passage 3 by 5 metres that ran 85 metres to the foot of a 35-metre vertical shaft opening at the glacier surface. His contemporary account put the death toll above 200, which is why the figure quoted for this disaster still varies."
+        },
+        {
+          "year": "2010",
+          "label": "It is still there",
+          "text": "Tête Rousse is small — about ten hectares — but water still collects inside it, and the valley below is far more heavily built up than it was in 1892. Since 2010 the glacier has been drilled, drained by pumping and kept under continuous monitoring, with evacuation plans for the villages beneath. The mountain you are photographing is under active surveillance for the same reason it made the news 130 years ago."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Il y a 100 ans : le drame du 12 juillet 1892 à Saint-Gervais (Haute-Savoie)",
+          "publisher": "Revue de Géographie Alpine",
+          "url": "https://doi.org/10.4267/2042/26326"
+        },
+        {
+          "title": "Une catastrophe oubliée datant de plus d'un siècle",
+          "publisher": "Les Alpes, Club Alpin Suisse",
+          "url": "https://www.sac-cas.ch/fr/les-alpes/catastrophe-oubliee-datant-de-plus-dun-siecle-une-13578/"
+        },
+        {
+          "title": "1892 — Catastrophe de Saint-Gervais",
+          "publisher": "IHMEC, Mémoire des catastrophes",
+          "url": "https://memoiresdescatastrophes.org/catastrophe/1892-catastrophe-saint-gervais/"
+        },
+        {
+          "title": "Tête Rousse Glacier",
+          "publisher": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/T%C3%AAte_Rousse_Glacier"
+        }
+      ]
+    },
+    {
+      "waypointId": "les-contamines-sainte-trinite",
+      "summary": "The church at the end of the day stands on the ruins of the castle that once guarded this valley, its bell tower built on one of the castle's towers. Getting it built took the villagers a ten-year lawsuit against the next parish down the valley, and money sent home by men who had left as pedlars.",
+      "eras": [
+        {
+          "year": "1277",
+          "label": "The castle of Montjoie",
+          "text": "A document of the Dauphine mentions the château de Montjoie for the first time, and calls the land around it Contamina, from the Latin condominium — the origin of the village's name. The castle watched the approach to the Col du Bonhomme and the frontier with the Tarentaise. When Savoy took the Faucigny in 1355 it lost its purpose, and it was gradually abandoned; by the census of 1561 there were three families living at La Contamine."
+        },
+        {
+          "year": "1751",
+          "label": "Twelve hundred pages to get a parish",
+          "text": "Until 1760 the village belonged to the parish of Saint-Nicolas-de-Véroce, an hour's walk away over the hill. In 1751 the villagers petitioned the bishop of Annecy to be made a parish of their own. Their request ran to three pages; the lawsuit that followed, with Saint-Nicolas fighting to keep them, ran to twelve hundred and lasted ten years. The judgment authorising a church came on 24 July 1758. Saint-Nicolas appealed, which took another sixteen months, and was finally dismissed on 24 March 1760."
+        },
+        {
+          "year": "1758",
+          "label": "A Piedmontese mason and the pedlars' money",
+          "text": "A contract was signed at Sallanches on 5 September 1758 with Domenico Gualino of Sastegno, a master mason from the Valsesia in Piedmont, to have the church finished by autumn 1760. The parishioners paid for it themselves with help from men born in the valley who had gone abroad as colporteurs — travelling pedlars — and made money in Germany, Austria and Hungary. Gualino died before the work was done and his son Joachim finished it. The first mass was said on 28 September 1760 and the bishop of Annecy consecrated the church to the Holy Trinity on 19 July 1766, an unusual dedication for this part of Europe. The tower was raised in 1776; the very slender spire came later, in the nineteenth century."
+        },
+        {
+          "year": "1802",
+          "label": "Turner draws the tower",
+          "text": "Coming down the Val Montjoie on the walk that also took him over the Col de Voza, Turner sketched the church. His drawing shows the bell tower still under a plain four-sided pyramid roof, before the octagonal lantern, the flattened bulb and the needle spire were added on top — which is how you can tell the sequence."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Église de la Sainte-Trinité des Contamines-Montjoie",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/%C3%89glise_de_la_Sainte-Trinit%C3%A9_des_Contamines-Montjoie"
+        },
+        {
+          "title": "Église paroissiale de la Sainte-Trinité",
+          "publisher": "Mémoire, histoire et patrimoine des Contamines-Montjoie",
+          "url": "https://contamines-patrimoine.org/eglise-paroissiale-de-la-sainte-trinite/"
+        },
+        {
+          "title": "Du château de Montjoie à l'église de la Sainte-Trinité",
+          "publisher": "Mémoire, histoire et patrimoine des Contamines-Montjoie",
+          "url": "https://contamines-patrimoine.org/du-chateau-de-montjoie-a-leglise-de-la-sainte-trinite/"
+        }
+      ]
+    },
+    {
+      "waypointId": "notre-dame-de-la-gorge",
+      "summary": "A hermit is said to have settled at the head of this valley around nine hundred years ago to shelter travellers walking to the Col du Bonhomme and on into Italy. The baroque church that replaced his sanctuary was used as a stable during the Revolution, drew ten thousand pilgrims in a single day in 1873, and kept an art-historical riddle on its altarpiece until 1998.",
+      "eras": [
+        {
+          "year": "c. 1100",
+          "label": "A hermit for the muleteers",
+          "text": "Tradition holds that a hermit — a Benedictine monk, by some accounts — settled here to take in and comfort the travellers passing through, and dedicated his sanctuary to Saint Antony, then the patron of muleteers and mountain guides. That choice tells you what the traffic was. A church has stood on the spot since at least the eleventh century, the small sanctuary grew into a parish, and by 1338 the village of la Gorge counted thirty households."
+        },
+        {
+          "year": "1606",
+          "label": "The bishop walks up",
+          "text": "On 28 July 1606 François de Sales, then bishop of Geneva and later a saint, made the pilgrimage up this valley himself. At that time the inhabitants were few and too poor to support a priest of their own."
+        },
+        {
+          "year": "1699",
+          "label": "The church you are standing in front of",
+          "text": "Claude Colliex, the new parish priest, set about replacing the building, and the work ran from 1699 to 1707. His architect was Jean La Vougna, who had just finished the church at Saint-Gervais and went on to build the one at Chamonix. Bishop Rossillon de Bernex blessed it on 25 August 1706. The façade carries its argument in Latin: over the door, EGO MATER PVLCHRAE DILECTIONIS — I am the mother of fair love — and on either side, “whoever finds Mary will find life” and, from Psalm 87, “her foundations are on the holy mountains,” which in this setting is not a metaphor. Fourteen oratories were built along the approach in 1728 as a rosary walk and turned into a way of the cross around 1840."
+        },
+        {
+          "year": "1793",
+          "label": "A stable, and bells into cannon",
+          "text": "During the Revolution the church was profaned and used as a stable, and its bells were requisitioned to be melted down for artillery. It survived, and in 1804, after the population had collapsed, the parish was absorbed into Les Contamines."
+        },
+        {
+          "year": "1873",
+          "label": "Ten thousand people in one day",
+          "text": "The nineteenth-century revival of Marian pilgrimage brought the place back to life. On 21 August 1873 a pilgrimage here gathered close to ten thousand people from across the region. The sacristy still keeps the banners made for that day by Flumet, Notre-Dame-de-Bellecombe, Saint-Nicolas-la-Chapelle, La Giettaz, Praz-sur-Arly, Megève, Combloux, Domancy, Servoz and Les Houches."
+        },
+        {
+          "year": "1998",
+          "label": "The Trinity with four people in it",
+          "text": "The upper tier of the altarpiece, attributed to the Chambéry artist Jacques Clairant, originally showed the Coronation of the Virgin: Mary at prayer in the centre, flanked by Christ and God the Father. Somewhere between the late eighteenth century and the middle of the nineteenth it was taken apart — possibly to protect it during the Revolution — and when it went back up, God the Father was put in the middle. Art historians spent a long time calling the resulting four-figure Trinity a piece of theological daring. In 1998 someone noticed which way the cherubs beneath each statue were looking, and the original arrangement became obvious."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Chapelle Notre-Dame-de-la-Gorge",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/Chapelle_Notre-Dame-de-la-Gorge"
+        },
+        {
+          "title": "Chapelle Notre-Dame de la Gorge",
+          "publisher": "Musée du Patrimoine de France",
+          "url": "https://museedupatrimoine.fr/chapelle-notre-dame-de-la-gorge-haute-savoie/53237.html"
+        },
+        {
+          "title": "Église de Notre-Dame de la Gorge",
+          "publisher": "Office de tourisme de Combloux",
+          "url": "https://www.combloux.com/sites-culturels/eglise-de-notre-dame-de-la-gorge/"
+        },
+        {
+          "title": "Avant le Mont Blanc, Notre-Dame de la Gorge",
+          "publisher": "Aleteia",
+          "url": "https://fr.aleteia.org/2016/08/14/en-images-avant-le-mont-blanc-notre-dame-de-la-gorge/"
+        }
+      ]
+    },
+    {
+      "waypointId": "voie-romaine",
+      "summary": "The steep paved ramp above the chapel is the real thing: a built pack road, cut and cobbled, that carried traffic from this valley over the Col du Bonhomme into Italy for centuries. What it is not, on any evidence anyone has produced, is Roman.",
+      "eras": [
+        {
+          "year": "Medieval",
+          "label": "The road to Italy",
+          "text": "This was a working route, not a path. From the head of the valley it climbed to the Col du Bonhomme, dropped to Les Chapieux and went on towards the Tarentaise and Italy, which is why a hermit set up a shelter at the bottom of it and dedicated his chapel to the patron of muleteers, and why a castle downstream at Montjoie was built to watch the approach. The paving you are walking on is what a maintained mule road looked like: cobbles set to shed water and take hooves on a gradient too steep for bare earth to survive."
+        },
+        {
+          "year": "1780s",
+          "label": "The Pont Romain",
+          "text": "Ten minutes above the chapel the path crosses the gorge on a stone arch known as the Pont Romain, a good place to look down at the tines — the potholes drilled into the rock by the torrent. The bridge is genuinely old and genuinely handsome. The guardian of the refuge just beyond it dates it to the 1780s."
+        }
+      ],
+      "caveat": "The name is the local tradition and nothing more. The tourist office and the commune both call this the voie romaine, but no excavation, inscription or document has been produced that dates any of it to the Roman period, and the bridge that shares the name appears to be eighteenth-century. Mountain pack roads across the Alps are routinely called Roman; where they have actually been investigated they usually turn out to be medieval or later, built or rebuilt for trade. Treat the paving as old and important, and the adjective as folklore.",
+      "sources": [
+        {
+          "title": "La Voie Romaine, Les Contamines-Montjoie",
+          "publisher": "Haute-Savoie Mont-Blanc Tourisme",
+          "url": "https://hautesavoiemontblanc-tourisme.com/offres/la-voie-romaine-les-contamines-montjoie-fr-5888068/"
+        },
+        {
+          "title": "La Voie Romaine (fiche de la mairie des Contamines-Montjoie)",
+          "publisher": "Outdooractive",
+          "url": "https://www.outdooractive.com/fr/poi/rhone-alpes/la-voie-romaine/808597246/"
+        },
+        {
+          "title": "Patricia Mollard, gardienne du refuge de Nant Borrant",
+          "publisher": "Grande Traversée des Alpes",
+          "url": "https://www.grande-traversee-alpes.com/refuge-nant-borrant-gr5/"
+        }
+      ]
+    },
+    {
+      "waypointId": "nant-borrant",
+      "summary": "The same family has fed travellers here for five generations. The licence was granted in 1842 to sell wine and food to the pedlars crossing the Col du Bonhomme, and the customers have changed from colporteurs to tourists to Tour du Mont-Blanc walkers without the business ever leaving the Mattels.",
+      "eras": [
+        {
+          "year": "1842",
+          "label": "A licence to sell wine to pedlars",
+          "text": "The chalet dates from around 1800. In 1842 the council of Les Contamines authorised Joseph Alexandre Mattel to run an inn in it, selling wine, food and whatever else the travellers needed — specifically the colporteurs, the travelling pedlars, who came up this valley and over the col. Men from these villages left as pedlars and some came back rich; the money that built the church down at Les Contamines came partly from them."
+        },
+        {
+          "year": "1870",
+          "label": "Four rooms for people from the city",
+          "text": "It became a mountain hotel with four bedrooms, taking in townspeople who had begun coming to the mountains for their health and the view rather than to get to the other side."
+        },
+        {
+          "year": "1976",
+          "label": "From hotel to refuge",
+          "text": "The Tour du Mont-Blanc arrived as a walking route in the 1970s and the hotel became a refuge, which is what it still is. Patricia Mollard, the guardian, is the fifth generation of the family to own it."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Patricia Mollard, gardienne du refuge de Nant Borrant",
+          "publisher": "Grande Traversée des Alpes",
+          "url": "https://www.grande-traversee-alpes.com/refuge-nant-borrant-gr5/"
+        },
+        {
+          "title": "Refuge de Nant Borrant, des colporteurs aux traileurs",
+          "publisher": "Le Dauphiné Libéré",
+          "url": "https://www.ledauphine.com/culture-loisirs/2020/08/30/haute-savoie-les-contamines-montjoie-refuge-de-nant-borrant-des-colporteurs-aux-traileurs"
+        },
+        {
+          "title": "Refuge de Nant Borrant",
+          "publisher": "Mon Tour du Mont-Blanc",
+          "url": "https://www.montourdumontblanc.com/fr/refuges/refuge-de-nant-borrant"
+        }
+      ]
+    },
+    {
+      "waypointId": "plan-des-dames",
+      "summary": "A stone cone about four metres high beside the path, which walkers have been adding to for generations. The custom of throwing a stone on it is real and still observed; the story about who is buried underneath is a legend, and a fairly recent one.",
+      "eras": [
+        {
+          "year": "Late 1800s",
+          "label": "Two English ladies",
+          "text": "The legend recorded by the commune says the mound covers the bodies of two English ladies found buried after a terrible storm on this exposed shoulder below the col. It is the kind of story the early tourist era produced in quantity, and it is not attested any earlier than the end of the nineteenth century."
+        },
+        {
+          "year": "Today",
+          "label": "Throw a stone",
+          "text": "The place has a reputation for being unlucky, and the way to deal with that is to add a stone to the pile as you pass. Everyone who walks the Tour du Mont-Blanc contributes to it, which is why the cairn keeps growing — and why its present size says more about the number of walkers than about anything underneath."
+        }
+      ],
+      "caveat": "Nobody has established what, if anything, is buried here. The mound is mapped as an archaeological site and a tumulus, but no excavation report exists, and a cairn that everyone adds a stone to every summer is not a reliable object to date. The two Englishwomen should be treated as folklore, not as a grave.",
+      "sources": [
+        {
+          "title": "Tumulus du Plan des Dames (fiche de la mairie des Contamines-Montjoie)",
+          "publisher": "Cirkwi",
+          "url": "https://www.cirkwi.com/fr/point-interet/2184909-tumulus-du-plan-des-dames"
+        }
+      ]
+    },
+    {
+      "waypointId": "col-du-bonhomme",
+      "summary": "For centuries this was the only straightforward way from the Val Montjoie into the Beaufortain, so almost everyone who needed to get between the two came over it: a medieval border, a thousand religious exiles walking home, a retreating army, the first naturalist to look closely at the rock, and an Italian division that never arrived.",
+      "eras": [
+        {
+          "year": "1355",
+          "label": "The col stops being a border",
+          "text": "Until the Treaty of Paris the col marked the edge of the Faucigny, held by the counts of Geneva. The treaty transferred the Faucigny to Savoy, and the crossing lost its frontier status overnight; the Val Montjoie below has belonged to the House of Savoy, and then to France, ever since. It became a border again in a smaller way after the 1860 annexation of Savoy, when the col formed one of the southern limits of the free-trade zone granted to northern Savoy — a status France cut back in 1919 under the Treaty of Versailles."
+        },
+        {
+          "year": "1689",
+          "label": "A thousand exiles walking home",
+          "text": "The Vaudois were Protestants from the high valleys of Piedmont, expelled by the Duke of Savoy in 1686. On the night of 16 August 1689 between nine hundred and a thousand of them crossed Lake Geneva by boat from Prangins, near Nyon, under the pastor Henri Arnaud and the veteran fighter Josué Janavel, and set out to walk back and retake their valleys. They came up the Bon Nant past Notre-Dame de la Gorge and climbed this col on 20 August at an average gradient of eighteen per cent, in rain, with snow to their knees. They crossed the Col de la Croix du Bonhomme, dropped down the Raja stream to Les Chapieux and slept at Séez. The column was not only soldiers: it carried pastors, students of theology, physicians and surgeons, a notary, a boatman, a butcher, an armourer and a wigmaker. They reached their valleys about fifteen days and 350 kilometres after leaving the lake."
+        },
+        {
+          "year": "1779",
+          "label": "Saussure finds a rock that fits nowhere",
+          "text": "Horace-Bénédict de Saussure, the Geneva naturalist who put up the prize that led to the first ascent of Mont Blanc, came over this col and noticed sandstones and pebble conglomerates that resembled nothing else nearby. He gave them a paragraph headed “Grès remarquables” in the second volume of his Voyages dans les Alpes. Later geologists renamed them the Grès Singuliers — the singular sandstones — and they are still a puzzle: a 2020 study in the International Journal of Earth Sciences reads them as Jurassic river and delta sediment laid down while the crust was pulling apart, stranded in a landscape that is otherwise limestone. The pebbles underfoot near the Rocher du Bonhomme are rounded and sorted by size, and look as though they came off a beach this year."
+        },
+        {
+          "year": "1793",
+          "label": "Four cannon left in the valley",
+          "text": "During the Revolutionary war in Savoy, a Sardinian force that had retaken much of the Faucigny was pushed back out by French troops through late September 1793. The Sardinians withdrew over this col, and four abandoned cannon were later found down at Notre-Dame de la Gorge — the guns had come this far up and no further."
+        },
+        {
+          "year": "1861",
+          "label": "The path we are walking",
+          "text": "Napoleon III visited Savoy after its annexation to France, and the path over the col was rebuilt between 1861 and 1866 in the wake of that visit. A more ambitious plan followed and failed: the two ends of the old route nationale 202 — one stopping at Les Chapieux to the south, the other at Notre-Dame de la Gorge to the north — were meant to be joined over this col as part of the Route des Grandes Alpes. The road scheme was abandoned here, which is why the crossing is still a footpath."
+        },
+        {
+          "year": "1940",
+          "label": "An objective never reached",
+          "text": "When Italy attacked France on 21 June 1940, the 2nd Alpine Division Tridentina, reinforced by the elite Duca degli Abruzzi battalion, was ordered to take the Col du Bonhomme and the Cormet de Roselend and push on to Beaufort. The Edolo, Tirano and Morbegno battalions came down off the Glacier des Glaciers from the Col de la Seigne towards Les Chapieux. They got no further than the head of the Chapieux valley, held up by French artillery and ski-scout sections and losing men steadily to frostbite in midsummer, and the offensive was called off on 24 June when the armistice was signed. No Italian soldier reached this col. The fighting itself is described at Les Chapieux, where it happened."
+        }
+      ],
+      "caveat": "Nobody knows where the name comes from. The rock above the col is the Rocher du Bonhomme and the pair is sometimes explained by a resemblance to a seated man, but no source establishes it. There is a well-documented etymology for a different Col du Bonhomme in the Vosges, and it does not transfer. Accounts of the Vaudois crossing also disagree: the col's own encyclopaedia entry dates the departure to 27 August and the march to 200 km in nine days, against the academic reconstruction followed here.",
+      "sources": [
+        {
+          "title": "La « glorieuse rentrée » des Vaudois (1689), un voyage militaire et spirituel",
+          "publisher": "Persée / Comité des travaux historiques et scientifiques",
+          "url": "https://www.persee.fr/doc/acths_1764-7355_2009_act_130_7_1569"
+        },
+        {
+          "title": "La Glorieuse Rentrée des vaudois (1689)",
+          "publisher": "Musée protestant",
+          "url": "https://museeprotestant.org/notice/la-glorieuse-rentree-des-vaudois-1689/"
+        },
+        {
+          "title": "The Grès Singuliers of the Mont Blanc region: stratigraphic response to rifting and crustal necking in the Alpine Tethys",
+          "publisher": "International Journal of Earth Sciences, 2020",
+          "url": "https://doi.org/10.1007/s00531-020-01902-z"
+        },
+        {
+          "title": "Forces italiennes à l'assaut de la Tarentaise",
+          "publisher": "La Bataille des Alpes, juin 1940",
+          "url": "https://www.labatailledesalpes.fr/sites/savoie-tarentaise/bourg-saint-maurice/col-du-petit-saint-bernard/"
+        },
+        {
+          "title": "Col du Bonhomme (massif du Mont-Blanc)",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/Col_du_Bonhomme_(massif_du_Mont-Blanc)"
+        }
+      ]
+    },
+    {
+      "waypointId": "refuge-croix-du-bonhomme",
+      "summary": "Built in 1922 as a luxury for its day — double rooms and a telephone at 2,443 m — then bombed to a ruin in the war and left for twenty-five years until volunteers rebuilt it by hand. The stone shell they saved is still inside the building you are looking at.",
+      "eras": [
+        {
+          "year": "1912",
+          "label": "A path dug to hide from the Italians",
+          "text": "The ridge running west from the col carries the Crête des Gittes, a path cut into the shale by battalions of chasseurs alpins in 1912. It was deliberately dug on the western flank of the crest so that troops moving along it could not be seen from the Italian side. It is one of the most spectacular stretches of trail in the Beaufortain, and it exists because this was a watched frontier."
+        },
+        {
+          "year": "1922",
+          "label": "A telephone at 2,443 metres",
+          "text": "The Touring Club de France built the refuge from stone quarried on the spot, three storeys high in the manner of the period, which was to command the landscape rather than sit in it. For the time it was remarkably comfortable: double rooms, proper sanitation and a telephone. It ran until 1940."
+        },
+        {
+          "year": "1940",
+          "label": "Shelled and abandoned",
+          "text": "The refuge was bombarded and partly destroyed in the fighting of the Second World War, in the same campaign that sent Italian battalions up the valley below towards this col. It was then left as a ruin for a quarter of a century."
+        },
+        {
+          "year": "1965",
+          "label": "Rebuilt by volunteers",
+          "text": "Volunteers took on the restoration in 1965 and after three years' work the refuge reopened in the summer of 1968. The Club alpin français took over running it in 1983 and bought it in 1987."
+        },
+        {
+          "year": "1992",
+          "label": "The new refuge around the old one",
+          "text": "An L-shaped extension and a terrace in wood and stone were built around the original stone building rather than replacing it, so the 1922 shell survives inside. The refuge now takes more than eight thousand overnight stays a year, and a full renovation is under way with reopening planned for 2029 — after which it should be staffed in winter as well."
+        }
+      ],
+      "caveat": "Sources disagree on the construction date by two years: the refuge's owners now give 1924, while the Touring Club de France announced the new refuge in its own journal in September 1922, which is the date followed here.",
+      "sources": [
+        {
+          "title": "Refuge de la Croix du Bonhomme",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/Refuge_de_la_Croix_du_Bonhomme"
+        },
+        {
+          "title": "Projet de rénovation du refuge de la Croix du Bonhomme",
+          "publisher": "Fédération française des clubs alpins et de montagne",
+          "url": "https://ffcam.fr/projet-de-renovation-croix-du-bonhomme.html"
+        },
+        {
+          "title": "Randonnée au refuge du Col de la Croix du Bonhomme",
+          "publisher": "Office de tourisme d'Arêches-Beaufort",
+          "url": "https://en.areches-beaufort.com/equipement/randonnee-au-refuge-du-col-de-la-croix-du-bonhomme/"
+        }
+      ]
+    },
+    {
+      "waypointId": "les-chapieux",
+      "summary": "This hamlet was fought over twice in four years. In June 1940 a few hundred French alpine troops held the head of the valley against an Italian division; in August 1944 the Resistance made it their command post and beat off a German attack, losing ten men. One officer, Jean Bulle, appears in both stories.",
+      "eras": [
+        {
+          "year": "1890",
+          "label": "Barracks at the crossroads",
+          "text": "The valley of the Glaciers is the junction between the Beaufortain and the Tarentaise, and the Col de la Seigne at its head leads into Italy. When France created its alpine troops in 1888 the position was reinforced against a possible Italian invasion, and barracks were built at Séloge and here at Les Chapieux between 1890 and 1894."
+        },
+        {
+          "year": "1940",
+          "label": "Fifty years of preparation, four days of use",
+          "text": "Two sections of the 80th fortress alpine battalion held the valley floor at the Séloge blockhouse and the Bellaval outpost, with ski-scout sections above them — Lieutenant Jean Bulle to the north of the col and Lieutenant Guidot to the south. On 21 June, under pressure from the Edolo battalion, both scout sections withdrew across the valley without losing a man, having done what they were there for: watch and slow. On 22 June, in atrocious weather, the Edolo pushed past the Mottets and took Bellaval, where Second Lieutenant de Castex was killed with his weapon in his hands. They could not attack the Séloge blockhouse: French artillery was too costly and they could not get their own guns forward to support an assault. The Duca degli Abruzzi battalion tried to go round the north and west along the walls of the Aiguille des Glaciers to take the Col d'Enclave, and failed under coordinated French artillery and Bulle's machine-gun fire — Bulle abseiled down the rock face to get an angle on the Italian infantry climbing towards him. Over 23 and 24 June the two Italian battalions lost heavily to French fire and to frostbite. The ceasefire on the morning of 25 June ended it."
+        },
+        {
+          "year": "1944",
+          "label": "The combat des Chapieux",
+          "text": "Early in 1944 Lieutenant-Colonel Pierre Fourcaud and Captains Peter Ortiz and Thackthwaite were parachuted into the Tarentaise on Mission Union to arm and coordinate the local maquis; a drop at La Plagne in March armed the Tarentaise fighters and a large one at the Col des Saisies on 1 August equipped the Beaufortain maquis under Captain Jean Bulle — the same Bulle who had held the ridge above here in 1940. With the Germans in Bourg-Saint-Maurice, the Tarentaise maquis put its command post at Les Chapieux, ten kilometres north of the town, and Lieutenant Émile Paganon's section blocked the road from the south. On the night of 21–22 August the Germans came instead from the west, out of the combe de la Neuva, having crossed over by the Presset refuge and the Col du Grand Fond. Paganon's men were quickly outnumbered; reinforcements from the compagnie du Lac, a Beaufortain section, evened the fight, and the Germans were driven off — burning the buildings at Les Chapieux as they went. Ten of the maquisards were killed. Jean Bulle was murdered by the Germans that same day at Albertville, while negotiating the surrender of the garrison there; the battalion formed by merging these maquis was named after him and went on to help liberate the Tarentaise."
+        },
+        {
+          "year": "Today",
+          "label": "The stele at the edge of the hamlet",
+          "text": "A memorial stone at the edge of Les Chapieux records the fighting, and there is a commemoration here every year attended by a detachment of the 7th battalion of chasseurs alpins. Descendants of the men involved still come; Jean Bulle's grandson and great-grandson attended the eightieth anniversary in 2024."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Combat des Chapieux",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/Combat_des_Chapieux"
+        },
+        {
+          "title": "Les combats dans le cirque de la vallée des Glaciers",
+          "publisher": "La Bataille des Alpes, juin 1940",
+          "url": "https://www.labatailledesalpes.fr/sites/savoie-tarentaise/le-chemin-de-memoire-en-savoie-tarentaise/les-combats-dans-le-cirque-de-la-vallee-des-glaciers/"
+        },
+        {
+          "title": "Jean-Marie Bulle et la vallée des Glaciers",
+          "publisher": "Les Arcs / Bourg-Saint-Maurice",
+          "url": "https://www.lesarcs.com/que-faire-aux-arcs/cote-patrimoine/histoire/lieu-de-souvenirs/jean-marie-bulle-et-la-vallee-des-glaciers"
+        },
+        {
+          "title": "La cérémonie des Chapieux célèbre les 80 ans de la Résistance",
+          "publisher": "Le Dauphiné Libéré",
+          "url": "https://www.ledauphine.com/defense-guerre-conflit/2024/09/15/la-ceremonie-des-chapieux-celebre-les-80-ans-de-la-resistance"
+        }
+      ]
+    }
+  ]
+}

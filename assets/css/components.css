@@ -251,6 +251,13 @@ input[type='range'] {
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
+/* Heading for a group of checkboxes, which has no single control to label. */
+.field__legend {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--c-text-soft);
+}
+
 .checkbox {
   display: flex;
   align-items: center;
@@ -303,6 +310,17 @@ input[type='range'] {
 .chip--danger {
   background: var(--c-danger-soft);
   color: var(--c-danger);
+}
+.chip--historic {
+  background: var(--c-historic-soft);
+  color: var(--c-historic);
+}
+
+/* Role icons sit inside chips and accordion headers, where there is room for a
+   glyph. On a 15 px map pin there is not, so the pins use shape and colour. */
+.role-icon {
+  flex: none;
+  vertical-align: -0.12em;
 }
 
 .chip__dot {
@@ -459,6 +477,166 @@ table.data tr.is-rest td {
 }
 
 /* ------------------------------------------------------------------ */
+/* stage history accordion                                            */
+/* ------------------------------------------------------------------ */
+
+/* The stage name doubles as the disclosure control, so the row keeps its shape
+   whether or not the day has any landmarks. */
+.stage-toggle {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.stage-toggle:hover .stage-toggle__label,
+.stage-toggle:focus-visible .stage-toggle__label {
+  text-decoration: underline;
+}
+
+.stage-toggle__chevron {
+  flex: none;
+  align-self: center;
+  width: 0;
+  height: 0;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  color: var(--c-text-faint);
+  transition: transform 0.15s ease;
+}
+
+.stage-toggle[aria-expanded='true'] .stage-toggle__chevron {
+  transform: rotate(90deg);
+}
+
+.stage-toggle__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex: none;
+  align-self: center;
+  font-size: 0.72rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-historic);
+}
+
+/* A day with no landmarks: same text, no affordance suggesting otherwise. */
+.stage-toggle__quiet {
+  display: inline-block;
+  min-height: var(--tap);
+  padding-left: calc(5px + 0.35rem);
+}
+
+.stage-history > td {
+  padding: 0 !important;
+  background: var(--c-surface-2);
+}
+
+/*
+ * The panel sits inside a horizontally scrolling table, so without sticky
+ * positioning it would slide out of view the moment someone scrolled right to
+ * read the margin column. Sticky pins it to the viewport's left edge while the
+ * numeric columns move under it.
+ */
+.stage-history__inner {
+  position: sticky;
+  left: 0;
+  display: grid;
+  gap: 0.9rem;
+  box-sizing: border-box;
+  width: min(100%, 100vw);
+  max-width: 46rem;
+  padding: 0.85rem 0.9rem 1rem;
+}
+
+/* Chip fills are tints designed against --c-surface, and the panel is the darker
+   --c-surface-2, so the pill all but disappears here. The text colour still
+   carries the meaning; the hairline gives back the shape. */
+.stage-history .chip {
+  border: 1px solid var(--c-border-strong);
+}
+
+.landmark {
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.landmark:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.landmark__head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.5rem;
+}
+
+.landmark__head h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.landmark__meta {
+  font-size: 0.76rem;
+  color: var(--c-text-faint);
+}
+
+.landmark__photo {
+  margin: 0.5rem 0 0;
+  position: relative;
+  max-width: 15rem;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: var(--c-surface);
+}
+
+.landmark__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* Same scrim reasoning as .wp-photo: the credit is a licence condition, so it
+   has to stay readable over an unpredictable photograph. */
+.landmark__photo figcaption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  max-width: 100%;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.64rem;
+  line-height: 1.4;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  border-top-left-radius: var(--r-sm);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@media (min-width: 700px) {
+  .landmark__photo {
+    float: right;
+    width: 12rem;
+    margin: 0 0 0.5rem 0.9rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* map                                                                */
 /* ------------------------------------------------------------------ */
 
@@ -521,8 +699,27 @@ table.data tr.is-rest td {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-warm) 30%, transparent);
 }
 
+/* A landmark with nothing to photograph. Square as well as blue, because at 15 px
+   on a phone the shape is what reads first, and colour alone would not survive a
+   colour-vision deficiency. A landmark that is also a photo stop keeps the round
+   warm pin — the light is the thing you have to be on time for. */
+.pin--wp-historic {
+  background: var(--c-historic);
+  border-radius: 3px;
+}
+
+.pin--wp-historic.pin--wp-1 {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-historic) 30%, transparent);
+}
+
+/* Ordered after the role rules so an off-route landmark still reads as a detour.
+   The square corners carry the role, the colour carries the detour. */
 .pin--detour {
   background: var(--c-optional);
+}
+
+.pin--detour.pin--wp-1 {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-optional) 30%, transparent);
 }
 
 .pin--cursor {
@@ -559,6 +756,22 @@ table.data tr.is-rest td {
   height: 0;
   border-top: 3px dashed currentColor;
   border-radius: 0;
+}
+
+/* Waypoint entries show the pin's shape, not a line, so the legend can be read
+   against the map rather than only against itself. */
+.map-legend i.dot,
+.map-legend i.square {
+  width: 10px;
+  height: 10px;
+}
+
+.map-legend i.dot {
+  border-radius: 50%;
+}
+
+.map-legend i.square {
+  border-radius: 2px;
 }
 
 /* ------------------------------------------------------------------ */
@@ -802,6 +1015,158 @@ table.data tr.is-rest td {
   .wp__tags {
     clear: both;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* landmark history                                                   */
+/* ------------------------------------------------------------------ */
+
+/*
+ * The writeup for a historic landmark. Measured to roughly 70 characters, because
+ * this is the only prose on the site long enough for line length to matter.
+ */
+.history {
+  clear: both;
+  max-width: 70ch;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--c-border);
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--c-text-soft);
+}
+
+.history p {
+  margin: 0;
+}
+
+.history__summary {
+  font-weight: 550;
+  color: var(--c-text);
+}
+
+/* The chronology, folded away by default. A <details> rather than a scripted
+   panel because the open state, the keyboard handling and the screen-reader
+   announcement all come for free and cannot drift out of sync with the markup. */
+.history__more {
+  margin-top: 0.45rem;
+}
+
+.history__more-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: var(--tap);
+  padding-right: 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--c-historic);
+  cursor: pointer;
+  /* The default triangle is replaced by one that can be rotated and coloured. */
+  list-style: none;
+}
+
+.history__more-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.history__more-toggle::before {
+  content: '';
+  flex: none;
+  width: 0;
+  height: 0;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform 0.15s ease;
+}
+
+.history__more[open] > .history__more-toggle::before {
+  transform: rotate(90deg);
+}
+
+.history__more-toggle:hover > span:first-of-type,
+.history__more-toggle:focus-visible > span:first-of-type {
+  text-decoration: underline;
+}
+
+.history__more-count {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-text-faint);
+}
+
+/* The eras sit directly under the toggle, so the top margin the list carries on
+   its own would double up with the toggle's tap padding. */
+.history__more[open] > .history__eras {
+  margin-top: 0.15rem;
+}
+
+.history__eras {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+/* A rule down the left reads as a timeline without needing dots or dates
+   repeated in the margin. Mixed with transparent rather than using the flat
+   --c-historic-soft chip tint, which is pale enough to disappear against the
+   planner panel's --c-surface-2 background. */
+.history__eras > li {
+  padding-left: 0.7rem;
+  border-left: 2px solid color-mix(in srgb, var(--c-historic) 40%, transparent);
+}
+
+.history__year {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--c-historic);
+}
+
+.history__label {
+  margin-left: 0.35rem;
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+/* Warm rather than blue: a caveat says treat this claim with caution, which is
+   what the warm token means everywhere else on the site. Tinted with transparent
+   so it reads as a box on the day page's --c-surface and on the planner panel's
+   --c-surface-2 alike — a flat fill matching either one vanishes on the other. */
+.history__caveat {
+  margin-top: 0.55rem !important;
+  padding: 0.4rem 0.55rem;
+  border-left: 2px solid var(--c-warm);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: color-mix(in srgb, var(--c-warm) 12%, transparent);
+  font-size: 0.8rem;
+  color: var(--c-text);
+}
+
+.history__sources {
+  margin-top: 0.55rem;
+  font-size: 0.76rem;
+}
+
+.history__sources-label {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 0.66rem;
+  color: var(--c-text-faint);
+}
+
+.history__sources ol {
+  margin: 0.2rem 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.history__sources a {
+  color: var(--c-historic);
 }
 
 /* ------------------------------------------------------------------ */

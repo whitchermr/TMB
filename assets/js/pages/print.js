@@ -15,7 +15,7 @@ import * as units from '../core/units.js';
 import * as schedule from '../core/schedule.js';
 import * as sun from '../core/sun.js';
 import * as money from '../core/money.js';
-import { locateWaypoints, facingLabel } from '../core/geo.js';
+import { locateWaypoints, facingLabel, isPhotographic } from '../core/geo.js';
 import { escapeHtml } from '../ui/map.js';
 import * as photos from '../ui/photo.js';
 import { mountChrome, showLoadError, onRefresh } from '../ui/nav.js';
@@ -496,12 +496,17 @@ function lightTable(day, times) {
 }
 
 function sceneryTable(leg, settings, timing, startHour, waypoints, times) {
-  if (!waypoints.length) return '';
+  // Every column here is about taking a picture — best light, facing, whether we
+  // arrive in the right window — so a landmark with nothing to photograph would
+  // fill a row with dashes. The landmark writeups belong on the day and planner
+  // pages, which have room for prose.
+  const shots = waypoints.filter(isPhotographic);
+  if (!shots.length) return '';
   // Decided once for the whole table so the header and the rows cannot disagree
   // about how many columns there are.
   const withPhotos = shown('photos');
 
-  const rows = waypoints
+  const rows = shots
     .slice()
     .sort((a, b) => (a.position_m ?? 0) - (b.position_m ?? 0))
     .map((point) => {

@@ -9,6 +9,8 @@
  * required by the respective licences — do not strip them.
  */
 
+import { isHistoric, isPhotographic } from '../core/geo.js';
+
 const OSM_ATTRIB = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
 export const BASEMAPS = {
@@ -204,10 +206,21 @@ export function addStopMarkers(map, stops, { onClick } = {}) {
   });
 }
 
-/** Scenery / photography waypoints, sized by priority. */
-export function addWaypointMarkers(map, waypoints, { onClick } = {}) {
+/**
+ * Scenery and landmark waypoints, sized by priority and shaped by role.
+ *
+ * A place that is both photographic and historic gets the photographic pin: the
+ * light is the thing you have to arrive on time for, so that is the cue worth
+ * putting on the map.
+ *
+ * `summaryFor` supplies the tooltip line for a waypoint with no photo subject.
+ * It is a callback rather than a lookup here so this module stays unaware of the
+ * history file, which imports escapeHtml from it.
+ */
+export function addWaypointMarkers(map, waypoints, { onClick, summaryFor } = {}) {
   return waypoints.map((waypoint) => {
     const classes = ['pin', 'pin--wp'];
+    if (isHistoric(waypoint) && !isPhotographic(waypoint)) classes.push('pin--wp-historic');
     if (waypoint.priority === 1) classes.push('pin--wp-1');
     if (waypoint.isDetour) classes.push('pin--detour');
 
@@ -220,7 +233,8 @@ export function addWaypointMarkers(map, waypoints, { onClick } = {}) {
 
     const bits = [`<strong>${escapeHtml(waypoint.name)}</strong>`];
     if (waypoint.elevation_m) bits.push(`${Math.round(waypoint.elevation_m)} m`);
-    if (waypoint.photo?.subject) bits.push(escapeHtml(waypoint.photo.subject));
+    const summary = waypoint.photo?.subject || summaryFor?.(waypoint);
+    if (summary) bits.push(escapeHtml(summary));
     marker.bindTooltip(bits.join('<br>'), { direction: 'top', offset: [0, -10] });
 
     if (onClick) marker.on('click', () => onClick(waypoint));

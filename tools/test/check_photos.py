@@ -46,6 +46,14 @@ def main() -> int:
     waypoints = json.loads((ROOT / "data" / "waypoints.json").read_text())["waypoints"]
     entries = json.loads(photos_path.read_text())["photos"]
 
+    # A historic-only landmark earns its place with a writeup, so it is not a
+    # coverage gap. Counting it as one would make the tally never reach full and
+    # so stop meaning anything.
+    photo_ids = {
+        waypoint["id"]
+        for waypoint in waypoints
+        if "photographic" in waypoint.get("roles", ["photographic"])
+    }
     waypoint_ids = {waypoint["id"] for waypoint in waypoints}
     seen: set[str] = set()
 
@@ -98,10 +106,10 @@ def main() -> int:
             if not isinstance(entry.get(field), int) or entry[field] <= 0:
                 fail(f"{wid}: {field} is missing, so the page cannot reserve space")
 
-    uncovered = [wid for wid in waypoint_ids if wid not in seen]
+    uncovered = [wid for wid in photo_ids if wid not in seen]
     if uncovered:
         notes.append(
-            f"{len(uncovered)} of {len(waypoint_ids)} scenery stops have no photo: "
+            f"{len(uncovered)} of {len(photo_ids)} scenery stops have no photo: "
             + ", ".join(sorted(uncovered))
         )
 
@@ -121,8 +129,12 @@ def main() -> int:
     for failure in failures:
         print(f"  FAIL  {failure}")
 
-    total = len(waypoint_ids)
-    print(f"photos: {len(seen)}/{total} stops illustrated, {len(failures)} problems")
+    total = len(photo_ids)
+    landmarks = len(waypoint_ids) - total
+    print(
+        f"photos: {len(seen)}/{total} stops illustrated, "
+        f"{landmarks} history-only landmarks, {len(failures)} problems"
+    )
     return 1 if failures else 0
 
 
