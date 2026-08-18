@@ -1,12 +1,16 @@
 /**
- * About page: mostly static prose, plus the offline-maps panel.
+ * About page: mostly static prose, the offline-maps panel, and the photograph
+ * credits.
  *
  * The panel is the one interactive part, because pre-downloading tiles has to
- * be a deliberate action rather than something the site does on its own.
+ * be a deliberate action rather than something the site does on its own. The
+ * credits are rendered from data/photos.json rather than written into the HTML so
+ * that changing a photo cannot leave the wrong name beside it.
  */
 
+import * as store from '../core/store.js';
 import * as offline from '../ui/offline.js';
-import { BASEMAPS } from '../ui/map.js';
+import { BASEMAPS, escapeHtml } from '../ui/map.js';
 import { mountChrome } from '../ui/nav.js';
 
 mountChrome();
@@ -27,6 +31,45 @@ const el = {
   bar: document.getElementById('offline-bar'),
   progressText: document.getElementById('offline-progress-text'),
 };
+
+/**
+ * The photograph credits.
+ *
+ * Rendered independently of the offline panel: a browser without service workers
+ * still shows the photos, so it still owes the credit.
+ */
+async function renderPhotoCredits() {
+  const table = document.getElementById('photo-credit-table');
+  const waypointNames = new Map(
+    store.get('waypoints').waypoints.map((waypoint) => [waypoint.id, waypoint.name])
+  );
+  const { photos } = await store.loadRouteFile('photos');
+
+  table.querySelector('tbody').innerHTML = photos
+    .map((entry) => {
+      const { author, licence, licenceUrl, source } = entry.credit;
+      const name = waypointNames.get(entry.waypointId) || entry.waypointId;
+      return `
+        <tr>
+          <td>${escapeHtml(name)}</td>
+          <td>${escapeHtml(author)}</td>
+          <td>${
+            licenceUrl
+              ? `<a href="${escapeHtml(licenceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(licence)}</a>`
+              : escapeHtml(licence)
+          }</td>
+          <td>${
+            source
+              ? `<a href="${escapeHtml(source)}" target="_blank" rel="noopener noreferrer">Commons</a>`
+              : '—'
+          }</td>
+        </tr>`;
+    })
+    .join('');
+
+  document.getElementById('photo-credits-count').textContent =
+    `${photos.length} photographs`;
+}
 
 async function main() {
   if (!offline.isSupported()) {
@@ -70,6 +113,7 @@ async function refreshStatus() {
     ${stat('Map tiles', status.tiles.toLocaleString(), 'cached')}
     ${stat('Pages and code', String(status.shell), 'files')}
     ${stat('Trip data', String(status.data), 'files')}
+    ${stat('View photos', String(status.photos ?? 0), 'saved as you browse')}
     ${stat(
       'Storage used',
       offline.formatBytes(status.usage),
@@ -147,6 +191,16 @@ async function clear() {
   el.progress.hidden = true;
   await refreshStatus();
 }
+
+// The two halves of this page fail independently: a broken offline panel should
+// not take the credits with it, and vice versa.
+store
+  .init(['waypoints'])
+  .then(renderPhotoCredits)
+  .catch((error) => {
+    document.getElementById('photo-credits-count').textContent = 'unavailable';
+    console.error(error);
+  });
 
 main().catch((error) => {
   el.status.textContent = `Offline panel failed to start: ${error.message}`;

@@ -748,6 +748,62 @@ table.data tr.is-rest td {
   margin-top: 0.35rem;
 }
 
+/*
+ * The photo of what we are walking towards.
+ *
+ * A fixed aspect ratio rather than the image's own, so a portrait shot cannot
+ * push the next scenery stop off the screen — the list has to stay scannable
+ * while walking. Cropping to the centre is acceptable here because these are
+ * wide landscapes chosen for the view.
+ */
+.wp-photo {
+  margin: 0.4rem 0 0.1rem;
+  position: relative;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: var(--c-surface-2);
+}
+
+.wp-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.wp-photo figcaption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  max-width: 100%;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.66rem;
+  line-height: 1.4;
+  color: #fff;
+  /* Over an unpredictable photograph, a scrim is the only way to guarantee the
+     credit stays readable — and it has to stay readable to be a credit. */
+  background: rgba(0, 0, 0, 0.55);
+  border-top-left-radius: var(--r-sm);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@media (min-width: 560px) {
+  /* Wider than a phone there is room to set the photo beside the text, which
+     keeps more of the list visible at once. */
+  .wp-photo {
+    float: right;
+    width: 11rem;
+    margin: 0 0 0.4rem 0.7rem;
+  }
+
+  .wp__tags {
+    clear: both;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* segment strip                                                      */
 /* ------------------------------------------------------------------ */

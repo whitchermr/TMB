@@ -1,14 +1,33 @@
 /**
- * Metric / imperial formatting. The preference is device-local, since which
- * units you think in is a property of the reader, not of the trip.
+ * Metric / imperial formatting.
+ *
+ * Which units you think in is a property of the reader, not of the trip, so the
+ * choice is stored as a device-local preference. Until someone touches the
+ * toggle there is no preference, and the committed `units` in settings.json acts
+ * as the group default — the trail data is metric throughout, but this group
+ * reads miles and feet.
  */
 
-import { pref, setPref } from './store.js';
+import { pref, setPref, get } from './store.js';
 
 const KEY = 'units';
+const FALLBACK = 'imperial';
+
+function groupDefault() {
+  try {
+    return get('settings').units === 'metric' ? 'metric' : 'imperial';
+  } catch {
+    // Formatting can be reached before the store has loaded settings; the
+    // fallback matches the committed value so nothing visibly changes when it
+    // does load.
+    return FALLBACK;
+  }
+}
 
 export function current() {
-  return pref(KEY, 'metric') === 'imperial' ? 'imperial' : 'metric';
+  const chosen = pref(KEY, null);
+  if (chosen === 'imperial' || chosen === 'metric') return chosen;
+  return groupDefault();
 }
 
 export function set(value) {

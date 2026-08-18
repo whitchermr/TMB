@@ -60,6 +60,9 @@ fi
 if ! "$PY" tools/test/check_paths.py; then
   FAILED=1
 fi
+if ! "$PY" tools/test/check_photos.py; then
+  FAILED=1
+fi
 
 echo
 echo "== Served-site check =="

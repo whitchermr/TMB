@@ -182,6 +182,25 @@
     gap: 3mm;
   }
 
+  /* Small enough that a day still fits one page, large enough to recognise the
+     view from. The credit stays printed: it is a condition of using the photo,
+     not decoration, so it cannot be dropped to save space. */
+  .brief-photo {
+    width: 26mm;
+  }
+
+  .brief-photo__fig img {
+    width: 26mm;
+    height: 19mm;
+    object-fit: cover;
+  }
+
+  .brief-photo__fig figcaption {
+    font-size: 5.5pt;
+    line-height: 1.2;
+    color: var(--c-text-faint);
+  }
+
   .brief__foot {
     position: fixed;
     bottom: 0;
@@ -262,4 +281,29 @@
 .brief-table th.num {
   text-align: right;
   font-variant-numeric: tabular-nums;
+}
+
+/* On screen print.html is a preview of the paper, so the photo column is sized
+   in the same proportion rather than at full width. */
+.brief-photo {
+  width: 5.5rem;
+}
+
+.brief-photo__fig {
+  margin: 0;
+}
+
+.brief-photo__fig img {
+  display: block;
+  width: 5.5rem;
+  height: 4rem;
+  object-fit: cover;
+  border-radius: var(--r-sm);
+}
+
+.brief-photo__fig figcaption {
+  margin-top: 0.1rem;
+  font-size: 0.6rem;
+  line-height: 1.3;
+  color: var(--c-text-faint);
 }

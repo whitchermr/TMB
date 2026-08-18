@@ -37,6 +37,7 @@ SHARED_MODULES = [
     "assets/js/ui/map.js",
     "assets/js/ui/elevation.js",
     "assets/js/ui/offline.js",
+    "assets/js/ui/photo.js",
     "assets/js/core/store.js",
     "assets/js/core/units.js",
     "assets/js/core/geo.js",

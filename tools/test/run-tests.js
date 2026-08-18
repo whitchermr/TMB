@@ -75,6 +75,7 @@ const people = json('data/people.json');
 const rates = json('data/rates.json');
 const stays = json('data/stays.json');
 const expensesFile = json('data/expenses.json');
+const photos = json('data/photos.json').photos;
 const leg = (dayId, variant) => json(`data/route/legs/${dayId}-${variant}.json`);
 
 print('TMB logic tests');
@@ -202,10 +203,18 @@ ok(
   hikeDays[0].date === schedule.addDays(settings.trip.startDate, 1),
   `day 1 falls the day after arrival (${hikeDays[0].date})`
 );
-ok(hikeDays[0].date === '2026-07-03', `day 1 falls on ${hikeDays[0].date}, matching the plan`);
+// 2 July 2027 is the date the group chose to start *walking*. It is asserted as a
+// literal because it is a decision, not a derivation: the arrival day in
+// settings.json has to stay one day behind it, and this is what catches someone
+// setting the arrival to the walking date and moving the whole trip.
+ok(hikeDays[0].date === '2027-07-02', `day 1 falls on ${hikeDays[0].date}, as planned`);
 ok(
-  calendar.find((d) => d.kind === 'rest').date === '2026-07-06',
-  'the Courmayeur rest day lands on Jul 6, matching the plan'
+  calendar.find((d) => d.kind === 'rest').date === '2027-07-05',
+  'the Courmayeur rest day lands on Jul 5'
+);
+ok(
+  hikeDays[hikeDays.length - 1].date === '2027-07-09',
+  `the last hiking day falls on ${hikeDays[hikeDays.length - 1].date}`
 );
 const rest = calendar.find((d) => d.kind === 'rest');
 const restIndex = calendar.indexOf(rest);
@@ -561,6 +570,42 @@ const personIds = new Set(people.people.map((p) => p.id));
 ok(
   expensesFile.expenses.every((e) => personIds.has(e.paidBy)),
   'every expense payer is a known person'
+);
+// Renaming someone is expected; renumbering them silently detaches their history.
+ok(personIds.size === people.people.length, 'person ids are unique');
+ok(
+  people.people.every((p) => p.name && p.name.trim() && p.color),
+  'everyone has a name and a colour'
+);
+
+/* ------------------------------------------------------------------ */
+describe('waypoint photographs');
+
+// The scenery list is meant to show what we are walking towards, so a stop with
+// no picture is a gap in the feature rather than a harmless omission.
+const photoIds = new Set(photos.map((entry) => entry.waypointId));
+ok(
+  waypoints.every((w) => photoIds.has(w.id)),
+  'every scenery stop has a photograph',
+  `${photos.length} of ${waypoints.length}`
+);
+ok(
+  photos.every((entry) => waypointIds.includes(entry.waypointId)),
+  'no photograph points at a waypoint that no longer exists'
+);
+// CC BY and CC BY-SA both make attribution a condition of use, so an entry
+// without a photographer is a licence problem, not a missing nicety.
+ok(
+  photos.every((entry) => entry.credit && entry.credit.author && entry.credit.licence),
+  'every photograph names its photographer and licence'
+);
+ok(
+  photos.every((entry) => entry.file.startsWith('assets/photos/')),
+  'photographs are stored in the repository rather than hotlinked'
+);
+ok(
+  photos.every((entry) => entry.width > 0 && entry.height > 0),
+  'every photograph records its dimensions so pages can reserve space'
 );
 ok(new Set(people.people.map((p) => p.id)).size === people.people.length,
   'person ids are unique');

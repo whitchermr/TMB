@@ -17,12 +17,14 @@ import * as sun from '../core/sun.js';
 import * as money from '../core/money.js';
 import { locateWaypoints, facingLabel } from '../core/geo.js';
 import { escapeHtml } from '../ui/map.js';
+import * as photos from '../ui/photo.js';
 import { mountChrome, showLoadError, onRefresh } from '../ui/nav.js';
 
 const state = { legs: new Map() };
 
 const OPTIONS = {
   scenery: 'opt-scenery',
+  photos: 'opt-photos',
   lodging: 'opt-lodging',
   profile: 'opt-profile',
   money: 'opt-money',
@@ -34,6 +36,7 @@ async function main() {
 
   state.legIndex = await store.loadRouteFile('legIndex');
   state.anchors = (await store.loadRouteFile('anchors')).anchors;
+  await photos.load();
 
   await Promise.all(
     state.legIndex.map(async (entry) => {
@@ -494,15 +497,27 @@ function lightTable(day, times) {
 
 function sceneryTable(leg, settings, timing, startHour, waypoints, times) {
   if (!waypoints.length) return '';
+  // Decided once for the whole table so the header and the rows cannot disagree
+  // about how many columns there are.
+  const withPhotos = shown('photos');
+
   const rows = waypoints
     .slice()
     .sort((a, b) => (a.position_m ?? 0) - (b.position_m ?? 0))
     .map((point) => {
       const arrival = startHour + schedule.elapsedAt(leg, settings.pace, point.position_m, timing);
       const match = sun.lightMatch(point.photo?.bestLight, arrival, times);
+      const image = withPhotos ? photos.forWaypoint(point.id) : null;
       return `
         <tr>
           <td class="num">${units.distance(point.position_m)}</td>
+          ${
+            withPhotos
+              ? `<td class="brief-photo">${photos.figure(image, {
+                  className: 'brief-photo__fig',
+                })}</td>`
+              : ''
+          }
           <td>
             <strong>${escapeHtml(point.name)}</strong>${
               point.isDetour ? ' <span class="chip chip--info">detour</span>' : ''
@@ -539,7 +554,9 @@ function sceneryTable(leg, settings, timing, startHour, waypoints, times) {
     <table class="brief-table">
       <thead>
         <tr>
-          <th class="num">At</th><th>Stop</th><th class="num">Elev</th>
+          <th class="num">At</th>
+          ${withPhotos ? '<th>View</th>' : ''}
+          <th>Stop</th><th class="num">Elev</th>
           <th class="num">ETA</th><th>Best light</th>
         </tr>
       </thead>

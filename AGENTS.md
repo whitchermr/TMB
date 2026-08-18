@@ -36,9 +36,14 @@ break by accident.
   projecting it onto the track, so adding one only needs a coordinate. Resist
   adding a field that duplicates something computable.
 - **`startDate` is the arrival day**, not the first day of walking, because it
-  dates the first entry in `itinerary.json` and that entry is the flight in.
-  Hiking day 1 is the day after. Getting this wrong shifts the whole trip by a
-  day silently; `run-tests.js` asserts both relationships.
+ dates the first entry in `itinerary.json` and that entry is the flight in.
+ Hiking day 1 is the day after. Getting this wrong shifts the whole trip by a
+ day silently; `run-tests.js` asserts both the relationship and the first walking
+ day as a literal, since that date is the group's decision rather than something
+ derived.
+- **Distances default to miles and elevations to feet.** `units` in
+ `settings.json` is the group default; the header toggle overrides it per device.
+ Data and logic stay metric regardless.
 - **Lodging lives in `stays.json` only.** `money.js` projects booked stays into
   the ledger as derived expenses. Never enter a hotel as a manual expense too.
 - **Only paid money creates debt.** `balances()` ignores expenses with no
@@ -46,10 +51,17 @@ break by accident.
   would invent money owed to nobody and balances would stop summing to zero. Use
   `forecast()` for the budget view that does count estimates.
 - **Route data under `data/route/` is generated.** Edit
-  `data/route/route-plan.json` and re-run the pipeline; never hand-edit a leg
-  file.
-- **`data/route/raw/` and `data/route/cache/` are gitignored.** They are
-  regenerable and large.
+ `data/route/route-plan.json` and re-run the pipeline; never hand-edit a leg
+ file.
+- **`data/photos.json` is generated too.** `tools/fetch_photos.py` owns it. To
+ change a photo, pin its Commons title in that script's `PICKS` table and re-run
+ with `--only <waypointId> --force`; do not edit the JSON.
+- **A waypoint photo may not be rendered without its credit.** These images are
+ used under CC BY and CC BY-SA, where naming the photographer is a condition of
+ use rather than a nicety. Go through `assets/js/ui/photo.js`, which emits the
+ image and the credit together, instead of writing an `<img>` for them.
+- **`data/route/raw/`, `data/route/cache/` and `tools/cache/` are gitignored.**
+ They are regenerable and large.
 
 ## Reading and writing data
 
@@ -96,7 +108,8 @@ never go backwards") over tests that restate the implementation.
 When adding or renaming a page, register it in three places or the checks will
 quietly stop covering it: `PAGE_MODULES` in `tools/test/static_check.py`, `PAGES`
 in `tools/test/page_smoke.js` plus the page list in `tools/test.sh`, and the
-`SHELL` array in `sw.js` so it is available offline.
+`SHELL` array in `sw.js` so it is available offline. A new shared module needs
+adding to `SHARED_MODULES` in `static_check.py` and to `SHELL` as well.
 
 There is no usable headless browser on this machine, so `tools/test/dom.js`
 provides a DOM small enough to run the real page controllers under

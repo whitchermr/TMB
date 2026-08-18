@@ -9,6 +9,7 @@ import * as schedule from '../core/schedule.js';
 import * as sun from '../core/sun.js';
 import { locateWaypoints, facingLabel } from '../core/geo.js';
 import * as mapUi from '../ui/map.js';
+import * as photos from '../ui/photo.js';
 import { createElevationChart } from '../ui/elevation.js';
 import { mountChrome, showLoadError, onRefresh, openChangesDialog } from '../ui/nav.js';
 
@@ -41,6 +42,7 @@ async function main() {
   state.hikeDays = state.calendar.filter((day) => day.kind === 'hike');
   state.legIndex = await store.loadRouteFile('legIndex');
   state.anchors = (await store.loadRouteFile('anchors')).anchors;
+  await photos.load();
 
   const requested = new URLSearchParams(window.location.search).get('d');
   state.day = state.hikeDays.find((day) => day.id === requested) || state.hikeDays[0];
@@ -466,6 +468,7 @@ function renderWaypoints() {
           </div>
           <div>
             <div class="wp__name">${mapUi.escapeHtml(waypoint.name)}</div>
+            ${photos.figure(photos.forWaypoint(waypoint.id))}
             ${
               waypoint.photo?.subject
                 ? `<div class="wp__subject">${mapUi.escapeHtml(waypoint.photo.subject)}</div>`

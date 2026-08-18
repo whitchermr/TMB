@@ -145,14 +145,53 @@ in both directions:
 
 | `startDate` | Hiking day 1 | Rest day | Matches the plan? |
 | --- | --- | --- | --- |
-| 2026-07-02 | Jul 3 | Jul 6 | yes — this is the seeded value |
-| 2026-07-03 | Jul 4 | Jul 7 | no, a day late throughout |
+| 2027-07-01 | Fri Jul 2 | Mon Jul 5 | yes — this is the seeded value |
+| 2027-07-02 | Sat Jul 3 | Tue Jul 6 | no, a day late throughout |
 
-The seed was initially set to Jul 3, which silently pushed every hiking day one
-day later than the group's table. It is now Jul 2, and
-`tools/test/run-tests.js` asserts both that hiking day 1 is the day after
-arrival and that it lands on Jul 3, so the same slip cannot come back unnoticed.
+The fixed point is the group's decision to **start walking on Friday 2 July
+2027**. Everything else follows from it: arrive Thursday 1 July, rest in
+Courmayeur on Monday 5 July, finish Friday 9 July. Because `startDate` is the
+arrival day, it is seeded one day earlier, at `2027-07-01`.
+
+That one-day gap has been set the wrong way twice, in both directions, so it is
+now defended in two places rather than only documented.
+`tools/test/run-tests.js` asserts the first walking day as a literal
+`2027-07-02`, and `plan.html` prints "Hiking day 1 is Fri Jul 2" directly under
+the date input — which makes the ambiguity visible at the moment someone would
+otherwise introduce it.
 
 Nothing else in the data stores a date. Every date on every page is derived by
 walking the itinerary from this one value, which is what makes shifting the trip
 or inserting a rest day a single-field edit.
+
+## Waypoint photographs
+
+Each of the 32 scenery stops carries a photograph of the view, because a name
+tells you a col is worth stopping at but not what to point a camera at.
+
+`tools/fetch_photos.py` finds them on Wikimedia Commons, which is the only large
+source of alpine photography with machine-readable licence and authorship data.
+Candidates come from a text search on hand-written terms per waypoint plus a
+geographic search around its coordinates, and are then scored on shape (a view is
+wide), proximity, whether the title names the place, and season. The files are
+copied into `assets/photos/` rather than hotlinked, so the pictures survive a
+valley with no signal and the site keeps its no-runtime-CDN property.
+
+Three rules in that scoring exist because of specific wrong answers it gave:
+
+- **Named or nearby, or nothing.** Text search will return a paddy field in Laos
+  for "Tré-le-Champ" if it has nothing better. A candidate now has to be
+  geotagged within 700 m or have at least half the waypoint's name in its title.
+- **Not winter, not 1930.** "Ice-covered Lac Blanc" is the same place and the
+  wrong view for early July, and Commons holds a lot of digitised Gallica plates
+  that show huts as they were ninety years ago.
+- **A score is not a judgement.** Run `tools/photo_contact_sheet.py` and look at
+  `docs/photo-review.html`. Five of the current set were chosen by eye and are
+  pinned in `PICKS`, including Nant Borrant, where Commons has no modern
+  photograph at all and the entry shows the Bon Nant torrent instead.
+
+Licences are limited to public domain, CC0, CC BY and CC BY-SA. Attribution is a
+condition of the last two, not a courtesy, so `assets/js/ui/photo.js` is the only
+way the pages render one of these images and it always emits the credit alongside.
+`tools/test/check_photos.py` fails the build on a missing photographer, a licence
+outside that set, or a file whose size no longer matches what was recorded.

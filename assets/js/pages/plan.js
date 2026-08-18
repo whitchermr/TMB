@@ -167,6 +167,15 @@ function render() {
   state.calendar = schedule.buildCalendar(itinerary, settings.trip.startDate);
 
   document.getElementById('pace-value').textContent = units.speed(settings.pace.flatSpeedKmh);
+
+  // The date field is the arrival day, not the first day of walking. Spelling
+  // out the consequence stops the two being confused, which silently shifts the
+  // whole trip by a day.
+  const firstHike = state.calendar.find((day) => day.kind === 'hike');
+  document.getElementById('start-date-note').textContent = firstHike
+    ? `Hiking day 1 is ${schedule.formatDate(firstHike.date, { weekday: true, year: true })}`
+    : 'No hiking days in the itinerary';
+
   document.getElementById('model-note').textContent =
     settings.pace.model === 'tobler'
       ? 'A continuous speed-versus-slope curve, fastest on a gentle downhill.'

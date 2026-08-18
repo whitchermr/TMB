@@ -19,6 +19,9 @@ const VERSION = 'v1';
 const SHELL_CACHE = `tmb-shell-${VERSION}`;
 const DATA_CACHE = `tmb-data-${VERSION}`;
 const TILE_CACHE = 'tmb-tiles'; // unversioned: tiles do not change with releases
+// Also unversioned, and for the same reason: a waypoint photograph is replaced by
+// re-running the pipeline, not by shipping a new version of the site.
+const PHOTO_CACHE = 'tmb-photos';
 
 // Tiles come back as opaque cross-origin responses, whose size is padded for
 // quota accounting and cannot be read from script, so the cap is a tile count
@@ -66,6 +69,7 @@ const SHELL = [
   'assets/js/ui/map.js',
   'assets/js/ui/elevation.js',
   'assets/js/ui/offline.js',
+  'assets/js/ui/photo.js',
   'assets/js/pages/index.js',
   'assets/js/pages/day.js',
   'assets/js/pages/plan.js',
@@ -83,6 +87,7 @@ const DATA = [
   'data/stays.json',
   'data/expenses.json',
   'data/rates.json',
+  'data/photos.json',
   'data/route/anchors.json',
   'data/route/legs/index.json',
   'data/route/tmb-main.geojson',
@@ -139,7 +144,7 @@ async function legPaths() {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
-      const keep = new Set([SHELL_CACHE, DATA_CACHE, TILE_CACHE]);
+      const keep = new Set([SHELL_CACHE, DATA_CACHE, TILE_CACHE, PHOTO_CACHE]);
       const names = await caches.keys();
       await Promise.all(
         names.filter((name) => name.startsWith('tmb-') && !keep.has(name)).map((name) => caches.delete(name))
@@ -173,6 +178,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Waypoint photographs are a few hundred KB each and never change in place, so
+  // revalidating them on every visit would spend the trip's data allowance on
+  // responses that are always 304. They are not precached either: they are only
+  // wanted once someone has looked at the day, and that is when they arrive.
+  if (url.pathname.includes('/assets/photos/')) {
+    event.respondWith(cacheFirst(request, PHOTO_CACHE));
+    return;
+  }
+
   event.respondWith(staleWhileRevalidate(request, SHELL_CACHE));
 });
 
@@ -194,6 +208,18 @@ async function tileFirst(request) {
     // showing broken-image icons across the whole map.
     return blankTile();
   }
+}
+
+async function cacheFirst(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const hit = await cache.match(request);
+  if (hit) return hit;
+
+  const response = await fetch(request);
+  if (response && response.ok) {
+    cache.put(request, response.clone()).catch(() => {});
+  }
+  return response;
 }
 
 async function networkFirst(request, cacheName) {
@@ -347,10 +373,11 @@ async function prefetchTiles(urls, client) {
 }
 
 async function reportStatus(client) {
-  const [tiles, shell, data] = await Promise.all([
+  const [tiles, shell, data, photos] = await Promise.all([
     caches.open(TILE_CACHE).then((cache) => cache.keys()),
     caches.open(SHELL_CACHE).then((cache) => cache.keys()),
     caches.open(DATA_CACHE).then((cache) => cache.keys()),
+    caches.open(PHOTO_CACHE).then((cache) => cache.keys()),
   ]);
 
   let usage = null;
@@ -371,6 +398,7 @@ async function reportStatus(client) {
     tiles: tiles.length,
     shell: shell.length,
     data: data.length,
+    photos: photos.length,
     usage,
     quota,
   });

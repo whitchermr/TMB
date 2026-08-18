@@ -4,12 +4,47 @@
     "Everyone on the trip. `id` is referenced by expenses and stays, so change",
     "names freely but do not renumber ids once expenses exist.",
     "`shares` weights the default equal split — leave at 1 for a normal split,",
-    "or use 2 for a couple sharing one entry."
+    "or use 2 for a couple sharing one entry.",
+    "`color` identifies a person in the balance bars and split chips; the six",
+    "here are drawn from the palette in assets/css/base.css so they stay",
+    "distinguishable from each other and legible in dark mode."
   ],
   "people": [
-    { "id": "p1", "name": "David", "shares": 1, "color": "#2f6f4e" },
-    { "id": "p2", "name": "Friend 2", "shares": 1, "color": "#b5651d" },
-    { "id": "p3", "name": "Friend 3", "shares": 1, "color": "#3b6ea5" },
-    { "id": "p4", "name": "Friend 4", "shares": 1, "color": "#7d5ba6" }
+    {
+      "id": "p1",
+      "name": "David",
+      "shares": 1,
+      "color": "#2f6f4e"
+    },
+    {
+      "id": "p2",
+      "name": "Amanda",
+      "shares": 1,
+      "color": "#b5651d"
+    },
+    {
+      "id": "p3",
+      "name": "Jordan",
+      "shares": 1,
+      "color": "#3b6ea5"
+    },
+    {
+      "id": "p4",
+      "name": "Sarah",
+      "shares": 1,
+      "color": "#7d5ba6"
+    },
+    {
+      "id": "p5",
+      "name": "Seth",
+      "shares": 1,
+      "color": "#9d2f2f"
+    },
+    {
+      "id": "p6",
+      "name": "Kia",
+      "shares": 1,
+      "color": "#1f7a8c"
+    }
   ]
 }

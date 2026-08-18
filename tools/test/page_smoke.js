@@ -36,7 +36,7 @@ const PAGES = {
     contains: [
       ['day-list', 'Les Houches', 'the first stage'],
       ['day-list', 'Courmayeur', 'the Italian stage'],
-      ['trip-stats', ' km', 'a distance in the totals'],
+      ['trip-stats', ' mi', 'a distance in the totals'],
     ],
   },
   day: {
@@ -50,6 +50,9 @@ const PAGES = {
       ['day-title', 'Les Contamines', 'the day-1 destination'],
       ['waypoint-list', 'Col de Voza', 'a day-1 scenery stop'],
       ['sun-stats', ':', 'a clock time in the sun panel'],
+      // The credit is rendered from the photo entry, so finding a licence in the
+      // scenery list proves the photograph itself was rendered with it.
+      ['waypoint-list', 'CC BY', 'a photo credit beside a scenery stop'],
     ],
   },
   day4: {
@@ -67,10 +70,21 @@ const PAGES = {
     file: 'plan.html',
     module: '../../assets/js/pages/plan.js',
     url: 'https://example.test/plan.html',
-    expect: ['plan-stats', 'plan-table', 'model-compare', 'light-table', 'rest-list'],
+    expect: [
+      'plan-stats',
+      'plan-table',
+      'model-compare',
+      'light-table',
+      'rest-list',
+      'start-date-note',
+    ],
     contains: [
       ['plan-table', 'Jul', 'dates derived from the start date'],
       ['light-table', 'Col', 'a col in the light plan'],
+      // No device preference is set in the shim, so this is the committed group
+      // default coming through — miles, not kilometres.
+      ['plan-stats', ' mi', 'distances default to miles'],
+      ['start-date-note', 'Hiking day 1', 'the arrival day is distinguished from day 1'],
     ],
   },
   stays: {

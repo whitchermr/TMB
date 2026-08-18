@@ -18,5 +18,9 @@ Generalized Product Development Processes/
 data/route/raw/
 data/route/cache/
 
+# Cached Wikimedia Commons API responses from tools/fetch_photos.py. The chosen
+# photos and their attribution are committed; the search results are not.
+tools/cache/
+
 # Logs
 *.log

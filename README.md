@@ -58,7 +58,10 @@ assets/icons/         App icon, as SVG plus rasterised PNGs
 
 data/                 Trip data — edited through the UI, committed as JSON
 data/route/           Generated trail geometry, legs and elevation
+data/photos.json      Generated: one photo per scenery stop, with attribution
+assets/photos/        The photographs themselves, stored for offline use
 docs/data-notes.md    Provenance, calibration, and known discrepancies
+docs/photo-review.html  Generated contact sheet for checking the photos by eye
 tools/                Data pipeline and tests
 ```
 
@@ -66,12 +69,47 @@ tools/                Data pipeline and tests
 
 `data/settings.json` holds one date, `trip.startDate`, and every other date is
 derived from it. It is the **arrival day** — the first entry in
-`data/itinerary.json` — not the first day of walking. The seeded value of
-`2026-07-02` therefore puts hiking day 1 on Jul 3 and the Courmayeur rest day on
-Jul 6, matching the group's original table.
+`data/itinerary.json` — not the first day of walking.
+
+We start walking on **Fri 2 July 2027**, so the seeded value is `2027-07-01`.
+That puts the Courmayeur rest day on Mon 5 July and the last hiking day on
+Fri 9 July.
+
+Because that one-day distinction is easy to lose, the planner prints "Hiking day 1
+is Fri Jul 2" directly beneath the date field.
 
 Nothing else stores a date, so moving the start or inserting a rest day reflows
 the entire trip, sun times included.
+
+## Units
+
+Distances default to **miles** and elevations to **feet**, from `units` in
+`data/settings.json`. All stored data and every calculation stay in metres —
+conversion happens only at render time in `assets/js/core/units.js` — so the
+toggle in the header switches the whole site without touching the data. That
+toggle is a per-device preference and overrides the committed default.
+
+## Photographs
+
+Every scenery stop shows a photograph of the view, sourced from Wikimedia Commons
+and stored in `assets/photos/` so it works offline. Regenerate or extend the set
+with:
+
+```bash
+tools/fetch_photos.py                    # fill in anything missing
+tools/fetch_photos.py --only lac-blanc --force    # re-pick one
+tools/photo_contact_sheet.py             # writes docs/photo-review.html
+```
+
+The picker is a best guess and is meant to be reviewed: open
+`docs/photo-review.html`, and to replace a photo add its Commons title to `PICKS`
+in `tools/fetch_photos.py` and re-run with `--only … --force`.
+
+Only public domain, CC0, CC BY and CC BY-SA files are accepted, and the
+photographer and licence are shown wherever a photo appears — that is a condition
+of the licence, which is why `assets/js/ui/photo.js` renders the image and the
+credit together and nothing else builds an `<img>` for these. `docs/data-notes.md`
+explains how candidates are scored and why.
 
 ## On the trail
 
@@ -144,7 +182,7 @@ trail, and the script reports how far off it was so a mistake is obvious.
 ./tools/test.sh
 ```
 
-Five layers, all using tools that ship with macOS — no Node, no npm, nothing to
+Six layers, all using tools that ship with macOS — no Node, no npm, nothing to
 install:
 
 - **Syntax check** of every JavaScript file via JavaScriptCore's
@@ -159,6 +197,11 @@ install:
   It also rejects root-absolute paths, which break under a Pages project
   subpath. Module specifiers are resolved against the file, `fetch()` calls
   against the document, matching what browsers do.
+- **Photo and credit check** (`tools/test/check_photos.py`) confirming every
+  photograph is on disk at the recorded size and carries a photographer and a
+  redistributable licence. That last part is not cosmetic: attribution is a term
+  of the CC BY and CC BY-SA licences these files are used under, so an empty
+  credit fails the build.
 - **Served-site check** (`tools/test/serve_check.sh`) serving the repo from a
   `/TMB/` subdirectory — the way a GitHub Pages project site is served — and
   requesting every page, asset and data file, asserting 200s and correct content
