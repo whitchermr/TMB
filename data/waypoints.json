@@ -344,6 +344,7 @@
       "lon": 6.97844,
       "elevation_m": 1970,
       "priority": 2,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "Balcony viewpoint straight across to the Grandes Jorasses",
         "facing": "NE",
@@ -360,6 +361,7 @@
       "lon": 7.03366,
       "elevation_m": 2030,
       "priority": 1,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "The postcard Grandes Jorasses panorama, with Mont Blanc's Italian ridges running left",
         "facing": "NW",
@@ -392,6 +394,7 @@
       "lon": 7.06564,
       "elevation_m": 2055,
       "priority": 2,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "Glacier de Pré de Bar tumbling down directly opposite",
         "facing": "W",

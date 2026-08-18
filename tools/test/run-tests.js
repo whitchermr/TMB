@@ -65,6 +65,7 @@ import * as geo from '../../assets/js/core/geo.js';
 import * as schedule from '../../assets/js/core/schedule.js';
 import * as sun from '../../assets/js/core/sun.js';
 import * as money from '../../assets/js/core/money.js';
+import * as sync from '../../assets/js/core/sync.js';
 
 const legIndex = json('data/route/legs/index.json');
 const anchors = json('data/route/anchors.json').anchors;
@@ -75,6 +76,7 @@ const people = json('data/people.json');
 const rates = json('data/rates.json');
 const stays = json('data/stays.json');
 const expensesFile = json('data/expenses.json');
+const packingFile = json('data/packing.json');
 const photos = json('data/photos.json').photos;
 const history = json('data/history.json').entries;
 const { isPhotographic, isHistoric } = geo;
@@ -691,13 +693,17 @@ ok(
   history.every((entry) => entry.sources?.length >= 1),
   'every writeup cites at least one source'
 );
+// http is tolerated because a handful of refuges are the only authority on their
+// own history and have never been served over TLS. Refusing them would push these
+// citations onto aggregator sites, which is demonstrably worse: the one for
+// Rifugio Bertone has both its opening decade and its valley wrong.
 ok(
   history.every((entry) =>
     entry.sources.every(
-      (source) => source.title && source.publisher && /^https:\/\//.test(source.url)
+      (source) => source.title && source.publisher && /^https?:\/\//.test(source.url)
     )
   ),
-  'every source has a title, a publisher and an https link'
+  'every source has a title, a publisher and a resolvable link'
 );
 // A landmark is placed by projecting it onto whichever variant is selected, so one
 // that only lands on the classic line would vanish from the map on a shortcut day.
@@ -786,6 +792,205 @@ legIndex.forEach((entry) => {
       );
     });
 });
+
+/* ------------------------------------------------------------------ */
+describe('sync: applying shared operations');
+
+// Operations are built by hand here rather than through sync.upsert() so that
+// timestamps and ids are fixed and the ordering assertions mean something.
+const anOp = (fields) => ({
+  id: 'op-fixed',
+  at: '2027-01-01T00:00:00.000Z',
+  by: 'p1',
+  file: 'packing',
+  collection: 'items',
+  op: 'upsert',
+  ...fields,
+});
+const anItem = (id, extra = {}) => ({
+  id,
+  name: id,
+  category: 'worn',
+  essential: false,
+  note: '',
+  ...extra,
+});
+const aBase = (items) => ({ categories: packingFile.categories, items });
+
+ok(
+  sync.reduce(aBase([]), [anOp({ key: 'x', value: anItem('x') })]).items.length === 1,
+  'an upsert of a new record adds it'
+);
+ok(
+  sync.reduce(aBase([anItem('x', { name: 'before' })]), [
+    anOp({ key: 'x', value: anItem('x', { name: 'after' }) }),
+  ]).items[0].name === 'after',
+  'an upsert of an existing record replaces it in place'
+);
+ok(
+  sync.reduce(aBase([anItem('x'), anItem('y')]), [
+    anOp({ op: 'remove', key: 'x' }),
+  ]).items.map((entry) => entry.id).join(',') === 'y',
+  'a remove takes the record out'
+);
+ok(
+  sync.reduce(aBase([]), [anOp({ op: 'remove', key: 'nothing' })]).items.length === 0,
+  'removing something that is not there is harmless'
+);
+
+// The later operation has the alphabetically earlier id on purpose: a comparator
+// that fell back to id without checking the timestamp first would pick the wrong
+// winner here and nowhere else.
+const earlier = anOp({
+  id: 'op-z',
+  at: '2027-01-01T00:00:00.000Z',
+  key: 'x',
+  value: anItem('x', { name: 'earlier' }),
+});
+const later = anOp({
+  id: 'op-a',
+  at: '2027-06-01T00:00:00.000Z',
+  key: 'x',
+  value: anItem('x', { name: 'later' }),
+});
+ok(
+  sync.reduce(aBase([]), [later, earlier]).items[0].name === 'later',
+  'the later edit wins regardless of the order the operations arrive in'
+);
+
+const tieOne = anOp({ id: 'op-a', key: 'x', value: anItem('x', { name: 'a' }) });
+const tieTwo = anOp({ id: 'op-b', key: 'x', value: anItem('x', { name: 'b' }) });
+ok(
+  sync.reduce(aBase([]), [tieOne, tieTwo]).items[0].name ===
+    sync.reduce(aBase([]), [tieTwo, tieOne]).items[0].name,
+  'two edits in the same millisecond resolve identically on every device'
+);
+
+// A removed default has to survive as something restorable, which only works if
+// the committed file is left alone by the reducer.
+const untouched = aBase([anItem('x')]);
+const before = JSON.stringify(untouched);
+sync.reduce(untouched, [anOp({ op: 'remove', key: 'x' })]);
+ok(JSON.stringify(untouched) === before, 'reducing does not modify the committed file');
+
+ok(
+  sync.reduce(aBase([]), [anOp({ collection: 'categories', key: 'x', value: anItem('x') })])
+    .categories.length === packingFile.categories.length,
+  'an operation aimed at a collection that is not open to sync is ignored'
+);
+ok(
+  sync.reduce(aBase([]), [anOp({ file: 'settings', key: 'x', value: anItem('x') })]).items
+    .length === 0,
+  'an operation aimed at a file that is not open to sync is ignored'
+);
+ok(!sync.isAllowed('settings', 'pace'), 'the allow-list does not cover settings');
+ok(sync.isAllowed('packing', 'items'), 'the allow-list covers the packing items');
+
+// The Worker enforces its own copy of the allow-list, because it cannot import
+// from the site. Drift between the two shows up as a save that is accepted by
+// the page and silently rejected on the way out, so it is worth checking
+// mechanically rather than trusting that both got edited.
+const workerSource = readFile('tools/sync-worker/worker.js');
+const workerTable = workerSource.match(/const COLLECTIONS = \{([\s\S]*?)\n\};/);
+ok(Boolean(workerTable), 'the Worker declares an allow-list');
+if (workerTable) {
+  const workerPairs = [...workerTable[1].matchAll(/(\w+):\s*\[([^\]]*)\]/g)]
+    .map(([, file, list]) => `${file}:${list.replace(/['"\s]/g, '')}`)
+    .sort()
+    .join('|');
+  const sitePairs = Object.entries(sync.COLLECTIONS)
+    .map(([file, list]) => `${file}:${list.join(',')}`)
+    .sort()
+    .join('|');
+  ok(
+    workerPairs === sitePairs,
+    'the Worker and the site agree on what may be synced',
+    `worker has ${workerPairs}, site has ${sitePairs}`
+  );
+}
+
+/* ------------------------------------------------------------------ */
+describe('sync: what counts as a valid operation');
+
+ok(sync.validate(anOp({ key: 'x', value: anItem('x') })) === null, 'a well-formed upsert passes');
+ok(
+  sync.validate(anOp({ key: 'x', value: anItem('y') })) !== null,
+  'a record whose id disagrees with the key is refused'
+);
+ok(
+  sync.validate(anOp({ key: 'x', value: anItem('x', { note: 'z'.repeat(5000) }) })) !== null,
+  'an oversized record is refused'
+);
+ok(sync.validate(anOp({ op: 'drop', key: 'x' })) !== null, 'an unknown verb is refused');
+ok(
+  sync.validate(anOp({ at: 'whenever', key: 'x', value: anItem('x') })) !== null,
+  'an unparseable timestamp is refused'
+);
+ok(sync.validate(anOp({ key: '', value: anItem('') })) !== null, 'a missing key is refused');
+
+/* ------------------------------------------------------------------ */
+describe('sync: the outbox');
+
+sync.discardPending();
+ok(sync.pending().length === 0, 'the outbox starts empty');
+ok(sync.status().configured === false, 'sync is off until an endpoint and passphrase exist');
+
+sync.upsert('packing', 'items', anItem('pk-queued'));
+ok(sync.pending('packing').length === 1, 'saving an item queues one operation');
+ok(sync.pending('stays').length === 0, 'the queue is kept per file');
+ok(sync.status().pending === 1, 'the status reports what is waiting');
+
+let refused = false;
+try {
+  sync.queue(anOp({ key: 'x', value: anItem('y') }));
+} catch {
+  refused = true;
+}
+ok(refused, 'queueing an invalid operation throws rather than storing it');
+ok(sync.pending().length === 1, 'the refused operation never reached the queue');
+
+sync.discardPending();
+ok(sync.pending().length === 0, 'discarding clears the queue');
+
+/* ------------------------------------------------------------------ */
+describe('packing list defaults');
+
+const packingIds = packingFile.items.map((entry) => entry.id);
+const packingCategories = new Set(packingFile.categories.map((entry) => entry.id));
+ok(new Set(packingIds).size === packingIds.length, 'no two items share an id');
+ok(
+  packingFile.items.every((entry) => packingCategories.has(entry.category)),
+  'every item sits in a category that exists',
+  packingFile.items
+    .filter((entry) => !packingCategories.has(entry.category))
+    .map((entry) => entry.id)
+    .join(', ')
+);
+ok(
+  packingFile.items.every((entry) => entry.name && entry.name.trim().length > 2),
+  'every item is named'
+);
+ok(
+  packingFile.items.every((entry) => typeof entry.essential === 'boolean'),
+  'essential is always an explicit boolean'
+);
+ok(
+  packingFile.categories.every((entry) => entry.id && entry.label),
+  'every category has an id and a label'
+);
+// The essentials filter is only worth having if it narrows the list. All-or-none
+// would both render it useless, in opposite directions.
+const essentials = packingFile.items.filter((entry) => entry.essential);
+ok(
+  essentials.length > packingFile.items.length * 0.1 &&
+    essentials.length < packingFile.items.length * 0.6,
+  'essentials are a meaningful minority of the list',
+  `${essentials.length} of ${packingFile.items.length}`
+);
+ok(
+  typeof settings.sync?.endpoint === 'string',
+  'settings carries a sync endpoint, even if it is empty'
+);
 
 /* ------------------------------------------------------------------ */
 
