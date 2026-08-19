@@ -30,5 +30,21 @@
       "essential": false,
       "note": "testing syncing. Update testing"
     }
+  },
+  {
+    "id": "op-mszimxe95n",
+    "at": "2026-08-19T03:12:14.481Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-base-layers",
+    "value": {
+      "id": "pk-base-layers",
+      "name": "Base layer tops (2) test test",
+      "category": "worn",
+      "essential": false,
+      "note": "Merino or synthetic. One on, one drying."
+    }
   }
 ]
