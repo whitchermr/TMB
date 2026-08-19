@@ -103,5 +103,14 @@
       "essential": false,
       "note": ""
     }
+  },
+  {
+    "id": "op-mszipv8u14",
+    "at": "2026-08-19T03:14:31.662Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "remove",
+    "key": "pk-sun-hat"
   }
 ]
