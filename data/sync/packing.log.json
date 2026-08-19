@@ -153,5 +153,21 @@
       "essential": false,
       "note": ""
     }
+  },
+  {
+    "id": "op-msziwz6p03",
+    "at": "2026-08-19T03:20:03.361Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-sun-hat",
+    "value": {
+      "id": "pk-sun-hat",
+      "name": "Sun hat or cap",
+      "category": "worn",
+      "essential": false,
+      "note": "Long exposed traverses above the treeline with no shade."
+    }
   }
 ]
