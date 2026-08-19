@@ -15,7 +15,7 @@
  * domain root or under a GitHub Pages project subpath like /TMB/.
  */
 
-const VERSION = 'v5';
+const VERSION = 'v6';
 const SHELL_CACHE = `tmb-shell-${VERSION}`;
 const DATA_CACHE = `tmb-data-${VERSION}`;
 const TILE_CACHE = 'tmb-tiles'; // unversioned: tiles do not change with releases
@@ -135,6 +135,11 @@ self.addEventListener('install', (event) => {
           data.add(new Request(path, { cache: 'reload' })).catch(() => {})
         )
       );
+      // Take over open tabs so a VERSION bump is not stuck behind "close every
+      // tab of this site". Without this, a phone that left transit.html open
+      // keeps serving the previous shell from cache and the update looks like it
+      // never reached GitHub.
+      await self.skipWaiting();
     })()
   );
 });
