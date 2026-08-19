@@ -112,5 +112,21 @@
     "collection": "items",
     "op": "remove",
     "key": "pk-sun-hat"
+  },
+  {
+    "id": "op-mszivovjts",
+    "at": "2026-08-19T03:19:03.343Z",
+    "by": "p2",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-mszivovjru",
+    "value": {
+      "id": "pk-mszivovjru",
+      "name": "amanda's item",
+      "category": "worn",
+      "essential": false,
+      "note": "test"
+    }
   }
 ]
