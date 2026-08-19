@@ -169,5 +169,21 @@
       "essential": false,
       "note": "Long exposed traverses above the treeline with no shade."
     }
+  },
+  {
+    "id": "op-mszixakj5e",
+    "at": "2026-08-19T03:20:18.115Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-mszixakikc",
+    "value": {
+      "id": "pk-mszixakikc",
+      "name": "test",
+      "category": "worn",
+      "essential": false,
+      "note": ""
+    }
   }
 ]
