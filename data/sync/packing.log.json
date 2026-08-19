@@ -128,5 +128,14 @@
       "essential": false,
       "note": "test"
     }
+  },
+  {
+    "id": "op-msziw1qfvu",
+    "at": "2026-08-19T03:19:20.007Z",
+    "by": "p2",
+    "file": "packing",
+    "collection": "items",
+    "op": "remove",
+    "key": "pk-mszivovjru"
   }
 ]
