@@ -14,5 +14,21 @@
       "essential": false,
       "note": "testing syncing"
     }
+  },
+  {
+    "id": "op-mszid3pheq",
+    "at": "2026-08-19T03:04:36.101Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-mszhln6ub3",
+    "value": {
+      "id": "pk-mszhln6ub3",
+      "name": "delete me delete me",
+      "category": "worn",
+      "essential": false,
+      "note": "testing syncing. Update testing"
+    }
   }
 ]
