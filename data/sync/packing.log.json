@@ -1,0 +1,18 @@
+[
+  {
+    "id": "op-mszhln6ut5",
+    "at": "2026-08-19T02:43:14.982Z",
+    "by": null,
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-mszhln6ub3",
+    "value": {
+      "id": "pk-mszhln6ub3",
+      "name": "delete me",
+      "category": "worn",
+      "essential": false,
+      "note": "testing syncing"
+    }
+  }
+]
