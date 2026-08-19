@@ -71,5 +71,21 @@
     "collection": "items",
     "op": "remove",
     "key": "pk-mszhln6ub3"
+  },
+  {
+    "id": "op-mszip9v2v7",
+    "at": "2026-08-19T03:14:03.950Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-mszip9v2gy",
+    "value": {
+      "id": "pk-mszip9v2gy",
+      "name": "brave item",
+      "category": "worn",
+      "essential": false,
+      "note": ""
+    }
   }
 ]
