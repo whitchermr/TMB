@@ -456,6 +456,25 @@ class Element extends Node {
     this.setAttribute('id', value);
   }
 
+  // A real browser resolves this against the document URL, but the pages only
+  // ever write relative links and only ever read back what they wrote, so
+  // reflecting the attribute verbatim is both enough and less surprising.
+  get href() {
+    return this.getAttribute('href') || '';
+  }
+
+  set href(value) {
+    this.setAttribute('href', value);
+  }
+
+  get title() {
+    return this.getAttribute('title') || '';
+  }
+
+  set title(value) {
+    this.setAttribute('title', value);
+  }
+
   get className() {
     return this.getAttribute('class') || '';
   }
@@ -597,6 +616,12 @@ class Element extends Node {
       details.open = !details.open;
       details.dispatchEvent(new SyntheticEvent('toggle', { bubbles: false }));
     }
+    // Ticking a checkbox flips it and fires change, for the same reason: a page
+    // that listens for change on a checkbox is untestable without it.
+    if (this.tagName === 'input' && this.getAttribute('type') === 'checkbox') {
+      this.checked = !this.checked;
+      this.dispatchEvent(new SyntheticEvent('change', { bubbles: true }));
+    }
   }
 
   /* dialog */
@@ -695,6 +720,13 @@ class SyntheticEvent {
 class ShimSearchParams {
   constructor(init = '') {
     this.pairs = [];
+    // A plain object is the form the pages use to build a link in one expression.
+    // Without this it stringifies to "[object Object]" and the link still renders,
+    // so the failure would be a silently unfiltered destination page.
+    if (init && typeof init === 'object' && !Array.isArray(init)) {
+      Object.entries(init).forEach(([key, value]) => this.pairs.push([key, String(value)]));
+      return;
+    }
     const text = String(init).replace(/^\?/, '');
     if (text) {
       text.split('&').forEach((chunk) => {
@@ -874,6 +906,9 @@ export function installDom(html, config = {}) {
       language: 'en-US',
       languages: ['en-US'],
       clipboard: { writeText: () => Promise.resolve() },
+      // Reported online, so a page that guards network calls on connectivity
+      // takes its normal path here rather than a permanently-offline one.
+      onLine: true,
       // Absent on purpose: 'serviceWorker' in navigator must be false so the
       // offline module short-circuits instead of reaching for a worker.
       storage: { estimate: () => Promise.resolve({ usage: 0, quota: 0 }) },

@@ -15,6 +15,8 @@ const PAGES = [
   { href: 'plan.html', label: 'Planner' },
   { href: 'stays.html', label: 'Stays' },
   { href: 'money.html', label: 'Money' },
+  { href: 'packing.html', label: 'Packing' },
+  { href: 'transit.html', label: 'Transit' },
   { href: 'print.html', label: 'Brief' },
   { href: 'about.html', label: 'About' },
 ];
@@ -27,6 +29,8 @@ const FILE_LABELS = {
   stays: 'Lodging',
   expenses: 'Expenses',
   rates: 'Exchange rates',
+  packing: 'Packing list',
+  transit: 'Transit and logistics',
 };
 
 function currentPage() {
@@ -251,8 +255,9 @@ export function showLoadError(error) {
   console.error(error);
 }
 
-/** Re-render a page when units change or the store updates. */
+/** Re-render a page when units change, the store updates, or shared edits land. */
 export function onRefresh(handler) {
   document.addEventListener('tmb:units', handler);
+  document.addEventListener('tmb:sync', handler);
   store.subscribe(handler);
 }

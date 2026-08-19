@@ -35,7 +35,7 @@ done
 
 PATHS=(
   "index.html" "day.html?d=1" "day.html?d=4" "plan.html" "stays.html"
-  "money.html" "about.html" ".nojekyll"
+  "money.html" "packing.html" "transit.html" "about.html" ".nojekyll"
   "assets/css/base.css" "assets/css/components.css" "assets/css/print.css"
   "assets/vendor/leaflet/leaflet.js" "assets/vendor/leaflet/leaflet.css"
   "assets/vendor/leaflet/images/marker-icon.png"
@@ -44,11 +44,14 @@ PATHS=(
   "assets/vendor/leaflet/images/layers.png"
   "assets/js/core/store.js" "assets/js/core/units.js" "assets/js/core/geo.js"
   "assets/js/core/sun.js" "assets/js/core/schedule.js" "assets/js/core/money.js"
+  "assets/js/core/sync.js" "assets/js/core/transit.js"
   "assets/js/ui/nav.js" "assets/js/ui/map.js" "assets/js/ui/elevation.js"
   "assets/js/pages/index.js" "assets/js/pages/day.js" "assets/js/pages/plan.js"
   "assets/js/pages/stays.js" "assets/js/pages/money.js" "assets/js/pages/about.js"
+  "assets/js/pages/packing.js" "assets/js/pages/transit.js"
   "data/settings.json" "data/itinerary.json" "data/waypoints.json"
   "data/stays.json" "data/people.json" "data/expenses.json" "data/rates.json"
+  "data/packing.json" "data/transit.json" "data/transit-schedules.json"
   "data/route/anchors.json" "data/route/legs/index.json"
   "data/route/tmb-main.geojson" "data/route/variants/index.json"
   "sw.js" "manifest.webmanifest"

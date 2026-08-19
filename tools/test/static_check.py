@@ -27,6 +27,8 @@ PAGE_MODULES = {
     "plan.html": "assets/js/pages/plan.js",
     "stays.html": "assets/js/pages/stays.js",
     "money.html": "assets/js/pages/money.js",
+    "packing.html": "assets/js/pages/packing.js",
+    "transit.html": "assets/js/pages/transit.js",
     "print.html": "assets/js/pages/print.js",
     "about.html": "assets/js/pages/about.js",
 }
@@ -40,11 +42,13 @@ SHARED_MODULES = [
     "assets/js/ui/photo.js",
     "assets/js/ui/history.js",
     "assets/js/core/store.js",
+    "assets/js/core/sync.js",
     "assets/js/core/units.js",
     "assets/js/core/geo.js",
     "assets/js/core/sun.js",
     "assets/js/core/schedule.js",
     "assets/js/core/money.js",
+    "assets/js/core/transit.js",
 ]
 
 ID_ATTR = re.compile(r"""\bid\s*=\s*["']([A-Za-z][\w:-]*)["']""")

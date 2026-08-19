@@ -78,6 +78,53 @@ store.update('settings', (data) => {              // receives a deep clone
 `update()` diffs against the committed file and drops the draft when a value is
 edited back to its original, so the unsaved badge never lies.
 
+### Shared edits
+
+`data/packing.json` works differently, and it is the pattern the other files are
+meant to move to. Nothing writes it from a browser. An edit becomes an
+**operation** appended to a log through `assets/js/core/sync.js`, and the current
+state is `reduce(committed file, log)`:
+
+```js
+sync.init('packing');                                  // load the cached log
+const current = sync.view('packing');                  // committed + log + outbox
+sync.upsert('packing', 'items', { id, name, ... });    // add or replace a record
+sync.remove('packing', 'items', id);                   // hide a record
+```
+
+Things to know before touching it:
+
+- **Operations, not files, because operations compose.** Two people saving a whole
+ file means the second write is rejected for a stale revision and whoever retries
+ last erases the other's work. Two operations on different records both survive.
+- **An upsert replaces the whole record.** Two people editing one record at the
+ same time means the later save wins outright. That is deliberate; per-field
+ merging would be far harder to reason about for no benefit here.
+- **A removal is an operation, not a deletion.** The item stays in the committed
+ file, which is what lets the page offer it back under "Removed from the default
+ list". Never fix a removal by editing the record out of `packing.json`.
+- **`COLLECTIONS` exists twice on purpose** — in `sync.js` and in
+ `tools/sync-worker/worker.js`, which cannot import from the site. Extending the
+ pattern to a new file means editing both, and `run-tests.js` asserts they agree,
+ because drift shows up as a save the page accepts and the Worker silently
+ rejects.
+- **Device-local state is not a shared edit.** Who you are (`pref('me')`) and what
+ you have ticked off both live in preferences. Six people ticking the same shared
+ boxes would tell the group nothing, and a tick must never cost a commit.
+- **The log lives on an unpublished branch, and publishing is debounced for a
+ different reason.** Pages throttles rebuilds at around ten an hour, which is why
+ the log is committed to `sync` rather than `main` — a commit there triggers no
+ deploy at all. The debounce in `queue()` is a smaller, separate thing: it folds
+ operations made together into one commit, keeping the log readable and saving
+ round trips. It is deliberately short, because an operation still inside the
+ window when a tab closes waits for that person's next visit; `visibilitychange`
+ publishes on the way out to narrow that gap. Do not add a code path that commits
+ per keystroke.
+
+`docs/sync-setup.md` covers the deployment side. `tools/squash_sync.py` folds a
+long log back into the committed file, using the site's own reducer through
+`tools/reduce_log.js` rather than a second implementation of the same rules.
+
 ## Accuracy expectations
 
 The numbers on this site are checked, not decorative. Before changing anything in
@@ -105,11 +152,23 @@ When adding logic to `core/`, add assertions to `tools/test/run-tests.js`. Prefe
 tests that would catch a real regression ("balances sum to zero", "arrival times
 never go backwards") over tests that restate the implementation.
 
-When adding or renaming a page, register it in three places or the checks will
-quietly stop covering it: `PAGE_MODULES` in `tools/test/static_check.py`, `PAGES`
-in `tools/test/page_smoke.js` plus the page list in `tools/test.sh`, and the
-`SHELL` array in `sw.js` so it is available offline. A new shared module needs
-adding to `SHARED_MODULES` in `static_check.py` and to `SHELL` as well.
+When adding or renaming a page, register it everywhere below. Miss one and the
+checks quietly stop covering it, which is worse than a failure:
+
+| Where | What |
+|---|---|
+| `PAGES` in `assets/js/ui/nav.js` | the header link |
+| `SHELL` in `sw.js` | so the page works offline |
+| `PAGE_MODULES` in `tools/test/static_check.py` | element-id and import checks |
+| `PAGES` in `tools/test/page_smoke.js` | actually runs the controller |
+| the page loop in `tools/test.sh` | runs that smoke test |
+| `PATHS` in `tools/test/serve_check.sh` | serves it from a Pages subpath |
+
+A new shared module goes in `SHARED_MODULES` in `static_check.py`, `SHELL` in
+`sw.js`, and `PATHS` in `serve_check.sh`. A new data file goes in `FILES` in
+`store.js`, `DATA` in `sw.js`, the name list at the end of
+`tools/test/check_paths.py`, and `PATHS` in `serve_check.sh`. Bump `VERSION` in
+`sw.js` when `SHELL` changes, or devices keep serving the old shell from cache.
 
 There is no usable headless browser on this machine, so `tools/test/dom.js`
 provides a DOM small enough to run the real page controllers under

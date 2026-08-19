@@ -1,0 +1,412 @@
+{
+  "$schema": "tmb/packing/1",
+  "$comment": [
+    "The group's default packing list. This file is the starting point, not the",
+    "current state: anything anyone adds, edits or removes on the Packing page is",
+    "an operation appended to the shared log, and the page shows this file with",
+    "those operations applied. See docs/sync-setup.md.",
+    "",
+    "Because a removal is an operation rather than a deletion, an item left here",
+    "can always be restored. Edit this file to change what a brand-new device",
+    "starts from; edit on the site to change what the group sees.",
+    "",
+    "category  : must match an id in `categories` below",
+    "essential : reserved for what cannot be bought on the way and would change",
+    "            the trip if forgotten. Kept deliberately short — Chamonix and",
+    "            Courmayeur both have shops, so most of this list is recoverable",
+    "            and marking it all essential would make the filter useless.",
+    "note      : why it is on the list, or what is specific to this trip. Left",
+    "            empty where the item speaks for itself.",
+    "",
+    "What is NOT here: whether *you* have packed something. That is per-person",
+    "and stays on your own device, because six people ticking off the same",
+    "shared list would be meaningless."
+  ],
+
+  "categories": [
+    { "id": "worn", "label": "Worn or carried" },
+    { "id": "layers", "label": "Layers and insulation" },
+    { "id": "pack", "label": "Pack and rain" },
+    { "id": "sleep", "label": "Sleep and refuge" },
+    { "id": "feet", "label": "Feet and first aid" },
+    { "id": "docs", "label": "Documents and money" },
+    { "id": "tech", "label": "Tech and power" },
+    { "id": "food", "label": "Food and water" },
+    { "id": "extras", "label": "Extras" }
+  ],
+
+  "items": [
+    {
+      "id": "pk-boots",
+      "name": "Broken-in hiking boots",
+      "category": "worn",
+      "essential": true,
+      "note": "Broken in over months, not weeks. Seven consecutive days with cols in them is not the place to discover a pressure point."
+    },
+    {
+      "id": "pk-socks",
+      "name": "Hiking socks (4 pairs)",
+      "category": "worn",
+      "essential": true,
+      "note": "Two in rotation, two drying. Wool, not cotton."
+    },
+    {
+      "id": "pk-liner-socks",
+      "name": "Liner socks",
+      "category": "worn",
+      "essential": false,
+      "note": "Worth it if you are blister-prone."
+    },
+    {
+      "id": "pk-hiking-trousers",
+      "name": "Hiking trousers or shorts",
+      "category": "worn",
+      "essential": false,
+      "note": ""
+    },
+    {
+      "id": "pk-base-layers",
+      "name": "Base layer tops (2)",
+      "category": "worn",
+      "essential": false,
+      "note": "Merino or synthetic. One on, one drying."
+    },
+    {
+      "id": "pk-underwear",
+      "name": "Underwear (3-4)",
+      "category": "worn",
+      "essential": false,
+      "note": ""
+    },
+    {
+      "id": "pk-sun-hat",
+      "name": "Sun hat or cap",
+      "category": "worn",
+      "essential": false,
+      "note": "Long exposed traverses above the treeline with no shade."
+    },
+    {
+      "id": "pk-sunglasses",
+      "name": "Sunglasses",
+      "category": "worn",
+      "essential": true,
+      "note": "Category 3 or better. Glare off the snow patches on the higher cols is fierce enough to matter over a full day."
+    },
+    {
+      "id": "pk-poles",
+      "name": "Trekking poles",
+      "category": "worn",
+      "essential": false,
+      "note": "The descents are what wreck knees on this route, not the climbs."
+    },
+
+    {
+      "id": "pk-fleece",
+      "name": "Fleece or mid layer",
+      "category": "layers",
+      "essential": false,
+      "note": ""
+    },
+    {
+      "id": "pk-puffy",
+      "name": "Insulated jacket",
+      "category": "layers",
+      "essential": true,
+      "note": "Cols sit above 2,500 m and mornings are cold regardless of the July date."
+    },
+    {
+      "id": "pk-hardshell",
+      "name": "Waterproof jacket",
+      "category": "layers",
+      "essential": true,
+      "note": "Properly waterproof with a hood, not a windbreaker. Afternoon storms build fast in the valleys."
+    },
+    {
+      "id": "pk-rain-trousers",
+      "name": "Waterproof over-trousers",
+      "category": "layers",
+      "essential": false,
+      "note": ""
+    },
+    {
+      "id": "pk-warm-hat",
+      "name": "Warm hat",
+      "category": "layers",
+      "essential": false,
+      "note": ""
+    },
+    {
+      "id": "pk-gloves",
+      "name": "Light gloves",
+      "category": "layers",
+      "essential": false,
+      "note": "For the early starts on col mornings."
+    },
+    {
+      "id": "pk-evening-clothes",
+      "name": "Evening clothes",
+      "category": "layers",
+      "essential": false,
+      "note": "One set to change into. Everything else is hiking kit."
+    },
+
+    {
+      "id": "pk-daypack",
+      "name": "Daypack (30-35 L)",
+      "category": "pack",
+      "essential": true,
+      "note": "Sized for a day, not the whole trip — the shared bags go by transfer."
+    },
+    {
+      "id": "pk-pack-cover",
+      "name": "Pack rain cover or liner",
+      "category": "pack",
+      "essential": false,
+      "note": "A bin liner inside the pack is more reliable than a cover in wind."
+    },
+    {
+      "id": "pk-drybags",
+      "name": "Dry bags or zip bags",
+      "category": "pack",
+      "essential": false,
+      "note": "Keeping the down jacket and the electronics dry matters more than keeping everything dry."
+    },
+    {
+      "id": "pk-transfer-bag",
+      "name": "Duffel for the luggage transfer",
+      "category": "pack",
+      "essential": true,
+      "note": "Two big bags are shared across the group rather than one each — see the luggage line on the Money page."
+    },
+
+    {
+      "id": "pk-liner",
+      "name": "Sleeping bag liner",
+      "category": "sleep",
+      "essential": true,
+      "note": "Required at Auberge de la Nova and the Trient gîte. Refuges provide blankets and a pillow but not sheets, and a liner is usually mandatory rather than optional."
+    },
+    {
+      "id": "pk-earplugs",
+      "name": "Earplugs",
+      "category": "sleep",
+      "essential": true,
+      "note": "Dormitory nights. Not negotiable if you want to sleep before a col morning."
+    },
+    {
+      "id": "pk-eye-mask",
+      "name": "Eye mask",
+      "category": "sleep",
+      "essential": false,
+      "note": ""
+    },
+    {
+      "id": "pk-hut-shoes",
+      "name": "Sandals or hut shoes",
+      "category": "sleep",
+      "essential": true,
+      "note": "Boots come off at the door in every refuge, and it is worth having your feet out of them anyway."
+    },
+    {
+      "id": "pk-towel",
+      "name": "Quick-dry towel",
+      "category": "sleep",
+      "essential": false,
+      "note": "Refuges rarely provide one; the hotels will."
+    },
+    {
+      "id": "pk-toiletries",
+      "name": "Toiletries",
+      "category": "sleep",
+      "essential": false,
+      "note": "Small. Anything you can buy in Courmayeur on the rest day does not need carrying from home."
+    },
+
+    {
+      "id": "pk-blister-kit",
+      "name": "Blister kit",
+      "category": "feet",
+      "essential": true,
+      "note": "Hydrocolloid dressings and tape. The single most likely thing to end someone's walking."
+    },
+    {
+      "id": "pk-first-aid",
+      "name": "First aid basics",
+      "category": "feet",
+      "essential": false,
+      "note": "Painkillers, antihistamine, plasters, tweezers. One decent kit shared across the group is enough."
+    },
+    {
+      "id": "pk-sunscreen",
+      "name": "Sunscreen (SPF 50)",
+      "category": "feet",
+      "essential": true,
+      "note": "Altitude plus snow reflection. Reapply at the cols."
+    },
+    {
+      "id": "pk-lip-balm",
+      "name": "Lip balm with SPF",
+      "category": "feet",
+      "essential": false,
+      "note": ""
+    },
+    {
+      "id": "pk-knee-support",
+      "name": "Knee support or tape",
+      "category": "feet",
+      "essential": false,
+      "note": ""
+    },
+    {
+      "id": "pk-meds",
+      "name": "Personal medication",
+      "category": "feet",
+      "essential": true,
+      "note": "Enough for the whole trip plus a few days. Pharmacies exist in Chamonix and Courmayeur and nowhere else on the route."
+    },
+
+    {
+      "id": "pk-passport",
+      "name": "Passport",
+      "category": "docs",
+      "essential": true,
+      "note": "The route crosses into Italy and Switzerland on foot. Nobody checks, but carry it."
+    },
+    {
+      "id": "pk-insurance",
+      "name": "Travel and rescue insurance",
+      "category": "docs",
+      "essential": true,
+      "note": "Check that mountain rescue is covered. Switzerland is not in the EU health scheme."
+    },
+    {
+      "id": "pk-cash-eur",
+      "name": "Cash in euros",
+      "category": "docs",
+      "essential": true,
+      "note": "Les Chapieux is card-unreliable and the navette machine wants coins. Budget more than feels necessary."
+    },
+    {
+      "id": "pk-cash-chf",
+      "name": "Cash in Swiss francs",
+      "category": "docs",
+      "essential": true,
+      "note": "For La Fouly, Champex and Trient. Small Swiss places often refuse euros or use a poor rate."
+    },
+    {
+      "id": "pk-cards",
+      "name": "Bank card with no foreign fees",
+      "category": "docs",
+      "essential": false,
+      "note": ""
+    },
+    {
+      "id": "pk-bookings",
+      "name": "Booking confirmations",
+      "category": "docs",
+      "essential": true,
+      "note": "Saved offline, not just sitting in email. Assume no signal when you arrive."
+    },
+
+    {
+      "id": "pk-phone",
+      "name": "Phone",
+      "category": "tech",
+      "essential": true,
+      "note": ""
+    },
+    {
+      "id": "pk-battery",
+      "name": "Power bank",
+      "category": "tech",
+      "essential": true,
+      "note": "Refuge sockets are scarce and shared between everyone in the dormitory."
+    },
+    {
+      "id": "pk-cables",
+      "name": "Charging cables",
+      "category": "tech",
+      "essential": false,
+      "note": ""
+    },
+    {
+      "id": "pk-adapters",
+      "name": "Plug adapters (EU and Swiss)",
+      "category": "tech",
+      "essential": true,
+      "note": "Switzerland uses a different socket from France and Italy, and a standard EU plug does not always fit it."
+    },
+    {
+      "id": "pk-headtorch",
+      "name": "Head torch",
+      "category": "tech",
+      "essential": true,
+      "note": "For pre-dawn starts, and for finding the dormitory bathroom without waking the room."
+    },
+    {
+      "id": "pk-offline-maps",
+      "name": "Offline maps downloaded",
+      "category": "tech",
+      "essential": true,
+      "note": "This site caches its own tiles from the About page. Do it on hotel wifi, not on the trail."
+    },
+    {
+      "id": "pk-camera",
+      "name": "Camera",
+      "category": "tech",
+      "essential": false,
+      "note": "The Days pages list the light plan for each scenery stop."
+    },
+
+    {
+      "id": "pk-water",
+      "name": "Water bottles or bladder (2 L)",
+      "category": "food",
+      "essential": true,
+      "note": "Two litres of capacity. Refill at refuges and village fountains rather than carrying a full day's worth."
+    },
+    {
+      "id": "pk-snacks",
+      "name": "Trail snacks",
+      "category": "food",
+      "essential": false,
+      "note": "Half board covers dinner and breakfast at most stops, so lunch and snacks are the gap."
+    },
+    {
+      "id": "pk-electrolytes",
+      "name": "Electrolyte tablets",
+      "category": "food",
+      "essential": false,
+      "note": ""
+    },
+
+    {
+      "id": "pk-knife",
+      "name": "Small knife",
+      "category": "extras",
+      "essential": false,
+      "note": "Checked baggage only."
+    },
+    {
+      "id": "pk-laundry",
+      "name": "Travel wash and a line",
+      "category": "extras",
+      "essential": false,
+      "note": "The Courmayeur rest day is the one realistic laundry stop."
+    },
+    {
+      "id": "pk-sit-pad",
+      "name": "Sit pad",
+      "category": "extras",
+      "essential": false,
+      "note": "Lunch stops are on wet rock more often than not."
+    },
+    {
+      "id": "pk-book",
+      "name": "Book or cards",
+      "category": "extras",
+      "essential": false,
+      "note": "Refuge evenings are long and there is no signal."
+    }
+  ]
+}

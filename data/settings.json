@@ -24,5 +24,9 @@
   "map": {
     "defaultBasemap": "opentopomap",
     "showWaymarkedOverlay": false
+  },
+  "sync": {
+    "endpoint": "https://tmb-sync.davidmwhitcher.workers.dev",
+    "endpointNote": "Cloudflare Worker that appends shared edits to the op log. Empty means sync is off, and pages fall back to queueing edits on the device. Set this once for the group; each person still enters the passphrase on their own device. See docs/sync-setup.md."
   }
 }

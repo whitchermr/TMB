@@ -33,7 +33,7 @@ while IFS= read -r file; do
     echo "$output" | sed 's/^/          /'
     FAILED=1
   fi
-done < <(find assets/js -name '*.js' | sort)
+done < <({ find assets/js -name '*.js'; echo tools/sync-worker/worker.js; } | sort)
 
 # The service worker is a classic script, not a module, so it gets the plain
 # parser. It also lives at the root, outside assets/js, to keep its scope wide
@@ -63,6 +63,9 @@ fi
 if ! "$PY" tools/test/check_photos.py; then
   FAILED=1
 fi
+if ! "$PY" tools/test/check_transit_pipeline.py; then
+  FAILED=1
+fi
 
 echo
 echo "== Served-site check =="
@@ -80,7 +83,7 @@ echo
 echo "== Page smoke tests =="
 # One process per page: a page module does its work at import time, and an ES
 # module is only evaluated once per realm, so they cannot share one process.
-for page in index day day4 plan stays money print about; do
+for page in index day day4 plan stays money packing transit print about; do
   if ! "$JSC" -m tools/test/page_smoke.js -- "$page"; then
     FAILED=1
   fi

@@ -42,6 +42,8 @@ day.html?d=day-03     Per-day detail: map, profile, segments, light, scenery
 plan.html             Start date, rest days, pace model, per-day timings
 stays.html            Lodging candidates and booked choices
 money.html            Expenses, balances, settle-up
+packing.html          Shared packing list, ticked off per person
+transit.html          Getting to, off and between trail stops by bus and train
 print.html            Printable trail brief, and a one-file data export
 about.html            Data sources, accuracy, attribution, offline downloads
 
@@ -49,7 +51,7 @@ sw.js                 Service worker: offline app shell, data and map tiles
 manifest.webmanifest  Home-screen install metadata
 
 assets/css/           base.css (tokens, layout), components.css, print.css
-assets/js/core/       store, units, geo, sun, schedule, money
+assets/js/core/       store, sync, units, geo, sun, schedule, money, transit
 assets/js/ui/         nav (shared header), map (Leaflet), elevation (canvas
                       chart), offline (service worker + tile prefetch)
 assets/js/pages/      One controller per page
@@ -59,10 +61,14 @@ assets/icons/         App icon, as SVG plus rasterised PNGs
 data/                 Trip data — edited through the UI, committed as JSON
 data/route/           Generated trail geometry, legs and elevation
 data/photos.json      Generated: one photo per scenery stop, with attribution
+data/transit-schedules.json  Generated: published times where a GTFS feed exists
 assets/photos/        The photographs themselves, stored for offline use
 docs/data-notes.md    Provenance, calibration, and known discrepancies
+docs/sync-setup.md    How shared editing works, and how to switch it on
+docs/transit-notes.md Feed coverage, confidence levels, pre-travel checklist
 docs/photo-review.html  Generated contact sheet for checking the photos by eye
 tools/                Data pipeline and tests
+tools/sync-worker/    The Cloudflare Worker that appends shared edits
 ```
 
 ## Dates
@@ -128,13 +134,27 @@ JSON download for backup or handover.
 
 ## Editing trip data
 
-Everything in the UI is editable. Because there is no server, edits are held as
-drafts in your browser's local storage and an **unsaved** badge appears in the
-header. Open that badge to copy the exact file content, then commit it over the
-matching file in `data/`. Teammates can pull the change, or use **Import** to
-load a file someone sent them.
+There are two mechanisms, and which one a page uses is the difference between an
+edit only you can publish and an edit everyone sees.
 
-Drafts are per-browser and per-device. Clearing site data discards them.
+**Drafts and export** — the planner, days, stays and money pages. Edits are held
+in your browser's local storage and an **unsaved** badge appears in the header.
+Open that badge to copy the exact file content, then commit it over the matching
+file in `data/`. Teammates can pull the change, or use **Import** to load a file
+someone sent them. Drafts are per-browser and per-device; clearing site data
+discards them.
+
+**Shared edits** — the packing page. Saving appends a small operation to a log
+that everyone reads, so a change is visible to the group in about a second with
+no copying and no commit. There is still no server: a Cloudflare Worker holds the
+GitHub token and the browser only ever talks to that. Sharing is off until an
+endpoint is configured, and it degrades to the same device-local behaviour with
+no signal. [docs/sync-setup.md](docs/sync-setup.md) explains the design and how
+to switch it on.
+
+The packing page is the pilot for that mechanism. The intent is to move the other
+pages onto it once it has proved itself, at which point the export flow becomes
+the fallback rather than the norm.
 
 ## Regenerating route data
 
@@ -176,6 +196,26 @@ To change the route, edit `data/route/route-plan.json` and re-run stages 2 and 3
 Adding an anchor only needs an approximate coordinate; it gets projected onto the
 trail, and the script reports how far off it was so a mistake is obvious.
 
+## Refreshing the timetables
+
+Separate from the route pipeline, because the transit page works without it.
+
+```bash
+python3 tools/fetch_transit.py --date 2027-07-14
+```
+
+Every service in `data/transit.json` is hand-recorded from an operator's own
+timetable, so the page is complete on its own. This tool overlays published times
+from the two open GTFS feeds that exist for the corridor — the Swiss 2027
+timetable, which is already the right year, and Chamonix Mobilité, which
+republishes each summer. It only overwrites the stops a feed covers, so a line the
+feed follows halfway does not lose its far end.
+
+Raw zips are cached in `tools/cache/gtfs/` and gitignored; the Swiss feed is
+58 MB. The extract it writes to `data/transit-schedules.json` is about 5 KB.
+[docs/transit-notes.md](docs/transit-notes.md) records what each feed covers, what
+it does not, and what has to be re-checked before travel.
+
 ## Tests
 
 ```bash
@@ -207,10 +247,11 @@ install:
   requesting every page, asset and data file, asserting 200s and correct content
   types for modules and JSON.
 - **Logic tests** (`tools/test/run-tests.js`) exercising the geometry,
-  scheduling, solar and money modules against the real generated data — 187
-  assertions covering things like "balances always sum to zero", "elapsed time
-  never goes backwards along a day", and "the JS and Python distance
-  implementations agree to within 5 m over 166 km".
+  scheduling, solar, money, sync and transit modules against the real generated
+  data — 312 assertions covering things like "balances always sum to zero", "elapsed time
+  never goes backwards along a day", "the later shared edit wins whichever order
+  the operations arrive in", and "the JS and Python distance implementations
+  agree to within 5 m over 166 km".
 - **Page smoke tests** (`tools/test/page_smoke.js`) actually *running* each page
   controller. `tools/test/dom.js` is a small DOM — HTML parser, element tree,
   CSS selector subset, canvas and Leaflet stubs, `fetch` backed by the real files

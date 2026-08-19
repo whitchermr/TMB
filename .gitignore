@@ -18,8 +18,9 @@ Generalized Product Development Processes/
 data/route/raw/
 data/route/cache/
 
-# Cached Wikimedia Commons API responses from tools/fetch_photos.py. The chosen
-# photos and their attribution are committed; the search results are not.
+# Cached Wikimedia Commons API responses from tools/fetch_photos.py and raw GTFS
+# zips from tools/fetch_transit.py. The chosen photos and the extracted timetable
+# are committed; the search results and the 58 MB Swiss feed behind them are not.
 tools/cache/
 
 # Logs

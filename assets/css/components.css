@@ -1209,6 +1209,51 @@ table.data tr.is-rest td {
 }
 
 /* ------------------------------------------------------------------ */
+/* transit journeys                                                   */
+/* ------------------------------------------------------------------ */
+
+.journey {
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  background: var(--c-surface);
+  cursor: pointer;
+}
+
+.journey[data-selected='true'] {
+  border-color: var(--c-accent);
+  box-shadow: inset 3px 0 0 var(--c-accent);
+}
+
+.journey__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.journey__duration {
+  color: var(--c-text-soft);
+  font-size: 0.85rem;
+}
+
+/* The leg list is a nested control, so its own affordance has to win over the
+   card's — otherwise tapping a bus to read its timetable selects the journey. */
+.journey .segment[data-service] {
+  cursor: pointer;
+}
+
+.journey .segment__label small {
+  display: block;
+}
+
+/* Keeps the swap button from stretching to a third of the row on a phone. */
+.field--shrink {
+  flex: 0 0 auto;
+}
+
+/* ------------------------------------------------------------------ */
 /* balance / money                                                    */
 /* ------------------------------------------------------------------ */
 
@@ -1336,6 +1381,49 @@ table.data tr.is-rest td {
 }
 
 /* ------------------------------------------------------------------ */
+/* packing list                                                       */
+/* ------------------------------------------------------------------ */
+
+.pack-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 0.15rem 0.6rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.pack-item:last-child {
+  border-bottom: 0;
+}
+
+/* The tick is the one control on the row that gets used repeatedly, so it keeps
+   a full touch target while the label beside it stays visually compact. */
+.pack-item__tick {
+  min-height: 0;
+  padding: 0.3rem 0.15rem;
+  margin: -0.3rem 0;
+}
+
+.pack-item__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.pack-item[data-packed='true'] .pack-item__name > span:first-child {
+  color: var(--c-text-faint);
+  text-decoration: line-through;
+}
+
+.pack-item__body .wp__notes {
+  margin-top: 0.15rem;
+}
+
+/* ------------------------------------------------------------------ */
 /* misc                                                               */
 /* ------------------------------------------------------------------ */
 
@@ -1349,6 +1437,14 @@ table.data tr.is-rest td {
 }
 
 .notice--warm {
+  background: var(--c-warm-soft);
+  border-left-color: var(--c-warm);
+}
+
+/* Reads the same as notice--warm but is a separate class on purpose: the page
+   smoke test treats notice--warm as the load-failure banner and fails a page
+   that renders one, so ordinary in-page warnings must not use it. */
+.notice--caveat {
   background: var(--c-warm-soft);
   border-left-color: var(--c-warm);
 }

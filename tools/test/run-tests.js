@@ -66,6 +66,7 @@ import * as schedule from '../../assets/js/core/schedule.js';
 import * as sun from '../../assets/js/core/sun.js';
 import * as money from '../../assets/js/core/money.js';
 import * as sync from '../../assets/js/core/sync.js';
+import * as transit from '../../assets/js/core/transit.js';
 
 const legIndex = json('data/route/legs/index.json');
 const anchors = json('data/route/anchors.json').anchors;
@@ -79,6 +80,8 @@ const expensesFile = json('data/expenses.json');
 const packingFile = json('data/packing.json');
 const photos = json('data/photos.json').photos;
 const history = json('data/history.json').entries;
+const transitFile = json('data/transit.json');
+const transitSchedules = json('data/transit-schedules.json');
 const { isPhotographic, isHistoric } = geo;
 const leg = (dayId, variant) => json(`data/route/legs/${dayId}-${variant}.json`);
 
@@ -996,6 +999,436 @@ ok(
 ok(
   typeof settings.sync?.endpoint === 'string',
   'settings carries a sync endpoint, even if it is empty'
+);
+
+/* ------------------------------------------------------------------ */
+describe('transit: service calendars');
+
+const transitCtx = transit.context({
+  transit: transitFile,
+  anchors,
+  stays,
+  schedules: transitSchedules,
+  pace: settings.pace,
+});
+
+// The trip is in July 2027 and almost every timetable here is a 2026 season
+// standing in for it, so a season that failed to match a 2027 date would
+// silently empty the whole page.
+const navette = transit.serviceById(transitCtx, 'chapieux-navette-glaciers');
+ok(transit.runsOn(navette, '2027-07-04'), 'a summer season matches a July date in another year');
+ok(!transit.runsOn(navette, '2027-01-04'), 'a summer season does not match January');
+ok(!transit.runsOn(navette, '2027-06-01'), 'a summer season does not match before it opens');
+ok(transit.runsOn(navette, '2027-09-13'), 'a season includes its closing day');
+
+const postbus = transit.serviceById(transitCtx, 'postbus-forclaz-martigny');
+// 2027-07-05 is a Monday and 2027-07-04 a Sunday.
+ok(transit.runsOn(postbus, '2027-07-05'), 'a weekday-only service runs on a Monday');
+ok(!transit.runsOn(postbus, '2027-07-04'), 'a weekday-only service does not run on a Sunday');
+
+ok(
+  transitFile.services.every(
+    (service) => ('departures' in service) !== ('frequency' in service)
+  ),
+  'every service has exactly one of departures or frequency'
+);
+ok(
+  transitFile.services.every((service) => transit.departureTimes(service).length > 0),
+  'every service yields at least one departure time',
+  transitFile.services
+    .filter((service) => transit.departureTimes(service).length === 0)
+    .map((service) => service.id)
+    .join(', ')
+);
+ok(
+  transit.departureTimes({ frequency: { everyMinutes: 30, first: '07:30', last: '09:00' } })
+    .length === 4,
+  'a half-hourly window expands to the right number of departures'
+);
+ok(
+  transit.departureTimes({ frequency: { everyMinutes: 0, first: '07:30', last: '09:00' } })
+    .length === 0,
+  'a zero-minute frequency yields nothing rather than spinning'
+);
+ok(transit.parseTime('24:00') === null, 'an out-of-range hour does not parse');
+ok(transit.parseTime('07:30') === 450, 'a clock time parses to minutes after midnight');
+ok(transit.formatTime(450) === '07:30', 'minutes format back to a padded clock time');
+
+/* ------------------------------------------------------------------ */
+describe('transit: journeys');
+
+const JULY = '2027-07-04';
+
+const navetteHop = transit.journeys(transitCtx, {
+  from: 'les-chapieux',
+  to: 'ville-des-glaciers',
+  date: JULY,
+  time: '07:00',
+});
+ok(navetteHop.length > 0, 'the Chapieux navette is found as a direct journey');
+ok(navetteHop[0].rides === 1 && navetteHop[0].transfers === 0, 'and it needs no transfer');
+ok(
+  transit.formatTime(navetteHop[0].departMinutes) === '07:30',
+  'it leaves on the first run after the requested time',
+  transit.formatTime(navetteHop[0].departMinutes)
+);
+
+// The whole point of the feature: a walking day replaced by vehicles. Day 5 is
+// La Fouly to Champex-Lac, which needs a change at Orsières.
+const skipDayFive = transit.journeys(transitCtx, {
+  from: 'la-fouly',
+  to: 'champex-lac',
+  date: JULY,
+  time: '08:00',
+});
+ok(skipDayFive.length > 0, 'day 5 can be skipped by bus');
+ok(
+  skipDayFive[0].legs.some((leg) => leg.to === 'orsieres'),
+  'and the itinerary changes at Orsières'
+);
+
+// Trient back to base crosses a border and changes mode, which is the case most
+// likely to be quietly broken.
+const trientHome = transit.journeys(transitCtx, {
+  from: 'trient',
+  to: 'chamonix',
+  date: JULY,
+  time: '09:00',
+});
+ok(trientHome.length > 0, 'Trient reaches Chamonix by public transport');
+ok(
+  trientHome[0].legs.some((leg) => leg.kind === 'ride' && leg.service.mode === 'train'),
+  'using the Mont-Blanc Express for part of it'
+);
+
+const allJourneys = [navetteHop, skipDayFive, trientHome].flat();
+ok(
+  allJourneys.every((journey) => journey.arriveMinutes > journey.departMinutes),
+  'no journey arrives before it departs'
+);
+ok(
+  allJourneys.every((journey) =>
+    journey.legs.every((leg) => leg.arriveMinutes > leg.departMinutes)
+  ),
+  'no leg arrives before it departs'
+);
+ok(
+  allJourneys.every((journey) =>
+    journey.legs.every((leg, i) => i === 0 || leg.departMinutes >= journey.legs[i - 1].arriveMinutes)
+  ),
+  'legs never depart before the previous one has arrived'
+);
+ok(
+  allJourneys.every((journey) =>
+    journey.legs.every((leg, i) => {
+      const previous = journey.legs[i - 1];
+      if (!previous || previous.kind !== 'ride' || leg.kind !== 'ride') return true;
+      return leg.departMinutes - previous.arriveMinutes >= transit.MIN_TRANSFER_MINUTES;
+    })
+  ),
+  'every vehicle-to-vehicle change allows the minimum transfer time'
+);
+ok(
+  allJourneys.every((journey) => journey.legs.every((leg) => leg.arriveMinutes < 1440)),
+  'no journey runs past midnight'
+);
+ok(
+  allJourneys.every((journey) => transit.CONFIDENCE.includes(journey.confidence)),
+  'every journey reports a known confidence level'
+);
+// A journey is only as good as its worst leg, and an unverified connection
+// inside an otherwise solid itinerary is exactly what must not be hidden.
+ok(
+  transit.worstConfidence([
+    { confidence: 'scheduled-2027' },
+    { confidence: 'estimate' },
+    { confidence: 'pattern-2026' },
+  ]) === 'estimate',
+  'a journey takes the confidence of its weakest leg'
+);
+
+// Out of season the answer must be "nothing runs", not a made-up connection.
+ok(
+  transit.journeys(transitCtx, {
+    from: 'les-chapieux',
+    to: 'ville-des-glaciers',
+    date: '2027-01-04',
+    time: '09:00',
+  }).length === 0,
+  'a seasonal shuttle yields no journeys in winter'
+);
+// Late enough that the last departure has gone.
+ok(
+  transit.journeys(transitCtx, {
+    from: 'les-chapieux',
+    to: 'ville-des-glaciers',
+    date: JULY,
+    time: '23:30',
+  }).length === 0,
+  'no journey is invented after the last departure of the day'
+);
+ok(
+  transit.journeys(transitCtx, { from: 'trient', to: 'trient', date: JULY }).length === 0,
+  'a journey to where you already are returns nothing'
+);
+
+// Cross-reference: every night of the trip has to be reachable from the airport,
+// or the page will confidently tell someone there is no way to join the group.
+const lodgingStops = stays.stops.map((stop) => stop.stopId);
+const unreachable = lodgingStops.filter(
+  (stopId) =>
+    stopId !== 'chamonix' &&
+    transit.journeys(transitCtx, {
+      from: 'geneva-airport',
+      to: stopId,
+      date: JULY,
+      time: '06:00',
+      maxTransfers: 3,
+    }).length === 0
+);
+ok(unreachable.length === 0, 'every lodging stop is reachable from Geneva airport', unreachable.join(', '));
+
+// Every hiking day has to be skippable, which is the whole point of the page.
+// Day 4 is the hard one: Courmayeur to La Fouly crosses the Grand Col Ferret and
+// no vehicle goes over it, so the only way round is Italy to France through the
+// tunnel, France to Switzerland by train, and back up the Val Ferret by bus. It
+// needs three changes and it is the case most likely to break silently when a
+// service is edited.
+const unskippable = itinerary.days
+  .filter((day) => day.from && day.to)
+  .filter(
+    (day) =>
+      transit.journeys(transitCtx, {
+        from: day.from,
+        to: day.to,
+        date: JULY,
+        time: '06:00',
+        maxTransfers: 3,
+      }).length === 0
+  )
+  .map((day) => day.id);
+ok(unskippable.length === 0, 'every hiking day can be skipped by public transport', unskippable.join(', '));
+
+// And every trail anchor should be somewhere the planner knows about, so the
+// day-page links cannot point at a place that does not exist.
+ok(
+  Object.keys(anchors).every((anchorId) =>
+    transitFile.places.some((place) => place.anchorId === anchorId)
+  ),
+  'every route anchor appears as a transit place',
+  Object.keys(anchors)
+    .filter((id) => !transitFile.places.some((place) => place.anchorId === id))
+    .join(', ')
+);
+
+/* ------------------------------------------------------------------ */
+describe('transit: walking connections');
+
+const forclazWalk = transitFile.walks.find(
+  (walk) => walk.from === 'trient' && walk.to === 'col-de-la-forclaz'
+);
+const uphill = transit.walkMinutes(forclazWalk, settings.pace, false);
+const downhill = transit.walkMinutes(forclazWalk, settings.pace, true);
+ok(uphill > downhill, 'climbing to the Forclaz takes longer than coming down', `${uphill} vs ${downhill}`);
+// The same model the hiking days use, not a separate walking speed that could
+// drift away from it.
+near(
+  uphill,
+  schedule.MODELS[settings.pace.model].fn(
+    forclazWalk.distance_m,
+    forclazWalk.ascent_m,
+    settings.pace.flatSpeedKmh
+  ) / 60,
+  1,
+  'walk timing comes from the shared pace model'
+);
+ok(
+  transitFile.walks.every((walk) => walk.distance_m > 0 && walk.note),
+  'every walk link has a distance and says what it is'
+);
+
+/* ------------------------------------------------------------------ */
+describe('transit: data integrity');
+
+const transitPlaceIds = new Set(transitFile.places.map((place) => place.id));
+const transitOperatorIds = new Set(transitFile.operators.map((operator) => operator.id));
+
+ok(
+  transitPlaceIds.size === transitFile.places.length,
+  'place ids are unique'
+);
+ok(
+  new Set(transitFile.services.map((service) => service.id)).size ===
+    transitFile.services.length,
+  'service ids are unique'
+);
+ok(
+  transitFile.services.every((service) =>
+    service.stops.every((stop) => transitPlaceIds.has(stop.place))
+  ),
+  'every service stop names a known place'
+);
+ok(
+  transitFile.services.every((service) => transitOperatorIds.has(service.operator)),
+  'every service names a known operator'
+);
+ok(
+  transitFile.walks.every(
+    (walk) => transitPlaceIds.has(walk.from) && transitPlaceIds.has(walk.to)
+  ),
+  'every walk link joins known places'
+);
+ok(
+  transitFile.onDemand.every(
+    (option) =>
+      transitOperatorIds.has(option.operator) &&
+      option.serves.every((place) => transitPlaceIds.has(place)) &&
+      (option.fares || []).every(
+        (fare) => transitPlaceIds.has(fare.from) && transitPlaceIds.has(fare.to)
+      )
+  ),
+  'on-demand options reference known operators and places'
+);
+ok(
+  transitFile.services.every((service) => {
+    const offsets = service.stops.map((stop) => stop.offsetMinutes);
+    return offsets.every((value, i) => i === 0 || value > offsets[i - 1]);
+  }),
+  'stop offsets increase along every service'
+);
+ok(
+  transitFile.services.every((service) => service.stops.length >= 2),
+  'every service has at least two stops'
+);
+// Provenance is the mechanism that keeps this honest as the trip approaches, so
+// a record without it is a record nobody can re-check.
+ok(
+  transitFile.services.every(
+    (service) =>
+      transit.CONFIDENCE.includes(service.confidence) &&
+      service.source?.url &&
+      /^\d{4}-\d{2}-\d{2}$/.test(service.verifiedOn || '')
+  ),
+  'every service carries a confidence, a source and a verification date'
+);
+ok(
+  transitFile.onDemand.every(
+    (option) => transit.CONFIDENCE.includes(option.confidence) && option.source?.url
+  ),
+  'every on-demand option carries a confidence and a source'
+);
+// The generated extract is a second writer into the same graph, so it gets the
+// same structural checks as the hand-authored file rather than being trusted
+// because a script produced it.
+ok(
+  transitSchedules.services.every((entry) =>
+    transitFile.services.some((service) => service.id === entry.serviceId)
+  ),
+  'every generated schedule attaches to a curated service'
+);
+ok(
+  transitSchedules.services.every((entry) => {
+    const offsets = entry.stops.map((stop) => stop.offsetMinutes);
+    return offsets[0] === 0 && offsets.every((value, i) => i === 0 || value > offsets[i - 1]);
+  }),
+  'generated stop offsets start at zero and increase'
+);
+// Splicing feed times into a curated stop list is the one place this can go
+// wrong silently: dropping the far end of a line would leave a service that
+// still works but no longer reaches where the trip needs it to.
+ok(
+  transitSchedules.services.every((entry) => {
+    const service = transitFile.services.find((s) => s.id === entry.serviceId);
+    return (
+      entry.stops.length === service.stops.length &&
+      entry.stops.every((stop, i) => stop.place === service.stops[i].place)
+    );
+  }),
+  'a generated schedule never shortens or reorders its service'
+);
+ok(
+  transitSchedules.services.every(
+    (entry) =>
+      transit.CONFIDENCE.includes(entry.confidence) &&
+      /^\d{2}:\d{2}$/.test(entry.departures[0] || '') &&
+      transitSchedules.sources.some((source) => source.id === entry.feed)
+  ),
+  'every generated schedule has a confidence, real times and a credited feed'
+);
+// Attribution is a condition of use for both feeds, not a courtesy, so a source
+// the page could render without naming a licence must not exist.
+ok(
+  transitSchedules.sources.every((source) => source.name && source.licence && source.attribution),
+  'every feed is named with its licence and attribution'
+);
+// A phone number you cannot dial from a phone is no use on a trail.
+ok(
+  transitFile.operators.every(
+    (operator) => !operator.phone || /^\+[0-9]{8,15}$/.test(operator.phone)
+  ),
+  'operator phone numbers are stored in dialable international form',
+  transitFile.operators
+    .filter((operator) => operator.phone && !/^\+[0-9]{8,15}$/.test(operator.phone))
+    .map((operator) => operator.id)
+    .join(', ')
+);
+ok(
+  transitFile.services.every(
+    (service) => !service.fare || typeof service.fare.amount === 'number'
+  ),
+  'fares are numeric where they are given'
+);
+// The two places the itinerary already claims a bus runs are the ones most worth
+// having a record for, since the prose and the data must not drift apart.
+ok(
+  transitFile.services.some((service) =>
+    service.stops.some((stop) => stop.place === 'arnouvaz')
+  ),
+  'the Val Ferret bus the day-4 note relies on exists as a service'
+);
+ok(
+  transitFile.services.some((service) =>
+    service.stops.some((stop) => stop.place === 'le-tour')
+  ),
+  'the Le Tour bus the day-7 note relies on exists as a service'
+);
+
+/* ------------------------------------------------------------------ */
+describe('transit: search and on-demand');
+
+const arpHits = transit.search(transitCtx, 'arp');
+ok(arpHits.length > 0, 'a prefix finds Arp Nouvaz');
+ok(arpHits[0].kind === 'place' && arpHits[0].id === 'arnouvaz', 'and ranks the place itself first');
+// Accents are the whole reason this normalises: nobody types "Orsières" with the
+// grave accent on a phone.
+ok(
+  transit.search(transitCtx, 'orsieres').some((hit) => hit.id === 'orsieres'),
+  'an unaccented query finds an accented place'
+);
+ok(
+  transit.search(transitCtx, 'forclaz').some((hit) => hit.kind === 'service'),
+  'a place name also finds the services that call there'
+);
+ok(
+  transit.search(transitCtx, 'taxi').some((hit) => hit.kind === 'operator'),
+  'operators are searchable too'
+);
+ok(transit.search(transitCtx, '').length === 0, 'an empty query returns nothing');
+ok(transit.search(transitCtx, 'zzzzz').length === 0, 'a query with no matches returns nothing');
+
+const taxiOptions = transit.onDemandBetween(transitCtx, 'les-chapieux', 'courmayeur');
+ok(taxiOptions.length > 0, 'a taxi is offered for the Chapieux to Courmayeur escape');
+ok(
+  taxiOptions[0].quotedFares.length > 0 && taxiOptions[0].quotedFares[0].amount > 0,
+  'with a quoted fare for that exact pair'
+);
+ok(
+  taxiOptions[0].operatorRecord?.phone,
+  'and a phone number to ring'
+);
+ok(
+  transit.onDemandBetween(transitCtx, 'trient', 'les-lanchettes').length === 0,
+  'no taxi is invented for a pair nobody covers'
 );
 
 /* ------------------------------------------------------------------ */

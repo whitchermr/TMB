@@ -70,8 +70,15 @@ const PAGES = {
     file: 'day.html',
     module: '../../assets/js/pages/day.js',
     url: 'https://example.test/day.html?d=day-04',
-    expect: ['day-title', 'day-stats', 'segments'],
+    expect: ['day-title', 'day-stats', 'segments', 'skip-day'],
     wantsMap: true,
+    contains: [
+      // The route data knows a bus covers part of this day but not when it runs,
+      // so the segment has to offer somewhere to find that out.
+      ['segments', 'Times', 'a link to the times for the bus leg'],
+      ['skip-day', 'Skip this day', 'the way round the whole day'],
+    ],
+    interact: interactDayTransit,
   },
   plan: {
     label: 'plan.html',
@@ -102,7 +109,11 @@ const PAGES = {
     module: '../../assets/js/pages/stays.js',
     url: 'https://example.test/stays.html',
     expect: ['stay-stats', 'stops'],
-    contains: [['stops', 'Contamines', 'a lodging stop']],
+    contains: [
+      ['stops', 'Contamines', 'a lodging stop'],
+      ['stops', 'Getting here', 'a link to getting to a stop'],
+    ],
+    interact: interactStaysTransit,
   },
   money: {
     label: 'money.html',
@@ -114,6 +125,23 @@ const PAGES = {
       ['categories', 'lodging', 'the lodging category'],
       ['rates-list', 'EUR', 'the euro rate'],
     ],
+  },
+  packing: {
+    label: 'packing.html',
+    file: 'packing.html',
+    module: '../../assets/js/pages/packing.js',
+    url: 'https://example.test/packing.html',
+    expect: ['packing-stats', 'packing-groups', 'packing-who', 'sync-panel'],
+    contains: [
+      ['packing-groups', 'Sleeping bag liner', 'a default item'],
+      ['packing-groups', 'essential', 'the essential marker'],
+      ['packing-stats', '0 of ', 'nothing packed yet'],
+      // An endpoint is configured but this device holds no passphrase, so the
+      // page has to ask for one rather than implying edits are reaching anyone.
+      ['sync-panel', 'Join the group list', 'that this device has not joined yet'],
+      ['packing-who', 'David', 'the people to pack as'],
+    ],
+    interact: interactPacking,
   },
   print: {
     label: 'print.html',
@@ -130,6 +158,36 @@ const PAGES = {
     // One elevation profile per hiking day, drawn as inline SVG.
     minSvg: 7,
   },
+  transit: {
+    // Day 5 is La Fouly to Champex-Lac, which is the realistic "skip a day"
+    // query and needs a change at Orsières, so the handover from the day page
+    // and a multi-leg journey are both exercised in one load.
+    label: 'transit.html?day=day-05',
+    file: 'transit.html',
+    module: '../../assets/js/pages/transit.js',
+    url: 'https://example.test/transit.html?day=day-05',
+    expect: [
+      'from-place',
+      'to-place',
+      'journey-summary',
+      'journeys',
+      'on-demand',
+      'day-shortcuts',
+      'provenance',
+      'map-legend',
+    ],
+    wantsMap: true,
+    contains: [
+      ['from-place', 'La Fouly', 'the day-5 origin, prefilled from the query string'],
+      ['to-place', 'Champex', 'the day-5 destination'],
+      ['from-place', 'Geneva', 'the airport as a pickable origin'],
+      ['journeys', 'Orsières', 'the change on the way to Champex'],
+      ['journeys', 'change', 'the number of changes on a journey'],
+      ['journey-summary', 'Fastest', 'the summary stats'],
+      ['provenance', 'transit-notes', 'where the provenance is written down'],
+    ],
+    interact: interactTransit,
+  },
   about: {
     label: 'about.html',
     file: 'about.html',
@@ -145,6 +203,117 @@ const PAGES = {
 /* ------------------------------------------------------------------ */
 /* interactions                                                        */
 /* ------------------------------------------------------------------ */
+
+/**
+ * The transit page's three interactive parts.
+ *
+ * All three are behavioural and invisible to static analysis: search only fills
+ * on input, selecting a leg has to open that service rather than swallow the
+ * click into the journey card, and an out-of-season date has to say nothing runs
+ * instead of quietly rendering an empty list that reads as a broken page.
+ */
+function interactTransit(document) {
+  const search = document.getElementById('search-input');
+  search.value = 'forclaz';
+  search.dispatchEvent(new SyntheticEvent('input', { bubbles: true }));
+  const results = document.getElementById('search-results');
+  ok(results.textContent.includes('Forclaz'), 'searching finds the Col de la Forclaz');
+  ok(
+    results.querySelectorAll('[data-set-field="from-place"]').length > 0,
+    'a place result offers to become the origin'
+  );
+
+  // An unaccented query has to find an accented name, since nobody types the
+  // grave accent in "Orsières" on a phone.
+  search.value = 'orsieres';
+  search.dispatchEvent(new SyntheticEvent('input', { bubbles: true }));
+  ok(
+    document.getElementById('search-results').textContent.includes('Orsières'),
+    'an unaccented query finds the accented place'
+  );
+
+  const journeys = document.querySelectorAll('[data-journey]');
+  ok(journeys.length > 0, 'the page found at least one journey');
+  ok(
+    journeys[0].getAttribute('data-selected') === 'true',
+    'the first journey starts selected'
+  );
+
+  // The honesty mechanism: how far a journey's times can be trusted belongs on
+  // the journey, not in a footnote nobody reads. Which of the three levels it
+  // shows depends on whether tools/fetch_transit.py has run, so what is asserted
+  // is that the wording is one of them — a level the page has no label for would
+  // otherwise render as a bare slug and look deliberate.
+  const CONFIDENCE_WORDING = [
+    'Published 2027 timetable',
+    '2026 pattern, times will shift',
+    'Indicative only',
+  ];
+  ok(
+    CONFIDENCE_WORDING.some((wording) => journeys[0].textContent.includes(wording)),
+    'a journey says how much its times can be trusted',
+    journeys[0].textContent.replace(/\s+/g, ' ').trim().slice(0, 120)
+  );
+
+  // Clicking a leg must open that service, not select the journey around it.
+  const leg = journeys[0].querySelector('[data-service]');
+  ok(Boolean(leg), 'a journey leg carries the service it uses');
+  leg.click();
+  const detail = document.getElementById('service-detail');
+  ok(detail.textContent.includes('Stops'), 'clicking a leg shows that service in detail');
+  ok(detail.textContent.includes('Departures from'), 'with its departure times');
+  ok(
+    detail.textContent.includes('checked'),
+    'and the date the record was last verified'
+  );
+
+  // The stops in the detail panel are themselves links to a place, which is how
+  // you find out where a bus stop actually is.
+  const stop = detail.querySelector('[data-place]');
+  ok(Boolean(stop), 'the detail panel links each stop to its place');
+  stop.click();
+  ok(
+    document.getElementById('service-detail').textContent.includes('Open in maps'),
+    'a place shows a wayfinding link'
+  );
+
+  const swap = document.getElementById('swap-places');
+  const before = document.getElementById('from-place').value;
+  swap.click();
+  ok(
+    document.getElementById('to-place').value === before,
+    'swapping exchanges the two ends'
+  );
+  swap.click();
+
+  // Out of season the answer is "nothing runs on this date", which must be said
+  // rather than left as an empty list that reads as a broken page. The Swiss
+  // Entremont lines run all year, so this needs a genuinely seasonal pair — the
+  // Chapieux navette only exists between June and September.
+  document.getElementById('from-place').value = 'les-chapieux';
+  document.getElementById('to-place').value = 'ville-des-glaciers';
+  const date = document.getElementById('journey-date');
+  date.value = '2027-01-15';
+  date.dispatchEvent(new SyntheticEvent('change', { bubbles: true }));
+  const winter = document.getElementById('journeys').textContent;
+  ok(
+    winter.includes('No scheduled service'),
+    'an out-of-season date explains itself instead of rendering nothing'
+  );
+  ok(
+    winter.includes('out of season'),
+    'and names the service that is closed for the winter'
+  );
+
+  // Back in season the same pair has to work, so the empty state above was the
+  // date and not a broken pair.
+  date.value = '2027-07-08';
+  date.dispatchEvent(new SyntheticEvent('change', { bubbles: true }));
+  ok(
+    document.querySelectorAll('[data-journey]').length > 0,
+    'the same pair in July finds the navette'
+  );
+}
 
 /**
  * The landmark accordion in the planner's day-by-day table.
@@ -294,6 +463,177 @@ function interactDay(document) {
     globalThis.L.record.panTo > beforeRow,
     'clicking the row itself still pans the map'
   );
+}
+
+/**
+ * The links from a day into the transit page.
+ *
+ * A link whose label renders but whose href points at an unfiltered page is the
+ * failure worth catching: it looks right in a text dump and costs the reader the
+ * two selections they had just made. So this checks the query string, and checks
+ * it against the day being viewed rather than a literal, since renumbering the
+ * itinerary would otherwise leave a passing test asserting the wrong day.
+ */
+function interactDayTransit(document) {
+  const params = (element) => new URLSearchParams(element.getAttribute('href').split('?')[1] || '');
+
+  const skip = params(document.getElementById('skip-day'));
+  ok(skip.get('from') === 'courmayeur', 'skipping the day starts where the day starts');
+  ok(skip.get('to') === 'la-fouly', 'and ends where it ends');
+  ok(/^\d{4}-\d{2}-\d{2}$/.test(skip.get('date') || ''), 'on the date of the day itself');
+
+  const leg = document.getElementById('segments').querySelector('a');
+  const ride = params(leg);
+  ok(Boolean(ride.get('from') && ride.get('to')), 'the bus leg link carries both of its ends');
+  ok(ride.get('date') === skip.get('date'), 'and the same date as the day');
+}
+
+/**
+ * The "getting here" links on the lodging cards.
+ *
+ * Chamonix is the one stop reached from outside the region, so it is the one
+ * whose origin cannot be the default — a link from itself to itself would render
+ * perfectly and find nothing.
+ */
+function interactStaysTransit(document) {
+  const links = document
+    .getElementById('stops')
+    .querySelectorAll('a')
+    .filter((a) => (a.getAttribute('href') || '').startsWith('transit.html'));
+
+  ok(links.length > 1, 'more than one stop offers a way of getting there');
+
+  const queries = links.map((a) => new URLSearchParams(a.getAttribute('href').split('?')[1]));
+  ok(
+    queries.every((q) => q.get('to') && q.get('from') !== q.get('to')),
+    'no card links a stop to itself'
+  );
+  ok(
+    queries.some((q) => q.get('to') === 'chamonix' && q.get('from') === 'geneva-airport'),
+    'base is reached from the airport'
+  );
+}
+
+/**
+ * Packing: ticking an item, and adding one to the shared list.
+ *
+ * The two halves of the page have to stay separate, and that separation is
+ * invisible in a text dump. A tick is device-local and must not become a shared
+ * change; adding an item is shared and must queue one, carrying the name of
+ * whoever made it. Both survive the full re-render each one triggers.
+ */
+function interactPacking(document) {
+  const ticks = () => document.querySelectorAll('[data-packed-for]');
+  const packedRows = () =>
+    document.querySelectorAll('.pack-item').filter((row) => row.dataset.packed === 'true');
+  const stats = () => document.getElementById('packing-stats').textContent;
+
+  ok(ticks().length > 20, 'the default list rendered its items');
+  ok(packedRows().length === 0, 'nothing starts ticked');
+
+  const first = ticks()[0];
+  const firstId = first.dataset.packedFor;
+  first.click();
+  ok(packedRows().length === 1, 'ticking an item marks its row packed');
+  ok(stats().includes('1 of '), 'the packed count follows the tick');
+  // The list is rebuilt from scratch by the tick, so the tick has to have been
+  // re-rendered as checked rather than reset.
+  ok(
+    document.querySelector(`[data-packed-for="${firstId}"]`)?.checked === true,
+    'the tick survives the re-render it caused'
+  );
+  ok(
+    document.activeElement === document.querySelector(`[data-packed-for="${firstId}"]`),
+    'focus stays on the tick after the re-render'
+  );
+
+  // A tick is mine alone. If it leaked into the shared log it would show up as
+  // something waiting to publish.
+  ok(
+    !document.getElementById('sync-panel').textContent.includes('not published'),
+    'ticking an item does not become a shared change'
+  );
+
+  // Every commit is authored by the sync service's own token, so an operation
+  // with no name on it cannot be traced to anyone afterwards. The page refuses
+  // the shared half until someone says who they are.
+  const hint = () => document.getElementById('packing-who-hint');
+  ok(hint().hidden === false, 'an unnamed device is asked to choose someone');
+  document.getElementById('add-item').click();
+  ok(
+    document.getElementById('item-dialog').open !== true,
+    'adding is refused while nobody is chosen'
+  );
+  ok(
+    hint().textContent.includes('Choose yourself above first'),
+    'the refusal says what to do about it'
+  );
+
+  const who = document.getElementById('packing-who');
+  who.value = 'p1';
+  who.dispatchEvent(new SyntheticEvent('change', { bubbles: true }));
+  ok(hint().hidden === true, 'choosing someone clears the prompt');
+  // Ticks made before choosing are filed under 'anon'. They have to follow the
+  // person, or identifying yourself looks like it wiped your progress.
+  ok(packedRows().length === 1, 'a tick made before choosing survives being claimed');
+
+  document.querySelector(`[data-packed-for="${firstId}"]`).click();
+  ok(packedRows().length === 0, 'un-ticking an item clears it again');
+
+  // Adding to the list is the shared half.
+  const before = ticks().length;
+  document.getElementById('add-item').click();
+  ok(document.getElementById('item-dialog').open === true, 'Add opens the item dialog');
+  document.getElementById('item-name').value = 'Spare bootlaces';
+  document.getElementById('item-essential').checked = true;
+  document.getElementById('item-save').click();
+
+  ok(ticks().length === before + 1, 'saving adds the item to the list');
+  ok(
+    (JSON.parse(globalThis.localStorage.getItem('tmb:outbox')) || []).some(
+      (op) => op.by === 'p1'
+    ),
+    'the queued change records who made it'
+  );
+  ok(
+    document.getElementById('packing-groups').textContent.includes('Spare bootlaces'),
+    'the new item is shown'
+  );
+  ok(
+    document.getElementById('sync-panel').textContent.includes('not published'),
+    'the new item is queued as a shared change'
+  );
+  ok(stats().includes('Added by the group'), 'the stats distinguish added items');
+
+  // Removing a default has to be recoverable, which is the whole reason removal
+  // is an operation rather than a deletion. A named default is used rather than
+  // whichever row sorted first, so the assertion cannot drift with the list.
+  const target = 'pk-liner';
+  const removedPanel = () => document.getElementById('packing-removed');
+  const inList = (id) => Boolean(document.querySelector(`[data-edit-item="${id}"]`));
+
+  ok(removedPanel().textContent.trim() === '', 'nothing is listed as removed yet');
+  ok(inList(target), 'the item about to be removed is on the list');
+
+  document.querySelector(`[data-edit-item="${target}"]`).click();
+  ok(
+    document.getElementById('item-delete').hidden === false,
+    'editing an existing item offers removal'
+  );
+  // The shim declines every confirm() by default; standing in for the user
+  // agreeing is the only way to reach the code past the guard.
+  globalThis.window.confirm = () => true;
+  document.getElementById('item-delete').click();
+
+  ok(!inList(target), 'the removed item leaves the list');
+  ok(
+    Boolean(document.querySelector(`[data-restore="${target}"]`)),
+    'the removed default is offered back rather than lost'
+  );
+
+  document.querySelector(`[data-restore="${target}"]`).click();
+  ok(inList(target), 'restoring puts it back on the list');
+  ok(removedPanel().textContent.trim() === '', 'nothing is left listed as removed');
 }
 
 /* ------------------------------------------------------------------ */

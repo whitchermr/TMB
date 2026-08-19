@@ -210,7 +210,8 @@ function drawMap({ fit }) {
       ? `<span style="color:${mapUi.VARIANT_COLORS[state.compareLeg.variant]}"><i class="dashed"></i> ${labelFor(state.compareLeg.variant)}</span>`
       : '',
     state.leg.transitDistance_m
-      ? `<span style="color:${mapUi.VARIANT_COLORS.transit}"><i class="dashed"></i> Bus / navette</span>`
+      ? `<span style="color:${mapUi.VARIANT_COLORS.transit}"><i class="dashed"></i>
+          <a href="${transitLink(state.day.from, state.day.to)}">Bus / navette</a></span>`
       : '',
     '<span style="color:var(--c-warm)"><i class="dot"></i> Scenery stop</span>',
     state.located.some((waypoint) => isHistoric(waypoint) && !isPhotographic(waypoint))
@@ -351,6 +352,14 @@ function renderChart() {
 }
 
 function renderSegments() {
+  // Somebody whose knee has gone wants the whole day replaced, not one leg of
+  // it, so the card that explains the day also offers a way round it.
+  const skip = document.getElementById('skip-day');
+  skip.href = transitLink(state.day.from, state.day.to);
+  skip.title = `Public transport from ${state.anchors[state.day.from]?.name || state.day.from} to ${
+    state.anchors[state.day.to]?.name || state.day.to
+  }`;
+
   const container = document.getElementById('segments');
   container.innerHTML = state.leg.segments
     .map((segment) => {
@@ -384,10 +393,34 @@ function renderSegments() {
             ${segment.note ? `<br><small class="faint">${mapUi.escapeHtml(segment.note)}</small>` : ''}
           </span>
           <span class="segment__num">${numbers}</span>
+          ${
+            isTransit && segment.from && segment.to
+              ? `<a class="btn btn--sm" href="${transitLink(segment.from, segment.to)}"
+                   title="Times and tickets for this leg">Times</a>`
+              : ''
+          }
         </div>
       `;
     })
     .join('');
+}
+
+/**
+ * Link into the transit page, prefilled.
+ *
+ * The route data records that a bus covers part of this day but not when it
+ * runs, so the segment is the natural place to ask — and arriving there with the
+ * two ends and the date already chosen is the difference between one tap and
+ * re-picking what you were just looking at.
+ */
+function transitLink(from, to) {
+  const params = new URLSearchParams({
+    from,
+    to,
+    date: state.day.date,
+    t: '08:00',
+  });
+  return `transit.html?${params}`;
 }
 
 function renderSun() {

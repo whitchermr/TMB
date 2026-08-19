@@ -15,7 +15,7 @@
  * domain root or under a GitHub Pages project subpath like /TMB/.
  */
 
-const VERSION = 'v1';
+const VERSION = 'v4';
 const SHELL_CACHE = `tmb-shell-${VERSION}`;
 const DATA_CACHE = `tmb-data-${VERSION}`;
 const TILE_CACHE = 'tmb-tiles'; // unversioned: tiles do not change with releases
@@ -46,6 +46,8 @@ const SHELL = [
   'plan.html',
   'stays.html',
   'money.html',
+  'packing.html',
+  'transit.html',
   'about.html',
   'print.html',
   'manifest.webmanifest',
@@ -65,6 +67,8 @@ const SHELL = [
   'assets/js/core/sun.js',
   'assets/js/core/schedule.js',
   'assets/js/core/money.js',
+  'assets/js/core/sync.js',
+  'assets/js/core/transit.js',
   'assets/js/ui/nav.js',
   'assets/js/ui/map.js',
   'assets/js/ui/elevation.js',
@@ -76,6 +80,8 @@ const SHELL = [
   'assets/js/pages/plan.js',
   'assets/js/pages/stays.js',
   'assets/js/pages/money.js',
+  'assets/js/pages/packing.js',
+  'assets/js/pages/transit.js',
   'assets/js/pages/about.js',
   'assets/js/pages/print.js',
 ];
@@ -88,6 +94,9 @@ const DATA = [
   'data/stays.json',
   'data/expenses.json',
   'data/rates.json',
+  'data/packing.json',
+  'data/transit.json',
+  'data/transit-schedules.json',
   'data/photos.json',
   'data/history.json',
   'data/route/anchors.json',

@@ -1,0 +1,1280 @@
+{
+  "$schema": "tmb/transit/1",
+  "$comment": [
+    "Getting to the trail, off the trail, and between stops. Hand-authored.",
+    "tools/fetch_transit.py adds precise times for the services that have an open",
+    "GTFS feed; it writes data/transit-schedules.json and never touches this file.",
+    "",
+    "places  — graph nodes. Where data/route/anchors.json already has the",
+    "          coordinates, reference it with `anchorId` instead of restating",
+    "          them. Only places off the trail carry their own lat/lon.",
+    "          `precision: stated` means the coordinate is the operator's own",
+    "          published stop position, `approximate` means it was read off a map",
+    "          and the page says so, because these are what a maps link uses.",
+    "operators — who runs a service, and how to reach a human.",
+    "services  — scheduled services. One service is ONE stopping pattern in ONE",
+    "          direction. A shuttle where only some runs continue past the middle",
+    "          of the line is two services, not one with exceptions.",
+    "walks   — a leg you cover on foot, so a journey can mix a bus with the road",
+    "          walk at the end of it. Timed with the same Naismith model as the",
+    "          hiking days rather than a made-up walking speed.",
+    "onDemand — taxis, private transfers and booked shared shuttles. No timetable,",
+    "          so these are offered alongside the journey results, not inside them.",
+    "",
+    "season is month-day only, so a pattern is not tied to one year: the trip is",
+    "in 2027 and no French or Italian summer timetable for 2027 exists yet.",
+    "Absent season means the service runs year-round.",
+    "",
+    "days: \"daily\" or an array of weekday numbers, 0 = Sunday, matching",
+    "getUTCDay(). departures is a list of times at the FIRST stop; use frequency",
+    "instead when the service is turn-up-and-go.",
+    "",
+    "confidence — how much to trust the times, and rendered in the UI:",
+    "  scheduled-2027 : from a published 2027 timetable. Trust it.",
+    "  pattern-2026   : the 2026 season's pattern, standing in for 2027. The",
+    "                   shape is right; the exact minutes will move.",
+    "  estimate       : reconstructed from prose. Treat as indicative only.",
+    "",
+    "gtfs — a hint for tools/fetch_transit.py, present only where an open feed",
+    "covers the service: which feed, which route (shortName and/or a longName",
+    "substring), and a `towards` substring of the trip headsign to pick the",
+    "direction. Stops are matched to `places` by proximity rather than listed,",
+    "so a feed renumbering its stop ids does not need an edit here.",
+    "",
+    "Every service carries `source`, and `verifiedOn` records when a human last",
+    "looked. See docs/transit-notes.md for what must be re-checked before travel."
+  ],
+
+  "places": [
+    {
+      "id": "chamonix",
+      "anchorId": "chamonix",
+      "role": "hub",
+      "stopName": "Chamonix, Gare Routière (Chamonix Sud)",
+      "note": "Trip base. Rail to Martigny and Saint-Gervais, coaches to Geneva and Courmayeur, valley buses to both trailheads."
+    },
+    {
+      "id": "les-houches",
+      "anchorId": "les-houches",
+      "role": "trailhead",
+      "stopName": "Les Houches, Téléphérique de Bellevue",
+      "note": "Start of hiking day 1. Chamonix Bus line 1 runs here from town."
+    },
+    {
+      "id": "les-contamines",
+      "anchorId": "les-contamines",
+      "role": "trailhead",
+      "stopName": "Les Contamines-Montjoie, Chef-Lieu"
+    },
+    {
+      "id": "les-chapieux",
+      "anchorId": "les-chapieux",
+      "role": "trailhead",
+      "stopName": "Les Chapieux",
+      "note": "Navette ticket machine is beside Auberge de la Nova."
+    },
+    {
+      "id": "les-mottets",
+      "anchorId": "les-mottets",
+      "role": "stop",
+      "stopName": "Refuge des Mottets",
+      "note": "The navette stops below at Ville des Glaciers, not here."
+    },
+    {
+      "id": "lac-combal",
+      "anchorId": "lac-combal",
+      "role": "stop",
+      "stopName": "Lac Combal (Val Veny)",
+      "note": "Val Veny bus stop at the Combal dam."
+    },
+    {
+      "id": "courmayeur",
+      "anchorId": "courmayeur",
+      "role": "trailhead",
+      "stopName": "Courmayeur, Piazzale Monte Bianco",
+      "note": "Everything in Courmayeur leaves from Piazzale Monte Bianco: the valley shuttles, the tunnel coach to Chamonix, and the Aosta line."
+    },
+    {
+      "id": "arnouvaz",
+      "anchorId": "arnouvaz",
+      "role": "stop",
+      "stopName": "Arp Nouvaz (Val Ferret)",
+      "note": "Top of the Val Ferret shuttle and the start of walking on the shortcut day."
+    },
+    {
+      "id": "la-fouly",
+      "anchorId": "la-fouly",
+      "role": "trailhead",
+      "stopName": "La Fouly, poste"
+    },
+    {
+      "id": "champex-lac",
+      "anchorId": "champex-lac",
+      "role": "trailhead",
+      "stopName": "Champex-Lac, télécabine"
+    },
+    {
+      "id": "trient",
+      "anchorId": "trient",
+      "role": "trailhead",
+      "stopName": "Trient, village"
+    },
+    {
+      "id": "col-de-balme",
+      "anchorId": "col-de-balme",
+      "role": "stop",
+      "stopName": "Col de Balme",
+      "note": "No road and no service. Reachable on foot only — listed so a journey can end with the walk up to it."
+    },
+    {
+      "id": "le-tour",
+      "anchorId": "le-tour",
+      "role": "trailhead",
+      "stopName": "Le Tour, télécabine",
+      "note": "Where the shortcut day 7 finishes and the bus back to Chamonix starts."
+    },
+
+    {
+      "id": "ville-des-glaciers",
+      "name": "Ville des Glaciers",
+      "role": "stop",
+      "country": "FR",
+      "lat": 45.7315,
+      "lon": 6.7735,
+      "precision": "approximate",
+      "note": "Navette terminus in the Vallée des Glaciers. Short road walk up to Les Mottets from here."
+    },
+    {
+      "id": "les-lanchettes",
+      "name": "Les Lanchettes",
+      "role": "stop",
+      "country": "FR",
+      "lat": 45.7245,
+      "lon": 6.7605,
+      "precision": "approximate",
+      "note": "Parking at the head of the valley, for Refuge Robert Blanc. Only a few navettes a day come this far."
+    },
+    {
+      "id": "bourg-saint-maurice",
+      "name": "Bourg-Saint-Maurice",
+      "role": "rail",
+      "country": "FR",
+      "lat": 45.6183,
+      "lon": 6.7693,
+      "address": "Gare SNCF et gare routière, Avenue de la Gare, 73700 Bourg-Saint-Maurice",
+      "note": "TGV and TER railhead for the Beaufortain side. The Les Chapieux shuttle leaves from the coach station beside the railway station."
+    },
+    {
+      "id": "notre-dame-de-la-gorge",
+      "name": "Notre-Dame de la Gorge",
+      "role": "stop",
+      "country": "FR",
+      "lat": 45.7856,
+      "lon": 6.7311,
+      "precision": "approximate",
+      "note": "Head of the Contamines valley road, where the day 2 climb properly begins. Free village navette runs here in summer."
+    },
+    {
+      "id": "saint-gervais-le-fayet",
+      "name": "Saint-Gervais-les-Bains-Le Fayet",
+      "role": "rail",
+      "country": "FR",
+      "lat": 45.9057,
+      "lon": 6.7003,
+      "address": "Gare SNCF, 122 Avenue de la Gare, 74190 Saint-Gervais-les-Bains",
+      "note": "Where the Mont-Blanc Express meets the main-line trains, and the railhead for Les Contamines."
+    },
+    {
+      "id": "sallanches",
+      "name": "Sallanches",
+      "role": "rail",
+      "country": "FR",
+      "lat": 45.9378,
+      "lon": 6.6317,
+      "precision": "approximate",
+      "note": "Main-line station with TGV connections; north end of the Y84 bus to Les Contamines."
+    },
+    {
+      "id": "argentiere",
+      "name": "Argentière",
+      "role": "rail",
+      "country": "FR",
+      "lat": 45.9847,
+      "lon": 6.9267,
+      "note": "Mont-Blanc Express stop, and the nearest station to Le Tour."
+    },
+    {
+      "id": "vallorcine",
+      "name": "Vallorcine",
+      "role": "rail",
+      "country": "FR",
+      "lat": 46.0333,
+      "lon": 6.9333,
+      "precision": "approximate",
+      "note": "Last French stop on the Mont-Blanc Express before the Swiss border."
+    },
+    {
+      "id": "le-chatelard",
+      "name": "Le Châtelard VS",
+      "role": "rail",
+      "country": "CH",
+      "lat": 46.06189,
+      "lon": 6.95841,
+      "precision": "stated",
+      "note": "Swiss border station on the Mont-Blanc Express, and the low end of the Trient valley bus. This is Le Châtelard VS in the village; Le Châtelard-Frontière is a separate station a kilometre down the line, right on the border."
+    },
+    {
+      "id": "finhaut",
+      "name": "Finhaut",
+      "role": "rail",
+      "country": "CH",
+      "lat": 46.0808,
+      "lon": 6.9756,
+      "precision": "approximate",
+      "note": "Mont-Blanc Express stop and one end of the Col de la Forclaz summer bus."
+    },
+    {
+      "id": "col-de-la-forclaz",
+      "name": "Col de la Forclaz",
+      "role": "stop",
+      "country": "CH",
+      "lat": 46.05783,
+      "lon": 7.00106,
+      "precision": "stated",
+      "note": "On the TMB just above Trient. Hotel here is the usual fallback when Trient is full, and it is a bus stop."
+    },
+    {
+      "id": "martigny",
+      "name": "Martigny",
+      "role": "rail",
+      "country": "CH",
+      "lat": 46.10583,
+      "lon": 7.07912,
+      "precision": "stated",
+      "address": "Gare CFF, Place de la Gare, 1920 Martigny",
+      "note": "The Swiss hub for the whole eastern half of the loop. Mont-Blanc Express to Chamonix, St-Bernard Express to Orsières, main line to Geneva, and the international coach to Aosta."
+    },
+    {
+      "id": "orsieres",
+      "name": "Orsières",
+      "role": "rail",
+      "country": "CH",
+      "lat": 46.0286,
+      "lon": 7.145,
+      "note": "Where you change between the Val Ferret and Champex bus lines. Train to Martigny."
+    },
+    {
+      "id": "praz-de-fort",
+      "name": "Praz-de-Fort",
+      "role": "stop",
+      "country": "CH",
+      "lat": 45.98925,
+      "lon": 7.12532,
+      "precision": "stated",
+      "note": "On the day 5 valley walk, and on the La Fouly bus line."
+    },
+    {
+      "id": "ferret",
+      "name": "Ferret",
+      "role": "stop",
+      "country": "CH",
+      "lat": 45.91629,
+      "lon": 7.10486,
+      "precision": "stated",
+      "note": "Highest bus stop in the Swiss Val Ferret, about 45 minutes' walk above La Fouly. Le Clou/Les Granges is a separate stop a kilometre below it, easy to mistake for this one."
+    },
+    {
+      "id": "aosta",
+      "name": "Aosta",
+      "role": "rail",
+      "country": "IT",
+      "lat": 45.7356,
+      "lon": 7.3242,
+      "precision": "approximate",
+      "note": "Italian rail and coach hub. The way to Courmayeur from Milan, Turin and Malpensa, and from Martigny over the Grand-Saint-Bernard."
+    },
+    {
+      "id": "geneva-airport",
+      "name": "Geneva Airport (GVA)",
+      "role": "airport",
+      "country": "CH",
+      "lat": 46.2381,
+      "lon": 6.108,
+      "address": "Genève Aéroport, 1215 Le Grand-Saconnex, Switzerland",
+      "note": "The usual way in. Rail station is under the terminal; transfer companies meet in the arrivals hall."
+    },
+    {
+      "id": "milan-malpensa",
+      "name": "Milan Malpensa (MXP)",
+      "role": "airport",
+      "country": "IT",
+      "lat": 45.6306,
+      "lon": 8.7281,
+      "note": "The Italian-side alternative, with a direct Arriva coach up the Aosta valley."
+    }
+  ],
+
+  "operators": [
+    {
+      "id": "les-arcs-navettes",
+      "name": "Navettes des Chapieux (Les Arcs / Bourg-Saint-Maurice)",
+      "country": "FR",
+      "phone": "+33479075756",
+      "phoneLabel": "Les Chapieux tourist office",
+      "website": "https://www.lesarcs.com/randonnee/les-chapieux",
+      "hours": "Tourist office daily 08:30–12:00 and 13:30–17:30, 13 June to 13 September",
+      "note": "Municipal seasonal shuttles, not a commercial line. Cash is safer than card everywhere in this valley."
+    },
+    {
+      "id": "taxi-aarthur",
+      "name": "Taxi Aarthur",
+      "country": "FR",
+      "phone": "+33614182611",
+      "website": "https://www.taxibourgsaintmaurice.com",
+      "hours": "Phone booking; ring ahead rather than expecting to find one waiting",
+      "note": "The usual fallback for the Beaufortain side, including the long transfer round to Courmayeur when someone needs to leave the trail."
+    },
+    {
+      "id": "chamonix-mobilite",
+      "name": "Chamonix Mobilité (Chamonix Bus)",
+      "country": "FR",
+      "email": "commercial.chamonix@transdev.com",
+      "website": "https://www.chamonix-mobilite.com",
+      "hours": "Buses roughly 05:40 to 20:45 in summer",
+      "bookingUrl": "https://www.chamonix-mobilite.com",
+      "note": "Operated by Transdev for the valley. Groups over 10 can hire a bus through the commercial address above."
+    },
+    {
+      "id": "sat-mont-blanc",
+      "name": "SAT Mont-Blanc (Cars Région Haute-Savoie)",
+      "country": "FR",
+      "website": "https://www.sat-montblanc.com",
+      "note": "Runs the Y84 between Sallanches, Saint-Gervais and Les Contamines on behalf of the region."
+    },
+    {
+      "id": "les-contamines-navettes",
+      "name": "Les Contamines-Montjoie free village navettes",
+      "country": "FR",
+      "phone": "+33450470020",
+      "phoneLabel": "Tourist office, Les Contamines",
+      "website": "https://www.lescontamines.com",
+      "hours": "Tourist office mornings 08:30–12:00; afternoons by appointment",
+      "note": "Free summer shuttles round the hamlets and up to Notre-Dame de la Gorge. Timetable is published on the village app each season."
+    },
+    {
+      "id": "arriva-aosta",
+      "name": "Arriva Italia — Valle d'Aosta",
+      "country": "IT",
+      "website": "https://aosta.arriva.it/courmayeur-mont-blanc/",
+      "bookingUrl": "https://aosta.arriva.it/en/timetables-and-routes/",
+      "hours": "Val Ferret and Val Veny shuttles daytime only, summer season",
+      "note": "Runs all local transport in Courmayeur plus the commercial lines from Milan, Turin and Malpensa. Buying on board a Courmayeur shuttle carries a €4 surcharge outside the free period."
+    },
+    {
+      "id": "flixbus",
+      "name": "FlixBus / BlaBlaCar Bus (Mont Blanc tunnel)",
+      "country": "IT",
+      "website": "https://global.flixbus.com/bus-routes/bus-courmayeur-chamonix",
+      "bookingUrl": "https://global.flixbus.com/bus-routes/bus-courmayeur-chamonix",
+      "hours": "Roughly 06:00 to 22:30, several operators sharing the route",
+      "note": "The tunnel coach is sold by FlixBus, BlaBlaCar Bus, Infobus and SAVDA/Arriva under different brands on the same road. Book ahead in July; it is a small vehicle and it fills."
+    },
+    {
+      "id": "tmr",
+      "name": "TMR — Transports de Martigny et Régions",
+      "country": "CH",
+      "phone": "+41277216840",
+      "email": "voyages@tmrsa.ch",
+      "website": "https://www.tmrsa.ch/en/timetables/",
+      "bookingUrl": "https://www.sbb.ch",
+      "hours": "Booking office weekday business hours",
+      "note": "Runs the Mont-Blanc Express, the St-Bernard Express and the Entremont bus network. Reservation required 72 hours ahead for groups of 10 or more, and for bicycles."
+    },
+    {
+      "id": "postauto",
+      "name": "PostAuto / CarPostal Valais",
+      "country": "CH",
+      "website": "https://www.postauto.ch",
+      "bookingUrl": "https://www.sbb.ch",
+      "note": "Shares the Trient valley and Forclaz stops with TMR. Everything Swiss is searchable and bookable on sbb.ch regardless of which company runs the vehicle."
+    },
+    {
+      "id": "cff-sbb",
+      "name": "CFF / SBB — Swiss Federal Railways",
+      "country": "CH",
+      "phone": "+41848444066",
+      "website": "https://www.sbb.ch",
+      "bookingUrl": "https://www.sbb.ch",
+      "hours": "Rail service desk 06:00–22:00 daily",
+      "note": "The Swiss main line along Lake Geneva to Martigny. Everything Swiss is searchable on sbb.ch whoever runs the vehicle, which is why it is the booking link on most Swiss services here."
+    },
+    {
+      "id": "sncf",
+      "name": "SNCF — French national railways",
+      "country": "FR",
+      "phone": "+33892353535",
+      "website": "https://www.sncf-connect.com",
+      "bookingUrl": "https://www.sncf-connect.com",
+      "hours": "Ticket desks at Le Fayet and Bourg-Saint-Maurice, station hours",
+      "note": "The Tarentaise and Mont-Blanc lines. Both journeys that touch this trip need a change and are sold as one ticket, so book through SNCF Connect rather than leg by leg."
+    },
+    {
+      "id": "mountain-dropoffs",
+      "name": "Mountain Drop-offs",
+      "country": "FR",
+      "website": "https://www.mountaindropoffs.com",
+      "bookingUrl": "https://www.mountaindropoffs.com",
+      "hours": "24 hours a day, every day of the year",
+      "rating": { "score": 5, "outOf": 5, "source": "Google and TripAdvisor", "ratingAsOf": "2026-08-18" },
+      "note": "Door-to-door rather than a central drop point, which matters with six people and luggage. Over 20 years on this route."
+    },
+    {
+      "id": "alpybus",
+      "name": "Alpybus",
+      "country": "FR",
+      "website": "https://www.alpybus.com/transfers/geneva-chamonix",
+      "bookingUrl": "https://www.alpybus.com/chamonix",
+      "hours": "Scheduled shared departures plus private hire",
+      "note": "Cheaper than door-to-door because the express line uses fixed pick-up points. Three tiers: express, door-to-door, private."
+    }
+  ],
+
+  "services": [
+    {
+      "id": "chapieux-navette-glaciers",
+      "operator": "les-arcs-navettes",
+      "mode": "navette",
+      "name": "Les Chapieux to Ville des Glaciers",
+      "stops": [
+        { "place": "les-chapieux", "offsetMinutes": 0 },
+        { "place": "ville-des-glaciers", "offsetMinutes": 12 }
+      ],
+      "season": { "from": "06-13", "to": "09-13" },
+      "days": "daily",
+      "frequency": { "everyMinutes": 30, "first": "07:30", "last": "18:00" },
+      "bidirectional": true,
+      "fare": { "amount": 5, "currency": "EUR", "basis": "return" },
+      "booking": {
+        "kind": "machine",
+        "where": "Ticket machine at Les Chapieux, beside Auberge de la Nova",
+        "note": "Cash. The machine shows how many seats are left and the first runs sell out — buy the evening before."
+      },
+      "note": "The road is closed to cars 07:30–18:00, which is exactly why the shuttle exists. Around 22 runs a day.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Les Arcs — Le site des Chapieux",
+        "url": "https://www.lesarcs.com/randonnee/les-chapieux"
+      }
+    },
+    {
+      "id": "chapieux-navette-lanchettes",
+      "operator": "les-arcs-navettes",
+      "mode": "navette",
+      "name": "Les Chapieux to Les Lanchettes",
+      "stops": [
+        { "place": "les-chapieux", "offsetMinutes": 0 },
+        { "place": "ville-des-glaciers", "offsetMinutes": 12 },
+        { "place": "les-lanchettes", "offsetMinutes": 30 }
+      ],
+      "season": { "from": "06-13", "to": "09-13" },
+      "days": "daily",
+      "departures": ["07:30", "14:00", "16:20"],
+      "bidirectional": true,
+      "fare": { "amount": 5, "currency": "EUR", "basis": "return" },
+      "booking": {
+        "kind": "machine",
+        "where": "Ticket machine at Les Chapieux, beside Auberge de la Nova",
+        "note": "Cash. Same ticket as the Ville des Glaciers runs."
+      },
+      "note": "Only three runs a day go beyond Ville des Glaciers to the Lanchettes parking. Everything else turns round short of it.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Refuge Robert Blanc — Accès",
+        "url": "https://refugerobertblanc.fr/acces/"
+      }
+    },
+    {
+      "id": "bsm-chapieux-up",
+      "operator": "les-arcs-navettes",
+      "mode": "navette",
+      "name": "Bourg-Saint-Maurice to Les Chapieux",
+      "stops": [
+        { "place": "bourg-saint-maurice", "offsetMinutes": 0 },
+        { "place": "les-chapieux", "offsetMinutes": 45 }
+      ],
+      "season": { "from": "06-13", "to": "09-13" },
+      "days": "daily",
+      "departures": ["06:45", "08:20", "14:30"],
+      "fare": { "amount": 8, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "driver",
+        "where": "From the driver at the Bourg-Saint-Maurice coach station",
+        "note": "Cash. No advance sale on this leg."
+      },
+      "note": "The way onto the trail if you are arriving by train rather than from Chamonix, and the way off it if someone needs to leave mid-trip.",
+      "caveat": "Sources disagree on the departure quay at Bourg-Saint-Maurice — the resort site says Quai 7 and Refuge Robert Blanc says Quai 5. Allow time to find it.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Les Arcs — Bourg Saint Maurice to Les Chapieux",
+        "url": "https://en.lesarcs.com/move-around/bourg-saint-maurice-les-chapieux"
+      }
+    },
+    {
+      "id": "bsm-chapieux-down",
+      "operator": "les-arcs-navettes",
+      "mode": "navette",
+      "name": "Les Chapieux to Bourg-Saint-Maurice",
+      "stops": [
+        { "place": "les-chapieux", "offsetMinutes": 0 },
+        { "place": "bourg-saint-maurice", "offsetMinutes": 45 }
+      ],
+      "season": { "from": "06-13", "to": "09-13" },
+      "days": "daily",
+      "departures": ["10:50", "17:20", "17:50", "18:20"],
+      "fare": { "amount": 8, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "driver",
+        "where": "From the driver at Les Chapieux",
+        "note": "Cash."
+      },
+      "note": "Modelled separately from the uphill runs because the return times are not a mirror of them — there is one late-morning departure and then nothing until the evening.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Refuge Robert Blanc — Accès",
+        "url": "https://refugerobertblanc.fr/acces/"
+      }
+    },
+
+    {
+      "id": "chamonix-bus-1",
+      "operator": "chamonix-mobilite",
+      "mode": "bus",
+      "line": "1",
+      "name": "Chamonix Bus line 1 — Les Houches to Les Praz",
+      "stops": [
+        { "place": "les-houches", "offsetMinutes": 0 },
+        { "place": "chamonix", "offsetMinutes": 20 }
+      ],
+      "gtfs": { "feed": "chamonix", "shortName": "1", "towards": "Praz" },
+      "season": { "from": "06-20", "to": "09-06" },
+      "days": "daily",
+      "frequency": { "everyMinutes": 30, "first": "05:40", "last": "20:14" },
+      "bidirectional": true,
+      "fare": { "amount": 2, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "Chamonix Mobilité app, website, or a sales terminal",
+        "url": "https://www.chamonix-mobilite.com",
+        "note": "Enter your Carte d'Hôte number when buying to get the discounted rate. Guest-card day passes were €5 for two days and €10 for a week in 2026."
+      },
+      "note": "How you get to the day 1 trailhead. Runs all year at roughly half-hourly; the summer timetable applies from 20 June.",
+      "caveat": "The trip notes say the Carte d'Hôte makes valley buses free. The 2026 fare sheet no longer does — it gives discounted passes bought online with the card number, not free travel. Budget a few euros a head and check on arrival.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Chamonix summer bus timetable 2026",
+        "url": "https://www.chamonix.com/sites/default/files/media/brochures/Guide-Ete-Chamonix-20-06-2026%20-%2006-09-2026.pdf"
+      }
+    },
+    {
+      "id": "chamonix-bus-2",
+      "operator": "chamonix-mobilite",
+      "mode": "bus",
+      "line": "2",
+      "name": "Chamonix Bus line 2 — Le Tour to Les Bossons",
+      "stops": [
+        { "place": "le-tour", "offsetMinutes": 0 },
+        { "place": "argentiere", "offsetMinutes": 10 },
+        { "place": "chamonix", "offsetMinutes": 35 }
+      ],
+      "gtfs": { "feed": "chamonix", "shortName": "2", "towards": "Bossons" },
+      "season": { "from": "06-20", "to": "09-06" },
+      "days": "daily",
+      "frequency": { "everyMinutes": 30, "first": "06:54", "last": "20:49" },
+      "bidirectional": true,
+      "fare": { "amount": 2, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "Chamonix Mobilité app, website, or a sales terminal",
+        "url": "https://www.chamonix-mobilite.com"
+      },
+      "note": "The ride home at the end of day 7, from the Le Tour gondola station back into town.",
+      "caveat": "The day 7 note in the itinerary says line 1 for this. On the 2026 network it is line 2 that serves Le Tour — line 1 covers the Les Houches end of the valley. Worth correcting before anyone stands at the wrong stop.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Chamonix summer bus timetable 2026",
+        "url": "https://www.chamonix.com/sites/default/files/media/brochures/Guide-Ete-Chamonix-20-06-2026%20-%2006-09-2026.pdf"
+      }
+    },
+    {
+      "id": "y84-contamines",
+      "operator": "sat-mont-blanc",
+      "mode": "bus",
+      "line": "Y84",
+      "name": "Y84 — Sallanches to Les Contamines-Montjoie",
+      "stops": [
+        { "place": "sallanches", "offsetMinutes": 0 },
+        { "place": "saint-gervais-le-fayet", "offsetMinutes": 20 },
+        { "place": "les-contamines", "offsetMinutes": 50 }
+      ],
+      "days": "daily",
+      "bidirectional": true,
+      "frequency": { "everyMinutes": 120, "first": "07:00", "last": "19:00" },
+      "fare": { "amount": 3, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "driver",
+        "where": "From the driver, or through Cars Région Haute-Savoie",
+        "url": "https://www.sat-montblanc.com/horaire-timetables/ligne-y84-sallanches-st-gervais-les-contamines.aspx"
+      },
+      "note": "The road link to Les Contamines, and the way to reach the trail from a main-line station if someone joins late or leaves early.",
+      "caveat": "The line runs all year, so no season is set, but the summer timetable only takes over in early July — in 2026 it ran from 5 July to 31 August. Frequency and fare here are indicative: the published timetable is a fixed set of runs, not a clock-face pattern. Check the SAT page before relying on a departure.",
+      "confidence": "estimate",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "SAT Mont-Blanc — ligne Y84",
+        "url": "https://www.sat-montblanc.com/horaire-timetables/ligne-y84-sallanches-st-gervais-les-contamines.aspx"
+      }
+    },
+    {
+      "id": "contamines-navette-gorge",
+      "operator": "les-contamines-navettes",
+      "mode": "navette",
+      "name": "Les Contamines free navette to Notre-Dame de la Gorge",
+      "stops": [
+        { "place": "les-contamines", "offsetMinutes": 0 },
+        { "place": "notre-dame-de-la-gorge", "offsetMinutes": 12 }
+      ],
+      "season": { "from": "06-29", "to": "09-01" },
+      "days": "daily",
+      "frequency": { "everyMinutes": 30, "first": "08:30", "last": "18:00" },
+      "bidirectional": true,
+      "fare": { "amount": 0, "currency": "EUR", "basis": "free" },
+      "booking": { "kind": "none", "where": "Turn up at the stop" },
+      "note": "Saves about an hour of road walking at the start of day 2, which is the flattest and least interesting part of it.",
+      "caveat": "Free and reliable, but the exact stops and times are only published on the village app each season, so treat the pattern as indicative.",
+      "confidence": "estimate",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Mairie des Contamines — navettes saisonnières gratuites",
+        "url": "https://www.mairie-lescontamines.com/actualite/post/les-navettes-saisonnieres-gratuites-sont-de-retour-aux-contamines"
+      }
+    },
+
+    {
+      "id": "val-ferret-924",
+      "operator": "arriva-aosta",
+      "mode": "navette",
+      "line": "924",
+      "name": "Linea Verde 924 — Courmayeur to Arp Nouvaz (Val Ferret)",
+      "stops": [
+        { "place": "courmayeur", "offsetMinutes": 0 },
+        { "place": "arnouvaz", "offsetMinutes": 35 }
+      ],
+      "season": { "from": "06-27", "to": "08-30" },
+      "days": "daily",
+      "frequency": { "everyMinutes": 60, "first": "08:30", "last": "18:00" },
+      "bidirectional": true,
+      "fare": { "amount": 0, "currency": "EUR", "basis": "free" },
+      "booking": {
+        "kind": "none",
+        "where": "Board at Piazzale Monte Bianco",
+        "url": "https://aosta.arriva.it/courmayeur-mont-blanc/",
+        "note": "Free during the summer period. Outside it, buying on board carries a €4 surcharge — buy at a rivendita in town instead."
+      },
+      "note": "The shortcut for day 4: ride to the head of the Italian Val Ferret and start walking at the foot of the Grand Col Ferret.",
+      "caveat": "Only the 27 June to 30 August runs go all the way to Arp Nouvaz and start from Piazzale Monte Bianco; either side of that they start from Verrand and turn round lower down. Times are the 2026 shape, not a published 2027 timetable.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Arriva Italia — Courmayeur Mont Blanc summer shuttles",
+        "url": "https://aosta.arriva.it/courmayeur-mont-blanc/"
+      }
+    },
+    {
+      "id": "val-veny-931",
+      "operator": "arriva-aosta",
+      "mode": "navette",
+      "line": "931",
+      "name": "Linea Arancione 931 — Courmayeur to La Visaille (Val Veny)",
+      "stops": [
+        { "place": "courmayeur", "offsetMinutes": 0 },
+        { "place": "lac-combal", "offsetMinutes": 30 }
+      ],
+      "season": { "from": "06-11", "to": "09-27" },
+      "days": "daily",
+      "frequency": { "everyMinutes": 60, "first": "08:30", "last": "17:30" },
+      "bidirectional": true,
+      "fare": { "amount": 0, "currency": "EUR", "basis": "free" },
+      "booking": {
+        "kind": "none",
+        "where": "Board at Piazzale Monte Bianco",
+        "url": "https://aosta.arriva.it/courmayeur-mont-blanc/"
+      },
+      "note": "The other half of the day 3 shortcut: the Val Veny bus down from the Combal dam into Courmayeur.",
+      "caveat": "Summer only, and the free period is funded by the comune one year at a time rather than guaranteed.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Arriva Italia — Courmayeur Mont Blanc summer shuttles",
+        "url": "https://aosta.arriva.it/courmayeur-mont-blanc/"
+      }
+    },
+    {
+      "id": "tunnel-coach-courmayeur-chamonix",
+      "operator": "flixbus",
+      "mode": "coach",
+      "name": "Mont Blanc tunnel coach — Courmayeur to Chamonix",
+      "stops": [
+        { "place": "courmayeur", "offsetMinutes": 0 },
+        { "place": "chamonix", "offsetMinutes": 45 }
+      ],
+      "days": "daily",
+      "departures": ["06:10", "09:15", "10:10", "10:35", "20:05", "22:20"],
+      "fare": { "amount": 13, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "FlixBus, BlaBlaCar Bus or Arriva, whichever is selling that departure",
+        "url": "https://global.flixbus.com/bus-routes/bus-courmayeur-chamonix",
+        "note": "Book ahead. Fares move with demand and start around €13."
+      },
+      "note": "The single most useful bail-out link on the whole trip: 45 minutes under the massif from the Italian side back to base.",
+      "caveat": "Around six to ten departures a day depending on the operator and date, and the exact times shift. The list here is a representative 2026 pattern — check the operator before counting on one.",
+      "confidence": "estimate",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "FlixBus — Courmayeur to Chamonix",
+        "url": "https://global.flixbus.com/bus-routes/bus-courmayeur-chamonix"
+      }
+    },
+    {
+      "id": "tunnel-coach-chamonix-courmayeur",
+      "operator": "flixbus",
+      "mode": "coach",
+      "name": "Mont Blanc tunnel coach — Chamonix to Courmayeur",
+      "stops": [
+        { "place": "chamonix", "offsetMinutes": 0 },
+        { "place": "courmayeur", "offsetMinutes": 45 }
+      ],
+      "days": "daily",
+      "departures": ["08:30", "11:30", "14:30", "17:30", "20:30"],
+      "fare": { "amount": 13, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "FlixBus, BlaBlaCar Bus or Arriva",
+        "url": "https://global.flixbus.com/bus-routes/bus-chamonix-courmayeur"
+      },
+      "note": "The reverse direction, for rejoining the group in Italy after skipping a day.",
+      "caveat": "Departure times here are indicative only — the southbound timetable was not verified departure by departure.",
+      "confidence": "estimate",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "FlixBus — Courmayeur to Chamonix route page",
+        "url": "https://global.flixbus.com/bus-routes/bus-courmayeur-chamonix"
+      }
+    },
+    {
+      "id": "aosta-courmayeur-581",
+      "operator": "arriva-aosta",
+      "mode": "bus",
+      "line": "581",
+      "name": "Line 581 — Aosta to Courmayeur",
+      "stops": [
+        { "place": "aosta", "offsetMinutes": 0 },
+        { "place": "courmayeur", "offsetMinutes": 60 }
+      ],
+      "days": "daily",
+      "bidirectional": true,
+      "frequency": { "everyMinutes": 60, "first": "06:30", "last": "20:30" },
+      "fare": { "amount": 4, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "counter",
+        "where": "Aosta bus station or a tobacconist",
+        "url": "https://aosta.arriva.it/en/timetables-and-routes/"
+      },
+      "note": "The Italian trunk route. Connects Courmayeur to the Milan, Turin and Malpensa coaches, and to the bus over the Grand-Saint-Bernard from Martigny.",
+      "caveat": "Roughly hourly through the day, but the pattern was not verified departure by departure.",
+      "confidence": "estimate",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Arriva Italia — Valle d'Aosta lines",
+        "url": "https://aosta.arriva.it/en/timetables-and-routes/"
+      }
+    },
+    {
+      "id": "malpensa-aosta-coach",
+      "operator": "arriva-aosta",
+      "mode": "coach",
+      "name": "Arriva coach — Milan Malpensa to Aosta",
+      "stops": [
+        { "place": "milan-malpensa", "offsetMinutes": 0 },
+        { "place": "aosta", "offsetMinutes": 165 }
+      ],
+      "days": "daily",
+      "bidirectional": true,
+      "departures": ["09:00", "13:00", "17:00"],
+      "fare": { "amount": 25, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "Arriva Italia commercial lines",
+        "url": "https://aosta.arriva.it/en/"
+      },
+      "note": "Runs all year. The sensible way in if anyone flies into Milan rather than Geneva, or flies home from Italy after leaving the trail at Courmayeur.",
+      "caveat": "Departure times and fare are indicative; the commercial line timetable was not verified in detail.",
+      "confidence": "estimate",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Arriva Italia — Aosta commercial lines",
+        "url": "https://aosta.arriva.it/en/"
+      }
+    },
+
+    {
+      "id": "tmr-272-orsieres-ferret",
+      "operator": "tmr",
+      "mode": "bus",
+      "line": "12.272",
+      "name": "Line 12.272 — Orsières to Praz-de-Fort, La Fouly and Ferret",
+      "stops": [
+        { "place": "orsieres", "offsetMinutes": 0 },
+        { "place": "praz-de-fort", "offsetMinutes": 12 },
+        { "place": "la-fouly", "offsetMinutes": 28 },
+        { "place": "ferret", "offsetMinutes": 35 }
+      ],
+      "gtfs": { "feed": "swiss-2027", "shortName": "272", "towards": "Ferret" },
+      "days": "daily",
+      "bidirectional": true,
+      "frequency": { "everyMinutes": 60, "first": "07:00", "last": "19:00" },
+      "fare": { "amount": 9.4, "currency": "CHF", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "sbb.ch, the CFF app, FAIRTIQ, or cash with the driver",
+        "url": "https://www.sbb.ch",
+        "note": "Drivers on this line will take euros as well as francs."
+      },
+      "note": "The Swiss Val Ferret line. Riding it out to Ferret saves the last 45 minutes into La Fouly, and riding it down to Orsières is how you skip day 5 entirely.",
+      "caveat": "Roughly hourly is the shape, not a promise — check sbb.ch for the day you need. Swiss timetables for July 2027 are already published there.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "TMR — Bus Entremont timetables",
+        "url": "https://www.tmrsa.ch/en/timetables/"
+      }
+    },
+    {
+      "id": "tmr-271-orsieres-champex",
+      "operator": "tmr",
+      "mode": "bus",
+      "line": "12.271",
+      "name": "Line 12.271 — Orsières to Champex",
+      "stops": [
+        { "place": "orsieres", "offsetMinutes": 0 },
+        { "place": "champex-lac", "offsetMinutes": 20 }
+      ],
+      "gtfs": { "feed": "swiss-2027", "shortName": "271", "towards": "Champex" },
+      "days": "daily",
+      "bidirectional": true,
+      "frequency": { "everyMinutes": 60, "first": "07:00", "last": "19:30" },
+      "fare": { "amount": 6.6, "currency": "CHF", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "sbb.ch, the CFF app, FAIRTIQ, or cash with the driver",
+        "url": "https://www.sbb.ch"
+      },
+      "note": "Pair this with 12.272 and change at Orsières to skip day 5 from La Fouly to Champex-Lac. The change at Orsières is easy — same forecourt.",
+      "caveat": "Some trail guides call this line 273. TMR's own timetable list says 12.271 is Orsières–Champex and 12.273 goes to Commeire instead.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "TMR — Bus Entremont timetables",
+        "url": "https://www.tmrsa.ch/en/timetables/"
+      }
+    },
+    {
+      "id": "st-bernard-express-orsieres-martigny",
+      "operator": "tmr",
+      "mode": "train",
+      "line": "St-Bernard Express",
+      "name": "St-Bernard Express — Orsières to Martigny",
+      "stops": [
+        { "place": "orsieres", "offsetMinutes": 0 },
+        { "place": "martigny", "offsetMinutes": 25 }
+      ],
+      "days": "daily",
+      "bidirectional": true,
+      "frequency": { "everyMinutes": 60, "first": "05:30", "last": "22:30" },
+      "fare": { "amount": 11.4, "currency": "CHF", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "sbb.ch, the CFF app, or station machines",
+        "url": "https://www.sbb.ch"
+      },
+      "note": "Gets you from the Val Ferret side onto the Swiss main line in under half an hour.",
+      "caveat": "Sold and timetabled as one journey, but the 2027 feed models it as an Orsières–Sembrancher shuttle joining the Martigny train at Sembrancher, so expect a short platform change. That is also why it has no gtfs block: no single feed trip covers both ends, and the twenty-five minutes here already includes the change.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "TMR — timetables",
+        "url": "https://www.tmrsa.ch/en/timetables/"
+      }
+    },
+    {
+      "id": "tmr-230-forclaz-finhaut",
+      "operator": "tmr",
+      "mode": "bus",
+      "line": "12.230",
+      "name": "Line 12.230 — Col de la Forclaz to Trient and Le Châtelard",
+      "stops": [
+        { "place": "col-de-la-forclaz", "offsetMinutes": 0 },
+        { "place": "trient", "offsetMinutes": 3 },
+        { "place": "le-chatelard", "offsetMinutes": 12 },
+        { "place": "finhaut", "offsetMinutes": 24 }
+      ],
+      "season": { "from": "06-29", "to": "08-30" },
+      "days": "daily",
+      "departures": ["07:55", "09:55", "10:55", "12:55", "14:35", "16:55"],
+      "fare": { "amount": 6.0, "currency": "CHF", "basis": "single" },
+      "booking": {
+        "kind": "driver",
+        "where": "Cash with the driver, or in advance on sbb.ch",
+        "url": "https://www.sbb.ch",
+        "note": "Reservation required 72 hours ahead for groups of 10 or more, on +41 27 721 68 40 or voyages@tmrsa.ch."
+      },
+      "note": "Saves the 40-minute descent from the Forclaz down to Trient, and reaches the Mont-Blanc Express at Le Châtelard for a train back to Chamonix.",
+      "caveat": "Daily only from 29 June to 30 August; weekends either side of that. Not every run continues past Le Châtelard to Finhaut. Times are from the 2026 timetable dated 26 May 2026. This bus is not in the Swiss annual GTFS feed — seasonal additions are published separately — so it cannot be re-derived and has no gtfs block.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "TMR — Bus été 2026, Col de la Forclaz – Finhaut (line 12.230)",
+        "url": "https://widgets.oev-info.ch/publikation/jahresfpl/12.230.pdf"
+      }
+    },
+    {
+      "id": "tmr-230-finhaut-forclaz",
+      "operator": "tmr",
+      "mode": "bus",
+      "line": "12.230",
+      "name": "Line 12.230 — Le Châtelard and Trient to Col de la Forclaz",
+      "stops": [
+        { "place": "le-chatelard", "offsetMinutes": 0 },
+        { "place": "trient", "offsetMinutes": 7 },
+        { "place": "col-de-la-forclaz", "offsetMinutes": 12 }
+      ],
+      "season": { "from": "06-29", "to": "08-30" },
+      "days": "daily",
+      "departures": ["08:28", "10:28", "15:28"],
+      "fare": { "amount": 6.0, "currency": "CHF", "basis": "single" },
+      "booking": {
+        "kind": "driver",
+        "where": "Cash with the driver, or in advance on sbb.ch",
+        "url": "https://www.sbb.ch"
+      },
+      "note": "The uphill direction, for rejoining the trail at Trient after a night down the valley or a train from Chamonix.",
+      "caveat": "Modelled separately because the return times are not a mirror. Some runs start at Finhaut rather than Le Châtelard. Like the downhill direction, this one is absent from the Swiss annual feed and stays hand-recorded.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "TMR — Bus été 2026, Col de la Forclaz – Finhaut (line 12.230)",
+        "url": "https://widgets.oev-info.ch/publikation/jahresfpl/12.230.pdf"
+      }
+    },
+    {
+      "id": "postbus-forclaz-martigny",
+      "operator": "postauto",
+      "mode": "bus",
+      "name": "PostBus — Col de la Forclaz to Martigny",
+      "stops": [
+        { "place": "col-de-la-forclaz", "offsetMinutes": 0 },
+        { "place": "martigny", "offsetMinutes": 42 }
+      ],
+      "gtfs": { "feed": "swiss-2027", "shortName": "213", "towards": "Martigny" },
+      "season": { "from": "06-15", "to": "09-30" },
+      "days": [1, 2, 3, 4, 5],
+      "departures": ["17:05", "18:31"],
+      "fare": { "amount": 11.0, "currency": "CHF", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "sbb.ch or cash with the driver",
+        "url": "https://www.sbb.ch"
+      },
+      "note": "The way down to a bed in Martigny when Trient and the Forclaz are both full, which happens often — there are only four places to stay up there.",
+      "caveat": "Weekday times only, reconstructed from a trail guide rather than an operator timetable. Saturday was reported as 16:09 and 17:45, Sunday as 16:09 alone. Verify on sbb.ch.",
+      "confidence": "estimate",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Tour du Mont Blanc Hike — public transport",
+        "url": "https://tourdumontblanchike.com/tour-du-mont-blanc-public-transport/"
+      }
+    },
+    {
+      "id": "mont-blanc-express-martigny-chamonix",
+      "operator": "tmr",
+      "mode": "train",
+      "line": "R85",
+      "name": "Mont-Blanc Express — Martigny to Chamonix and Saint-Gervais",
+      "stops": [
+        { "place": "martigny", "offsetMinutes": 0 },
+        { "place": "le-chatelard", "offsetMinutes": 36 },
+        { "place": "vallorcine", "offsetMinutes": 48 },
+        { "place": "argentiere", "offsetMinutes": 67 },
+        { "place": "chamonix", "offsetMinutes": 80 },
+        { "place": "saint-gervais-le-fayet", "offsetMinutes": 118 }
+      ],
+      "gtfs": { "feed": "swiss-2027", "shortName": "R85", "towards": "Vallorcine" },
+      "days": "daily",
+      "bidirectional": true,
+      "frequency": { "everyMinutes": 60, "first": "06:00", "last": "20:00" },
+      "fare": { "amount": 22.0, "currency": "CHF", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "sbb.ch, the CFF app, or station machines",
+        "url": "https://www.sbb.ch",
+        "note": "Free between Servoz and Vallorcine with a Chamonix valley Carte d'Hôte."
+      },
+      "note": "The spine that ties the Swiss and French sides together. This is how you get from Trient or Champex back to Chamonix without crossing a col, and how you reach Les Contamines by rail via Saint-Gervais.",
+      "caveat": "Roughly hourly, with a change at the border on some services. The Swiss 2027 timetable is already published on sbb.ch, so this is one to re-derive from the feed rather than trust as a pattern.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "TMR — Mont-Blanc Express (R85) timetable",
+        "url": "https://www.tmrsa.ch/en/timetables/"
+      }
+    },
+    {
+      "id": "geneva-martigny-rail",
+      "operator": "cff-sbb",
+      "mode": "train",
+      "name": "Rail — Geneva Airport to Martigny",
+      "stops": [
+        { "place": "geneva-airport", "offsetMinutes": 0 },
+        { "place": "martigny", "offsetMinutes": 105 }
+      ],
+      "days": "daily",
+      "bidirectional": true,
+      "frequency": { "everyMinutes": 30, "first": "05:30", "last": "23:00" },
+      "fare": { "amount": 44.0, "currency": "CHF", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "sbb.ch or the CFF app",
+        "url": "https://www.sbb.ch",
+        "note": "Buy a supersaver ticket in advance for roughly half this fare."
+      },
+      "note": "The all-rail way in: land at Geneva, train along the lake to Martigny, then the Mont-Blanc Express to Chamonix. Slower than a shuttle but immune to Saturday traffic on the Chamonix road.",
+      "caveat": "Frequency is the shape of the Swiss main line rather than a verified departure list. Re-derive from the 2027 feed.",
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": { "title": "SBB / CFF", "url": "https://www.sbb.ch" }
+    },
+    {
+      "id": "geneva-bourg-saint-maurice-rail",
+      "operator": "sncf",
+      "mode": "train",
+      "name": "Rail — Geneva Airport to Bourg-Saint-Maurice",
+      "stops": [
+        { "place": "geneva-airport", "offsetMinutes": 0 },
+        { "place": "bourg-saint-maurice", "offsetMinutes": 245 }
+      ],
+      "days": "daily",
+      "bidirectional": true,
+      "departures": ["06:40", "09:40", "12:40", "15:40"],
+      "fare": { "amount": 55, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "SNCF Connect, or sbb.ch for the Swiss portion",
+        "url": "https://www.sncf-connect.com",
+        "note": "Involves a change, usually at Bellegarde or Chambéry. Book the TGV leg early for a sensible fare."
+      },
+      "note": "The back door onto the trail. Worth knowing if somebody is joining partway through and wants to start at Les Chapieux rather than walk two days to catch up.",
+      "caveat": "Departures and duration are indicative — this is a multi-leg rail journey with several possible routings, not a single service. Roughly four hours. Check SNCF Connect for the day.",
+      "confidence": "estimate",
+      "verifiedOn": "2026-08-18",
+      "source": { "title": "SNCF Connect", "url": "https://www.sncf-connect.com" }
+    },
+    {
+      "id": "le-fayet-bourg-saint-maurice-rail",
+      "operator": "sncf",
+      "mode": "train",
+      "name": "Rail — Saint-Gervais-le-Fayet to Bourg-Saint-Maurice",
+      "stops": [
+        { "place": "saint-gervais-le-fayet", "offsetMinutes": 0 },
+        { "place": "bourg-saint-maurice", "offsetMinutes": 175 }
+      ],
+      "days": "daily",
+      "bidirectional": true,
+      "departures": ["07:20", "10:20", "13:20", "16:20"],
+      "fare": { "amount": 30, "currency": "EUR", "basis": "single" },
+      "booking": {
+        "kind": "online",
+        "where": "SNCF Connect, or the ticket desk at Le Fayet",
+        "url": "https://www.sncf-connect.com",
+        "note": "One ticket, but a change at Annecy or Albertville. Ask for the through fare rather than buying the legs separately."
+      },
+      "note": "The only scheduled way round the Beaufortain, and the leg that makes day 2 skippable at all: Les Contamines down to Le Fayet on the Y84, this train to Bourg-Saint-Maurice, then the navette up to Les Chapieux. Three hours to cover what takes a day on foot over the Col du Bonhomme, because the road goes the long way round the massif.",
+      "caveat": "Times and fare are indicative. Like the Geneva service, this is a multi-leg journey rather than one train, and the routing varies by time of day. Check SNCF Connect. If it looks too slow to be worth it, that is the honest answer — Taxi Aarthur will do the same trip by road in about two hours.",
+      "confidence": "estimate",
+      "verifiedOn": "2026-08-18",
+      "source": { "title": "SNCF Connect", "url": "https://www.sncf-connect.com" }
+    }
+  ],
+
+  "walks": [
+    {
+      "from": "ville-des-glaciers",
+      "to": "les-mottets",
+      "distance_m": 1500,
+      "ascent_m": 80,
+      "note": "Road walk up the valley from the navette terminus to the refuge, where the Col de la Seigne climb starts."
+    },
+    {
+      "from": "les-contamines",
+      "to": "notre-dame-de-la-gorge",
+      "distance_m": 3500,
+      "ascent_m": 130,
+      "note": "Flat valley road and track. The free navette covers it if you would rather not."
+    },
+    {
+      "from": "trient",
+      "to": "col-de-la-forclaz",
+      "distance_m": 2600,
+      "ascent_m": 230,
+      "note": "Up through the woods to the col, where the hotel and the Martigny bus are."
+    },
+    {
+      "from": "le-tour",
+      "to": "col-de-balme",
+      "distance_m": 4000,
+      "ascent_m": 738,
+      "note": "The climb back up to the border col, if you are rejoining the walk part way through day 7."
+    },
+    {
+      "from": "la-fouly",
+      "to": "ferret",
+      "distance_m": 3000,
+      "ascent_m": 105,
+      "note": "Up the Swiss Val Ferret to the highest bus stop. About 45 minutes."
+    }
+  ],
+
+  "onDemand": [
+    {
+      "id": "taxi-aarthur-beaufortain",
+      "operator": "taxi-aarthur",
+      "kind": "taxi",
+      "name": "Taxi Aarthur — Beaufortain and Vallée des Glaciers",
+      "serves": [
+        "bourg-saint-maurice",
+        "les-chapieux",
+        "ville-des-glaciers",
+        "les-lanchettes",
+        "courmayeur",
+        "les-contamines"
+      ],
+      "leadTime": "Ring ahead, ideally the day before in July",
+      "fares": [
+        {
+          "from": "bourg-saint-maurice",
+          "to": "les-chapieux",
+          "amount": 70,
+          "currency": "EUR",
+          "upTo": 4
+        },
+        {
+          "from": "bourg-saint-maurice",
+          "to": "les-chapieux",
+          "amount": 80,
+          "currency": "EUR",
+          "upTo": 8
+        },
+        {
+          "from": "bourg-saint-maurice",
+          "to": "ville-des-glaciers",
+          "amount": 85,
+          "currency": "EUR",
+          "upTo": 4
+        },
+        {
+          "from": "bourg-saint-maurice",
+          "to": "ville-des-glaciers",
+          "amount": 95,
+          "currency": "EUR",
+          "upTo": 8
+        },
+        {
+          "from": "les-chapieux",
+          "to": "courmayeur",
+          "amount": 250,
+          "currency": "EUR",
+          "upTo": 8,
+          "note": "Via Bourg-Saint-Maurice and the Petit-Saint-Bernard or the Mont Blanc tunnel. The realistic way to skip from the French side to Courmayeur in one move."
+        },
+        {
+          "from": "les-contamines",
+          "to": "les-chapieux",
+          "currency": "EUR",
+          "upTo": 8,
+          "note": "No published price for this one — ask. About two hours by road round the Beaufortain via Albertville and Beaufort, against eight by train and bus, which is why it is worth the call if day 2 is the one somebody has to miss."
+        }
+      ],
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Adventure Base — Tour du Mont Blanc trek logistics",
+        "url": "https://adventurebase.com/journal/tour-du-mont-blanc-trek-logistics/"
+      }
+    },
+    {
+      "id": "mountain-dropoffs-gva",
+      "operator": "mountain-dropoffs",
+      "kind": "transfer",
+      "name": "Mountain Drop-offs — Geneva Airport to the Chamonix valley",
+      "serves": ["geneva-airport", "chamonix", "les-houches", "argentiere", "le-tour", "vallorcine"],
+      "durationMinutes": 90,
+      "leadTime": "Book online in advance; they meet the flight",
+      "fares": [
+        {
+          "from": "geneva-airport",
+          "to": "chamonix",
+          "amount": 42.5,
+          "currency": "EUR",
+          "basis": "per person",
+          "note": "Shared shuttle, door to door, both directions available."
+        }
+      ],
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Mountain Drop-offs",
+        "url": "https://www.mountaindropoffs.com/"
+      }
+    },
+    {
+      "id": "alpybus-gva",
+      "operator": "alpybus",
+      "kind": "transfer",
+      "name": "Alpybus — Geneva Airport to Chamonix",
+      "serves": ["geneva-airport", "chamonix", "les-houches", "argentiere"],
+      "durationMinutes": 90,
+      "leadTime": "Book online; shared departures are assigned around your flight time",
+      "fares": [
+        {
+          "from": "geneva-airport",
+          "to": "chamonix",
+          "amount": 19.5,
+          "currency": "EUR",
+          "basis": "per person",
+          "note": "Express line, fixed pick-up and drop-off points. Door-to-door and private cost more."
+        }
+      ],
+      "confidence": "pattern-2026",
+      "verifiedOn": "2026-08-18",
+      "source": {
+        "title": "Alpybus — Geneva to Chamonix",
+        "url": "https://www.alpybus.com/transfers/geneva-chamonix"
+      }
+    }
+  ]
+}

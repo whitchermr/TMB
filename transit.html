@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Transit — Tour du Mont Blanc</title>
+    <meta name="theme-color" content="#2f6f4e" />
+    <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/print.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
+  <body>
+    <main class="app-main">
+      <div class="page-head">
+        <div>
+          <h1>Transit</h1>
+          <p class="muted">
+            Buses, trains, navettes and taxis between the trailheads, the lodging
+            stops and the airports. For getting to the start, getting home, and
+            for the day somebody's knee says no and needs a ride round instead.
+          </p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card__head">
+            <h2>Plan a journey</h2>
+            <small class="faint" id="journey-context"></small>
+          </div>
+          <div class="card__body">
+            <div class="field-row">
+              <div class="field">
+                <label for="from-place">From</label>
+                <select id="from-place"></select>
+              </div>
+              <div class="field field--shrink">
+                <label for="swap-places">&nbsp;</label>
+                <button class="btn" id="swap-places" type="button" title="Swap from and to">
+                  Swap
+                </button>
+              </div>
+              <div class="field">
+                <label for="to-place">To</label>
+                <select id="to-place"></select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="journey-date">Date</label>
+                <input type="date" id="journey-date" />
+              </div>
+              <div class="field">
+                <label for="journey-time">Leave after</label>
+                <input type="time" id="journey-time" step="300" />
+              </div>
+              <div class="field">
+                <label for="max-transfers">Changes</label>
+                <select id="max-transfers">
+                  <option value="0">Direct only</option>
+                  <option value="1">Up to 1</option>
+                  <option value="2" selected>Up to 2</option>
+                  <option value="3">Up to 3</option>
+                </select>
+              </div>
+            </div>
+            <div class="row row--tight" id="day-shortcuts" style="margin-top: 0.6rem"></div>
+          </div>
+        </section>
+
+        <div class="split split--sticky">
+          <div class="stack">
+            <section class="card">
+              <div class="card__head">
+                <h2 id="journey-heading">Journeys</h2>
+                <small class="faint" id="journey-count"></small>
+              </div>
+              <div class="card__body">
+                <div class="stats" id="journey-summary"></div>
+                <div class="stack stack--tight" id="journeys" style="margin-top: 0.75rem"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head">
+                <h2>Book a ride instead</h2>
+                <small class="faint">No timetable — you ring them</small>
+              </div>
+              <div class="card__body">
+                <div class="stack stack--tight" id="on-demand"></div>
+              </div>
+            </section>
+          </div>
+
+          <div class="stack">
+            <section class="card">
+              <div class="card__head">
+                <h2>Map</h2>
+                <div class="row row--tight" id="map-controls"></div>
+              </div>
+              <div class="card__body">
+                <div id="map" class="map"></div>
+                <div class="map-legend" id="map-legend"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head"><h2>Search everything</h2></div>
+              <div class="card__body">
+                <div class="field">
+                  <label for="search-input">Place, line, or company</label>
+                  <input
+                    type="search"
+                    id="search-input"
+                    placeholder="forclaz, navette, taxi, 12.272…"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="stack stack--tight" id="search-results" style="margin-top: 0.6rem"></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__head">
+                <h2 id="detail-heading">Details</h2>
+              </div>
+              <div class="card__body" id="service-detail"></div>
+            </section>
+          </div>
+        </div>
+
+        <section class="card">
+          <div class="card__head">
+            <h2>Where these times come from</h2>
+          </div>
+          <div class="card__body" id="provenance"></div>
+        </section>
+      </div>
+    </main>
+
+    <script src="assets/vendor/leaflet/leaflet.js"></script>
+    <script type="module" src="assets/js/pages/transit.js"></script>
+  </body>
+</html>

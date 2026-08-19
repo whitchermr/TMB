@@ -106,7 +106,10 @@ def main():
                     )
 
     # Data files loaded by the store go through a path constant, not a literal.
-    for name in ("settings", "itinerary", "waypoints", "stays", "people", "expenses", "rates"):
+    for name in (
+        "settings", "itinerary", "waypoints", "stays", "people", "expenses", "rates",
+        "packing", "transit", "transit-schedules",
+    ):
         target = os.path.join(ROOT, "data", f"{name}.json")
         checked += 1
         if not exists_exact(target):

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Packing — Tour du Mont Blanc</title>
+    <meta name="theme-color" content="#2f6f4e" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/print.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
+  <body>
+    <main class="app-main">
+      <div class="page-head">
+        <div>
+          <h1>Packing</h1>
+          <p class="muted">
+            One list for the group, ticked off separately by each of us. Adding or
+            removing an item changes it for everybody; what you have actually
+            packed stays on your own phone, because six people ticking the same
+            boxes would tell us nothing.
+          </p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card__head">
+            <div class="field" style="min-width: 12rem">
+              <label for="packing-who">Packing as</label>
+              <select id="packing-who"></select>
+            </div>
+            <div class="btn-group" role="group" aria-label="Show" id="packing-filter">
+              <button type="button" data-filter="all">Everything</button>
+              <button type="button" data-filter="left">Still to pack</button>
+              <button type="button" data-filter="essential">Essentials</button>
+            </div>
+          </div>
+          <div class="card__body">
+            <p
+              class="notice"
+              id="packing-who-hint"
+              role="status"
+              hidden
+              style="margin: 0 0 0.75rem"
+            ></p>
+            <div class="stats" id="packing-stats"></div>
+          </div>
+        </section>
+
+        <section class="card" id="sync-panel"></section>
+
+        <div class="row row--between">
+          <h2 style="margin: 0; font-size: 1.05rem">The list</h2>
+          <button class="btn btn--primary" id="add-item" type="button">Add an item</button>
+        </div>
+
+        <div id="packing-groups" class="stack"></div>
+
+        <div id="packing-removed"></div>
+      </div>
+    </main>
+
+    <dialog id="item-dialog">
+      <form method="dialog" class="dialog__head">
+        <h2 id="item-title">Packing item</h2>
+        <button class="btn btn--sm" value="cancel">Close</button>
+      </form>
+      <div class="dialog__body">
+        <div class="stack stack--tight">
+          <div class="field">
+            <label for="item-name">Item</label>
+            <input type="text" id="item-name" required placeholder="What is it?" />
+          </div>
+          <div class="field">
+            <label for="item-category">Category</label>
+            <select id="item-category"></select>
+          </div>
+          <div class="field">
+            <label for="item-note">Note</label>
+            <textarea
+              id="item-note"
+              placeholder="Why it is on the list, or anything specific to this trip"
+            ></textarea>
+          </div>
+          <label class="checkbox">
+            <input type="checkbox" id="item-essential" /> Essential — the trip suffers
+            if someone forgets it
+          </label>
+        </div>
+      </div>
+      <div class="dialog__foot">
+        <button class="btn btn--danger" type="button" id="item-delete">
+          Remove for everyone
+        </button>
+        <button class="btn btn--primary" type="button" id="item-save">Save</button>
+      </div>
+    </dialog>
+
+    <script type="module" src="assets/js/pages/packing.js"></script>
+  </body>
+</html>

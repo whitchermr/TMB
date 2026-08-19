@@ -11,6 +11,7 @@
  */
 
 import * as store from '../core/store.js';
+import * as sync from '../core/sync.js';
 import * as units from '../core/units.js';
 import * as schedule from '../core/schedule.js';
 import * as sun from '../core/sun.js';
@@ -37,6 +38,10 @@ async function main() {
   state.legIndex = await store.loadRouteFile('legIndex');
   state.anchors = (await store.loadRouteFile('anchors')).anchors;
   await photos.load();
+
+  // Loads the cached operation log, so the export below carries the group's
+  // shared edits rather than only the committed defaults.
+  Object.keys(store.FILES).filter(sync.isSynced).forEach(sync.init);
 
   await Promise.all(
     state.legIndex.map(async (entry) => {
@@ -80,10 +85,15 @@ function exportBundle() {
     $comment:
       'TMB trip snapshot. Each key matches a file under data/. Import the ' +
       'individual sections from the unsaved-changes dialog, or commit them ' +
-      'over the matching files.',
+      'over the matching files. Shared lists are written out with the group ' +
+      "changes this device knows about already applied, so they are a picture " +
+      'of the list rather than of the file it started from.',
     exportedAt: new Date().toISOString(),
     files: Object.fromEntries(
-      Object.keys(store.FILES).map((name) => [store.pathFor(name), store.get(name)])
+      Object.keys(store.FILES).map((name) => [
+        store.pathFor(name),
+        sync.isSynced(name) ? sync.view(name) : store.get(name),
+      ])
     ),
   };
 

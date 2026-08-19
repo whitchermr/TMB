@@ -180,6 +180,8 @@ function renderStop(stop, rates, people, nights, dates) {
             <input type="number" min="0" step="1" value="${nightCount}"
               data-nights-for="${stop.stopId}" style="width:4.2rem" />
           </label>
+          <a class="btn btn--sm" href="${transitLink(stop, stopDates[0])}"
+             title="Buses, trains and taxis to and from here">Getting here</a>
           <button class="btn btn--sm" data-add-option="${stop.stopId}">Add option</button>
         </div>
       </div>
@@ -193,6 +195,20 @@ function renderStop(stop, rates, people, nights, dates) {
       </div>
     </section>
   `;
+}
+
+/**
+ * Link to the transit page for arriving at this stop.
+ *
+ * Defaults the origin to base rather than the previous night's stop, because the
+ * question a lodging card raises is "how do we get to this one" — usually asked
+ * while booking, from home, before any walking has happened.
+ */
+function transitLink(stop, date) {
+  const params = new URLSearchParams({ to: stop.stopId, t: '09:00' });
+  if (stop.stopId === 'chamonix') params.set('from', 'geneva-airport');
+  if (date) params.set('date', date);
+  return `transit.html?${params}`;
 }
 
 function renderOption(stop, option, nightCount, rates, people) {
