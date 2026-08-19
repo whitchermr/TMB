@@ -185,5 +185,21 @@
       "essential": false,
       "note": ""
     }
+  },
+  {
+    "id": "op-mszixd96oy",
+    "at": "2026-08-19T03:20:21.594Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-mszixd96vn",
+    "value": {
+      "id": "pk-mszixd96vn",
+      "name": "testtest",
+      "category": "worn",
+      "essential": false,
+      "note": ""
+    }
   }
 ]
