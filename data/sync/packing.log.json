@@ -137,5 +137,21 @@
     "collection": "items",
     "op": "remove",
     "key": "pk-mszivovjru"
+  },
+  {
+    "id": "op-msziwb3438",
+    "at": "2026-08-19T03:19:32.128Z",
+    "by": "p2",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-msziwb34xw",
+    "value": {
+      "id": "pk-msziwb34xw",
+      "name": "amanda's item",
+      "category": "worn",
+      "essential": false,
+      "note": ""
+    }
   }
 ]
