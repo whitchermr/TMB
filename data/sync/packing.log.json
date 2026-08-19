@@ -62,5 +62,14 @@
       "essential": false,
       "note": "Merino or synthetic. One on, one drying."
     }
+  },
+  {
+    "id": "op-mszincncte",
+    "at": "2026-08-19T03:12:34.248Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "remove",
+    "key": "pk-mszhln6ub3"
   }
 ]
