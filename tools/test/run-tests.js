@@ -730,14 +730,20 @@ landmarkDays.forEach((dayId) => {
 // A landmark far enough off the trail to need a decision about visiting it has to
 // say so in words, because a "detour +2.5 km" chip computed from the straight-line
 // offset can be a wild underestimate of the walking actually involved.
-const detourLandmarks = waypoints
-  .filter(isHistoric)
-  .filter((w) => {
-    const entry = legIndex.find((e) => e.dayId === w.dayId);
-    const data = leg(entry.dayId, entry.variant);
-    const [placed] = geo.locateWaypoints([w], data.track, data.cumulative_m, data.elevation_m);
-    return placed.isDetour;
-  });
+//
+// Off the line on *any* variant counts. Bertone and Bonatti are on the classic
+// balcony path and 9.2 km and 3.2 km away on the shortcut that buses to Arnouvaz,
+// so testing whichever variant the index happens to list first would drop them —
+// and the whole check with them, since they are most of what it covers.
+const detourLandmarks = waypoints.filter(isHistoric).filter((w) =>
+  legIndex
+    .filter((e) => e.dayId === w.dayId)
+    .some((e) => {
+      const data = leg(e.dayId, e.variant);
+      const [placed] = geo.locateWaypoints([w], data.track, data.cumulative_m, data.elevation_m);
+      return placed.isDetour;
+    })
+);
 ok(
   detourLandmarks.length > 0,
   'at least one landmark is off the line, so the check below is not vacuous'

@@ -419,6 +419,32 @@
       }
     },
     {
+      "id": "praz-de-fort",
+      "name": "Praz-de-Fort",
+      "kind": "village",
+      "dayId": "day-05",
+      "lat": 45.989494,
+      "lon": 7.125088,
+      "elevation_m": 1153,
+      "priority": 2,
+      "roles": ["historic"],
+      "$comment": "Coordinate is OSM node 240084849 (place=village). Elevation is swisstopo swissALTI3D at that point; published figures for the village run 1,146 to 1,150 m, which is the spread you get across a village on a slope. The node is 17 m from the day-5 track vertex at 1,154 m, 8.2 km into the leg.",
+      "isDetour": false
+    },
+    {
+      "id": "fort-champex",
+      "name": "Fort d'artillerie de Champex",
+      "kind": "heritage",
+      "dayId": "day-05",
+      "lat": 46.026092,
+      "lon": 7.12231,
+      "elevation_m": 1461,
+      "priority": 2,
+      "roles": ["historic"],
+      "$comment": "Coordinate is OSM node 814607165, the museum entrance (tourism=museum, wikidata=Q21035607); it agrees within 5 m with the position the Swiss fortification literature gives for Artilleriewerk A 46. Elevation is swisstopo swissALTI3D at the entrance, where military sources give 1,450 m for the work as a whole. The node is 16 m from the day-5 track vertex at 1,483 m, 14.2 km into the leg — the trail runs along the road just above the door.",
+      "isDetour": false
+    },
+    {
       "id": "champex-lac-lake",
       "name": "Champex lake",
       "kind": "lake",
@@ -427,12 +453,26 @@
       "lon": 7.11162,
       "elevation_m": 1466,
       "priority": 2,
+      "roles": ["photographic", "historic"],
       "photo": {
         "subject": "Small resort lake with the Grand Combin group on the skyline",
         "facing": "SE",
         "bestLight": "golden",
         "notes": "Arrival-evening shot. Calm water at dusk and a very civilised place to be holding a camera."
       }
+    },
+    {
+      "id": "jardin-flore-alpe",
+      "name": "Jardin botanique alpin Flore-Alpe",
+      "kind": "heritage",
+      "dayId": "day-05",
+      "lat": 46.032843,
+      "lon": 7.11271,
+      "elevation_m": 1521,
+      "priority": 2,
+      "roles": ["historic"],
+      "$comment": "Coordinate is the centre of OSM relation 12987813, the garden boundary (leisure=garden, wikidata=Q5926366); elevation is swisstopo swissALTI3D there. It projects 407 m off the day-5 line, barely past the 400 m detour threshold, so isDetour is set here rather than left to depend on which side of the threshold a regenerated track happens to fall.",
+      "isDetour": true
     },
     {
       "id": "alp-bovine",

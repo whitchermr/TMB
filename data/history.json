@@ -845,6 +845,202 @@
           "url": "https://fr.wikipedia.org/wiki/Grand_col_Ferret"
         }
       ]
+    },
+    {
+      "waypointId": "praz-de-fort",
+      "summary": "The trail runs straight down the main street of the last village in the Swiss Val Ferret that was lived in all year round. Its stone houses and larch granaries are unusual enough that an art historian living in the valley spent years cataloguing them before they were sold off, and the village is also the setting of a novella from 1865 about a boy the commune hired out.",
+      "eras": [
+        {
+          "year": "1189",
+          "label": "A valley owned by the Hospice",
+          "text": "Thomas, Count of Savoy, gave the forests of Le Clou and Ferret, at the head of this valley, to the Hospice of the Grand-Saint-Bernard. For close to seven centuries the Hospice held the right to take timber out of them — on the order of a hundred cubic metres a year, to heat a building at 2,469 m that could not grow its own fuel — and the men of the valley earned a little money cutting and hauling it. The wood went out over the Pas des Chevaux at 2,680 m, a pass named for the horses and mules that carried it. The arrangement was argued over for centuries and ended in 1893, when the bourgeoisie of Orsières bought the right out for 15,000 francs. In 1910 the railway reached Orsières and brought coal with it, and the question stopped mattering."
+        },
+        {
+          "year": "1865",
+          "label": "The goatherd of Praz-de-Fort",
+          "text": "Eugène Rambert — professor of French literature at Lausanne and then at the polytechnic in Zurich, and one of the founding members of the Swiss Alpine Club in 1863 — set a novella in this village. Gaspard Gros is an orphan, and the commune places him out at ten as cheap labour to a hard man down at Le Châble in the Val de Bagnes, where the work and the beatings leave him hunchbacked. At thirteen he is sent back here and given the village goats, more than sixty of them, to herd alone. When the job passes to a younger placed child he goes to Rossinière in Vaud, falls in love with a girl who is promised elsewhere, walks back into the Valais mountains and kills himself. It appeared fifteen years before Heidi and reads as its exact opposite: the same figure of a boy alone on a mountain with animals, and none of the consolation."
+        },
+        {
+          "year": "until 1914",
+          "label": "Glacier ice, and where it went",
+          "text": "Before refrigeration, keeping food was constant work, and a valley with glaciers in it had an advantage. Blocks were cut from the Saleinaz glacier above the village and sent down chutes built out of tree trunks to Praz-de-Fort, loaded onto carts under tarpaulins for the road to Orsières, and put on the railway. They went to towns across Switzerland and, by the valley's own account, as far as Paris. The trade ran until 1914."
+        },
+        {
+          "year": "1998",
+          "label": "A survey of what was left",
+          "text": "Frédéric Künzi, an art historian living in the valley, watched these buildings go: some collapsing, some converted to garages, some taken apart and rebuilt as luxury chalets in Verbier. He set out to record what the commune of Orsières had actually built, published the result in 1998 and laid out a waymarked trail through Praz-de-Fort, Les Arlaches and Issert so anyone could read the buildings off the ground. What he was recording: houses of stone rather than the timber usual elsewhere in Valais, walls 60 to 120 cm thick under slate roofs quarried locally, windows kept small and almost none facing north. Barns and granaries in slow-grown larch, the trunks split down the middle so the dense heartwood faces the weather, which is what gives old façades their mahogany colour. And the raccard, the building for threshing and storing rye, which stands clear of the ground on grès — squat piers each capped with a thick round disc of slate, so a dormouse climbing the pier meets an overhang and drops off. Its threshing floor is laid in heavy planks, grooved and tongued, so the flail loses no grain between the boards. Many are jointly owned, which you can read off double doors split by a post cut with boundary crosses. The older ones carry rosettes, sun-wheels and the monogram IHS, with the owner's initials, the letters FF for fieri fecit — had it made — and the date, always on the lintel over the main door."
+        }
+      ],
+      "caveat": "The name is explained locally as pré des fours, the meadow of the kilns, for the lime kilns that burnt the local limestone into the mortar holding these walls up. Praz is certainly the Latin pratum, a meadow, but no toponymic authority establishes the second half and the kiln reading is village tradition rather than scholarship. Two of the sources here also contradict themselves. The trail booklet says in one sentence that the valley's cart road was built in the middle of the nineteenth century, and in the next that a hay cart could not get up the valley at that date, which cannot both be true — a twentieth-century date is far likelier. And the heritage panel heads its account of the ice trade “around 1920” while saying in the text that the glacier was worked until 1914.",
+      "sources": [
+        {
+          "title": "Le raccard du blé — sentier didactique, d'après l'ouvrage de Frédéric Künzi (1998)",
+          "publisher": "Editions Randonature",
+          "url": "http://www.randonature.ch/pdf/raccard-ble-A4.pdf"
+        },
+        {
+          "title": "Chemin de La Fouly — Praz-de-Fort, Le Clou, Saleinaz et la glace",
+          "publisher": "Pays du Saint-Bernard",
+          "url": "https://www.saint-bernard.ch/fr/chemin-de-la-fouly-21247/"
+        },
+        {
+          "title": "Fonds Eugène Rambert",
+          "publisher": "Bibliothèque nationale suisse",
+          "url": "https://ead.nb.admin.ch/html/rambert_0.html"
+        },
+        {
+          "title": "Eugène Rambert, Le chevrier de Praz-de-Fort (première édition 1865)",
+          "publisher": "Editions à la Carte, Sierre",
+          "url": "https://www.editions-carte.ch/editions/chevrier-praz-de-fort-665.html"
+        }
+      ]
+    },
+    {
+      "waypointId": "fort-champex",
+      "summary": "A few paces below the road on the way into Champex there is a door in the rock that was an official secret until 1999. Behind it is artillery fort A 46: six hundred metres of gallery cut into the south ridge of the Catogne, ten guns firing from four casemates, and quarters for a garrison meant to be sealed in and go on working. It was the hinge of the whole fortified system guarding the road to the Great St Bernard, and you can go inside it.",
+      "eras": [
+        {
+          "year": "1940",
+          "label": "Falling back into the mountains",
+          "text": "After France collapsed in June 1940 and Switzerland found itself ringed by the Axis, the Swiss army gave up the idea of holding the plain and withdrew into the Réduit national, fortifying the mountains instead. Valais mattered for what crosses it, and over a little more than a century some 380 bunkers, artillery works and tank barriers were built in the canton. Work on A 46 ran from 1940 to 1943, driven entirely into the rock at the foot of the Catogne's south ridge, 500 m above the basin of Orsières. Its job was to close the only two ways through — the road over the Great St Bernard and the road into the Val Ferret — and to give fire support to the infantry holding that axis against an attack out of Italy."
+        },
+        {
+          "year": "1943",
+          "label": "Ten guns and a town underground",
+          "text": "The armament was eight 10.5 cm guns and two of 7.5 cm, firing from four casemates and covered by six anti-aircraft guns. Below and around it, infantry works at Château Roc, Manoday and Le Biolley carried fortress machine guns and 8.1 cm mortars to stop anyone reaching the casemates on foot. Inside, the galleries held magazines, a telephone exchange, an officers' mess, a kitchen, dormitories, machine rooms with filters and generators, and a water tank fed from a spring, so the place could be shut and live on itself. Champex also housed the fire-control post for the sector, coordinating the guns of Champex, Commeire, Follatères and Dailly, which is what made it the pivot rather than simply the largest."
+        },
+        {
+          "year": "1994",
+          "label": "Kept for a war that did not come",
+          "text": "Through the Cold War the fort was modernised and rebuilt against the possibility of nuclear attack, and stayed in service long after the threat it was dug for had gone. The last fortress regiments in Valais were disbanded at the end of 1994, the army used A 46 until 1998, and it was declassified in 1999."
+        },
+        {
+          "year": "1999",
+          "label": "Bought by the people who wanted to keep it",
+          "text": "The association Pro Forteresse was started in September 1992 by ten founding members to save the works along the Great St Bernard axis, and as the army declassified them it bought them — around fifty of the sixty-odd structures in the system by 2002, from high-altitude rock strongpoints to the three big artillery works. The federal inventory of military monuments notes, a little pointedly, that this approach remains unique in Switzerland: the association argues that a single work only makes sense inside the chain it belonged to. Champex opened to visitors in 1999, and the same federal inventory holds it up as the example of what the canton might do with the rest."
+        }
+      ],
+      "caveat": "The numbers vary by source and nobody reconciles them. Construction is given as 1940–1943 by the fortification literature and as October 1941 to December 1942 by the regional tourist board. The fort's owners say it could shelter three hundred men, while a widely copied listing puts the garrison at a hundred and fifty; those are probably capacity and establishment rather than a contradiction, but no source says so. Altitude is quoted as 1,450 m in the military sources and 1,473 m elsewhere, against 1,461 m for the visitor entrance in the Swiss federal terrain model.",
+      "sources": [
+        {
+          "title": "Inventaire ADAB des monuments militaires — Militärische Denkmäler im Kanton Wallis (Keller et Lovisa, 2002)",
+          "publisher": "armasuisse Immobilier, Département fédéral de la défense (DDPS)",
+          "url": "https://www.ar.admin.ch/fr/adab-hobim-fr"
+        },
+        {
+          "title": "Fort de Champex",
+          "publisher": "Association Pro Forteresse",
+          "url": "https://proforteresse.com/fort-de-champex/"
+        },
+        {
+          "title": "A46 Artilleriewerk Champex — armament and role",
+          "publisher": "Festung Oberland",
+          "url": "https://www.festung-oberland.ch/sperren/festungsbrigade-10/a46-art-wk-champex/"
+        },
+        {
+          "title": "Fort d'artillerie de Champex-Lac",
+          "publisher": "Pays du Saint-Bernard",
+          "url": "https://www.saint-bernard.ch/fr/activites/fort-d-artillerie-de-champex-lac-8036/"
+        }
+      ]
+    },
+    {
+      "waypointId": "champex-lac-lake",
+      "summary": "The lake is natural — meltwater held behind the moraine of a glacier that came down the Arpette valley and left more than ten thousand years ago — but nearly everything around it was built to sell the view of it. Champex went from a summer pasture where two herdsmen put walkers up on straw to nine hotels and five hundred beds in sixty years.",
+      "eras": [
+        {
+          "year": "after the last ice age",
+          "label": "A lake, and the bog beside it",
+          "text": "The basin was gouged and then dammed by the moraine the Arpette glacier left as it withdrew. Sediment cores taken from the bed record the last 14,500 years of vegetation around it, which is why a small resort lake turns up in the scientific literature at all. One of the two inlets on the west side is not natural: it is a bisse, a cut channel bringing water over from the Arpette valley, probably medieval, and from the time it was dug the lake also served as a reservoir for irrigating the meadows down at Orsières. The marshy ground it feeds on the western shore is on the federal inventories of raised bogs and of fens of national importance, and the canton protected 10.3 hectares of it in 1997. It is the only place in Valais where the small cranberry grows and the only one with a bog pine wood."
+        },
+        {
+          "year": "1850",
+          "label": "Two herdsmen and a bed of straw",
+          "text": "Champex was a mayen, one of the middle pastures where the herds stopped on the way up to the alp, and it had buildings for that and nothing else. When the first walkers in serious boots began arriving around 1850, two of the men summering their animals here — Daniel Crettex and François Biselx — took them in, sharing rye bread, cheese and wine from Fully, and giving them a bed of straw in the barn."
+        },
+        {
+          "year": "1886",
+          "label": "Nine hotels and five hundred beds",
+          "text": "The Société anonyme de l'Hôtel-Pension du Lac was formed in 1886 and, after years of building, opened in 1890 with a salon and fireplace, hot meals, finely painted porcelain basins and ewers, and central heating with a boiler behind it, so a guest could have a hot bath. The hoteliers then competed by improving the resort rather than undercutting each other — central heating, the first tennis court, a landing stage on the lake, orchestras they hired between them — and by the time they were finished there were nine hotels and more than five hundred beds. Each called its guests to fixed mealtimes with a bell or a Far Eastern gong, for roast mutton and cutlets. Afternoon tea was the fashion, taken first at Champex d'en Haut, then at the Signal, then at the Alpina, which put on tea dances. The evening of 1 August was the event of the season: fireworks, the lake lit up, a gala dinner, a ball, and a champagne fountain running into the small hours. Getting here was a two-hour carriage ride up from Orsières, or three and a half from Martigny."
+        },
+        {
+          "year": "1926",
+          "label": "Roads, and a heated pool because the lake is cold",
+          "text": "The cantonal government opened the Valettes road in 1926 and the commune of Orsières built the road up from Orsières in 1929, which is when motor coaches could finally reach the resort. The hoteliers had got ahead of that in 1911, when their syndicate asked the commune to require a public enquiry for every building application — a deliberate piece of restraint that is part of why the place still hangs together visually. Down at the water they added changing cabins, public lavatories and a free beach, none of which changed the fact that the lake sits between 14 and 17 degrees; in 1960 a company was formed to build a heated swimming pool instead. The Breya chairlift followed in 1952, built after Verbier opened its pistes, and Champex spent forty years attached to Verbier's lift company before going its own way again."
+        }
+      ],
+      "caveat": "The belle-époque account comes almost entirely from the regional tourist board's own history page, which cites nothing. Its load-bearing dates — the 1886 company, the 1890 opening, the two roads in 1926 and 1929 — are repeated consistently elsewhere, but the detail that makes the story worth telling, the gong and the champagne fountain and the names of the two herdsmen, rests on that single page. It does not date the nine hotels and five hundred beds at all; that count is given in passing, alongside the 1911 building rules.",
+      "sources": [
+        {
+          "title": "L'histoire de Champex-Lac",
+          "publisher": "Pays du Saint-Bernard",
+          "url": "https://www.saint-bernard.ch/fr/news/l-histoire-de-champex-lac-24184/"
+        },
+        {
+          "title": "Marais de Champex — site naturel protégé, inventaires fédéraux des hauts-marais et bas-marais",
+          "publisher": "État du Valais, Service des forêts, de la nature et du paysage",
+          "url": "https://www.vs.ch/web/sites-naturels-proteges/marais-de-champex"
+        },
+        {
+          "title": "14,500 years of vegetation and land use history in the upper continental montane zone at Lac de Champex",
+          "publisher": "Vegetation History and Archaeobotany",
+          "url": "https://doi.org/10.1007/s00334-021-00859-6"
+        },
+        {
+          "title": "Champex-Lac",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/Champex-Lac"
+        }
+      ]
+    },
+    {
+      "waypointId": "jardin-flore-alpe",
+      "summary": "A rock garden of some four thousand mountain plants, laid out from 1927 around a Swiss industrialist's holiday chalet and opened to the public four years later. It is a side trip from the village rather than a stop on the trail — a few minutes on foot from the lake, uphill, with an entrance fee and closing time. In September 2025 the foundation that runs it took its founder's name off the institution, having commissioned the research into his life and then published what it found.",
+      "eras": [
+        {
+          "year": "1925",
+          "label": "A cable manufacturer buys a parcel at Champex",
+          "text": "Jean-Marcel Aubert (1875–1968) was born at Le Brassus in the Vallée de Joux and founded a cable and wire works at Cossonay in 1898, which he built into an international business over twenty-four years and was dismissed from at the end of 1922 after a quarrel over wartime production. The historian who went through that company's archives describes him as quick, enterprising and clever, and also as greedy, unscrupulous and willing to manipulate his partners to get what he wanted. In 1925 he bought a 600 m² parcel of ground at Champex, and a garden began to grow around the holiday chalet he kept there."
+        },
+        {
+          "year": "1927",
+          "label": "Correvon lays out the alpinum",
+          "text": "Aubert commissioned Henry Correvon (1854–1939), the Geneva horticulturist who was the authority on alpine rock gardens and had built one at Bourg-Saint-Pierre in 1889, to make an alpinum around the chalet. It opened to the public in 1931. In 1953 Aubert brought in Egidio Anchisi, a pupil of Correvon's, to give the garden a landscape form, and the shape it has now is largely his. It holds about four thousand species, twelve hundred of them from the Alps and Valais, and is listed on the federal inventory of cultural property of national importance; Patrimoine suisse gave it the Schulthess garden prize in 2007, for a garden made in the era when tourism first threatened the alpine flora and now used to study it."
+        },
+        {
+          "year": "1940",
+          "label": "What he did in France",
+          "text": "Aubert had moved to France in 1923 and sold and repaired American cars — Ford and General Motors — through several companies. From July 1940, under German occupation, his business multiplied roughly tenfold and was done almost entirely with the occupying authorities: maintaining and repairing their vehicle fleet, trading vehicle parts on their account, manufacturing war materiel including tank-transporter trailers, tank tracks, seaplanes and Krupp tractors, a stake in a firm pouring concrete for the Atlantic Wall, huts for occupation troops, and a purchasing office that bought them whatever they asked for. He also took an active part in aryanisation — the removal of Jews from economic life — buying the furniture business Le Bucheron and, together with a French textile industrialist, the Galeries Lafayette, part of whose capital he passed on to German financial interests. The historians put the turnover at about 1.2 billion French francs and the profit above 100 million, of which 52 million was his. He was arrested on 31 August 1944, moved to hospital under police guard and escaped in February 1945, was rearrested that May and escaped again eight days later, and got back to his chalet here. The stolen shareholdings were returned to their owners in the autumn of 1944. Between 1947 and 1950 a French court sentenced him in his absence to national degradation, life imprisonment, confiscation of his property and a ban from French soil. The historians' verdict is that he was not a Nazi but a businessman who treated an occupation as an opportunity, and went on doing so to the end."
+        },
+        {
+          "year": "2025",
+          "label": "The foundation looks, and changes its name",
+          "text": "Aubert signed the founding act on 22 May 1967 and endowed the foundation with 500,000 francs, handing the running of the garden to the botanical gardens of the city of Geneva and the botany institute of the university of Neuchâtel; both withdrew in 2007, and the canton of Valais and the commune of Orsières have run it since. Preparing for the garden's centenary in 2027, the foundation commissioned a life of its founder in 2023, and the first report came back in March 2024 with the Galeries Lafayette in it. Rather than let it rest there, it appointed an independent committee — an ethicist from Geneva, a historian who had worked on the Bergier commission into Switzerland's wartime conduct, and a historian from Paris 8 — and published their findings in full. They concluded that the money that made the garden, all of it spent before the war, came from clean Swiss industry, and that the 1967 endowment could not be traced to the occupation profits, so nothing was owed to anyone. They also recommended that the foundation stop carrying his name. On 25 September 2025 it did, becoming simply the Fondation du Jardin botanique Flore-Alpe."
+        }
+      ],
+      "caveat": "The foundation is the source both for the case against its founder and for the finding that it owes no restitution, which is an institution marking its own paper — though publishing the historians' report in full is the opposite of burying it, and the two historians are independent of it. They are explicit about the gaps: a Swiss company registered at Champex, the Société Nouvelle de Capitalisation, was financially active during the war and the French archives say nothing about it, and Aubert's frequent wartime crossings between France and Switzerland cannot be explained from any surviving record. The garden's founding dates vary by source: the foundation's own chronology has a 600 m² parcel bought in 1925 and the alpinum begun in 1927, other accounts give 500 m² in 1924, and the regional tourist board has him arriving in 1923 and buying a chalet called La Sapinière that year. The same tourist page has him dying in 1967, the year he signed the foundation over, rather than 1968. The chronology used here is the foundation's.",
+      "sources": [
+        {
+          "title": "Devoir de mémoire : le Jardin Flore-Alpe choisit la transparence pour l'avenir (communiqué du 25 septembre 2025)",
+          "publisher": "Fondation du Jardin botanique Flore-Alpe",
+          "url": "https://www.flore-alpe.ch/wp-content/uploads/2018/02/Communique-de-presse-devoir-de-memoire.pdf"
+        },
+        {
+          "title": "Synthèse des travaux du comité de recherche et éthique sur les activités économiques de Jean-Marcel Aubert durant la IIe Guerre mondiale",
+          "publisher": "Verheyde, Perrenoud et Dermange, pour la Fondation du Jardin botanique Flore-Alpe",
+          "url": "https://www.flore-alpe.ch/wp-content/uploads/2018/02/Synthese_JMA_v2_02062025.pdf"
+        },
+        {
+          "title": "Historique du Jardin botanique alpin Flore-Alpe — chronologie",
+          "publisher": "Fondation du Jardin botanique Flore-Alpe",
+          "url": "https://www.flore-alpe.ch/wp-content/uploads/2018/02/Historique_version-2019.pdf"
+        },
+        {
+          "title": "Jardin botanique alpin Flore-Alpe",
+          "publisher": "Wikipédia en français",
+          "url": "https://fr.wikipedia.org/wiki/Jardin_botanique_alpin_Flore-Alpe"
+        }
+      ]
     }
   ]
 }
