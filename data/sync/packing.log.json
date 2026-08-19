@@ -201,5 +201,21 @@
       "essential": false,
       "note": ""
     }
+  },
+  {
+    "id": "op-mszixfohqh",
+    "at": "2026-08-19T03:20:24.737Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-mszixfohf7",
+    "value": {
+      "id": "pk-mszixfohf7",
+      "name": "testtesttest",
+      "category": "worn",
+      "essential": false,
+      "note": ""
+    }
   }
 ]
