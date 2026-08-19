@@ -87,5 +87,21 @@
       "essential": false,
       "note": ""
     }
+  },
+  {
+    "id": "op-msziphnznu",
+    "at": "2026-08-19T03:14:14.063Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-msziphnziz",
+    "value": {
+      "id": "pk-msziphnziz",
+      "name": "safari item",
+      "category": "worn",
+      "essential": false,
+      "note": ""
+    }
   }
 ]
