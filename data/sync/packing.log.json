@@ -46,5 +46,21 @@
       "essential": false,
       "note": "Merino or synthetic. One on, one drying."
     }
+  },
+  {
+    "id": "op-mszin7yngm",
+    "at": "2026-08-19T03:12:28.175Z",
+    "by": "p1",
+    "file": "packing",
+    "collection": "items",
+    "op": "upsert",
+    "key": "pk-base-layers",
+    "value": {
+      "id": "pk-base-layers",
+      "name": "Base layer tops (2)",
+      "category": "worn",
+      "essential": false,
+      "note": "Merino or synthetic. One on, one drying."
+    }
   }
 ]
