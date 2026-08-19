@@ -242,6 +242,15 @@ parameters do not include one, and the undocumented parameter that does is a bas
 blob that would break silently. Better to open on the right pair and let the reader
 set the time than to look precise and not be.
 
+Selecting a journey expands it in place rather than filling a panel a tap away.
+Each ride names the stop to stand at (`stopName` where it differs from the trail
+name), offers walking directions to that stop, a booking button, and a Maps link
+for the ride itself. Only a prefilled booking earns a primary button — a front
+page still labelled "Book" would be the original complaint. Departure times in
+the service panel are buttons that set the planner's "leave after" time; they
+looked clickable when they were plain text, and doing nothing was worse than
+not showing them.
+
 ## Coordinates corrected by the feed
 
 Five places were entered by hand and were wrong. The Swiss feed's own stop

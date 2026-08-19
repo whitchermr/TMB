@@ -188,6 +188,9 @@ const PAGES = {
       ['journeys', 'change', 'the number of changes on a journey'],
       ['journey-summary', 'Fastest', 'the summary stats'],
       ['provenance', 'transit-notes', 'where the provenance is written down'],
+      // The selected journey expands in place: boarding stop and a way to act on
+      // the leg belong on the card, not in a panel a tap away.
+      ['journeys', 'Board at', 'the boarding stop on the selected journey'],
       // The board is the way into the page now, so the things that make a row
       // worth reading are asserted rather than just its presence.
       ['trip-board', 'Skip the walk', 'the skip option on a walking day'],
@@ -255,6 +258,14 @@ function interactTransit(document) {
     journeys[0].getAttribute('data-selected') === 'true',
     'the first journey starts selected'
   );
+  ok(
+    journeys[0].textContent.includes('Board at'),
+    'the selected journey names the stop to stand at'
+  );
+  ok(
+    journeys[0].querySelectorAll('a[href]').length > 0,
+    'and offers a link that leaves the page with the journey already in it'
+  );
 
   // The honesty mechanism: how far a journey's times can be trusted belongs on
   // the journey, not in a footnote nobody reads. Which of the three levels it
@@ -284,14 +295,33 @@ function interactTransit(document) {
     'and the date the record was last verified'
   );
 
+  // The times used to look clickable and do nothing. Tapping one has to put that
+  // time into the planner, because that is the only reason to show a list of them
+  // next to a journey you are already looking at.
+  const timeButton = detail.querySelector('[data-set-time]');
+  ok(Boolean(timeButton), 'departure times are buttons');
+  const picked = timeButton.getAttribute('data-set-time');
+  timeButton.click();
+  ok(
+    document.getElementById('journey-time').value === picked,
+    'tapping a departure sets the planner to leave after it',
+    document.getElementById('journey-time').value
+  );
+
   // The stops in the detail panel are themselves links to a place, which is how
-  // you find out where a bus stop actually is.
-  const stop = detail.querySelector('[data-place]');
+  // you find out where a bus stop actually is. Re-query after the time click,
+  // which rebuilt the page.
+  const stop = document.getElementById('service-detail').querySelector('[data-place]');
   ok(Boolean(stop), 'the detail panel links each stop to its place');
   stop.click();
   ok(
     document.getElementById('service-detail').textContent.includes('Open in maps'),
     'a place shows a wayfinding link'
+  );
+  ok(
+    document.getElementById('service-detail').textContent.includes('Google') &&
+      document.getElementById('service-detail').textContent.includes('Apple'),
+    'and names Google and Apple rather than leaving the choice to a geo: URI'
   );
 
   const swap = document.getElementById('swap-places');

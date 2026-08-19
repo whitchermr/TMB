@@ -198,26 +198,20 @@ function wireControls() {
     pushUrl();
   });
 
-  // Delegated because both lists are rebuilt on every render.
+  // Delegated because both lists are rebuilt on every render. Order matters:
+  // an expanded journey is full of links, and letting the card swallow those
+  // clicks would select the journey and never follow the thing that was tapped.
   document.addEventListener('click', (event) => {
-    const journey = event.target.closest?.('[data-journey]');
-    if (journey) {
-      state.selected = Number(journey.dataset.journey);
+    const time = event.target.closest?.('[data-set-time]');
+    if (time) {
+      setValue('journey-time', time.dataset.setTime);
+      state.selected = 0;
+      state.detail = null;
+      pushUrl();
       render();
       return;
     }
-    const service = event.target.closest?.('[data-service]');
-    if (service) {
-      state.detail = { kind: 'service', id: service.dataset.service };
-      renderDetail();
-      return;
-    }
-    const place = event.target.closest?.('[data-place]');
-    if (place) {
-      state.detail = { kind: 'place', id: place.dataset.place };
-      renderDetail();
-      return;
-    }
+
     const pick = event.target.closest?.('[data-set-place]');
     if (pick) {
       setValue(pick.dataset.setField, pick.dataset.setPlace);
@@ -226,6 +220,7 @@ function wireControls() {
       render();
       return;
     }
+
     // A board row loads its own pair into the planner. Changes go to 3 because
     // several of these pairs genuinely need three vehicles, and a row that
     // advertised a connection the search below then failed to find would be
@@ -243,6 +238,37 @@ function wireControls() {
       render();
       document.getElementById('journey-context').textContent = plan.dataset.planLabel;
       document.getElementById('journeys-anchor')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    const journeyEl = event.target.closest?.('[data-journey]');
+    const alreadySelected = journeyEl?.getAttribute('data-selected') === 'true';
+
+    // Links and buttons inside an expanded card are the point of expanding it.
+    if (alreadySelected && event.target.closest?.('a[href], button')) return;
+
+    const service = event.target.closest?.('[data-service]');
+    if (service) {
+      state.detail = { kind: 'service', id: service.dataset.service };
+      if (journeyEl && !alreadySelected) {
+        state.selected = Number(journeyEl.dataset.journey);
+        render();
+        return;
+      }
+      renderDetail();
+      return;
+    }
+
+    const place = event.target.closest?.('[data-place]');
+    if (place) {
+      state.detail = { kind: 'place', id: place.dataset.place };
+      renderDetail();
+      return;
+    }
+
+    if (journeyEl) {
+      state.selected = Number(journeyEl.dataset.journey);
+      render();
     }
   });
 }
@@ -596,13 +622,13 @@ function renderJourney(journey, index) {
         ${journey.walkMinutes ? `<span class="chip">${journey.walkMinutes} min on foot</span>` : ''}
       </div>
       <div class="segments" style="margin-top:.5rem">
-        ${journey.legs.map(renderLeg).join('')}
+        ${journey.legs.map((leg) => renderLeg(leg, selected)).join('')}
       </div>
     </article>
   `;
 }
 
-function renderLeg(leg) {
+function renderLeg(leg, expanded) {
   const clock = `${transit.formatTime(leg.departMinutes)}–${transit.formatTime(leg.arriveMinutes)}`;
   const where = `${escapeHtml(transit.placeName(state.ctx, leg.from))} → ${escapeHtml(
     transit.placeName(state.ctx, leg.to)
@@ -615,29 +641,105 @@ function renderLeg(leg) {
         : leg.ascent_m < 0
           ? ` · ${units.elevation(-leg.ascent_m)} down`
           : '';
+    const walkUrl = expanded
+      ? links.walkDirectionsUrl(transit.placeById(state.ctx, leg.to))
+      : null;
     return `
-      <div class="segment">
-        <span class="segment__num numeric">${clock}</span>
-        <span class="segment__label">
-          On foot — ${where}
-          <small class="faint">${escapeHtml(units.distance(leg.distance_m))}${climb}</small>
-        </span>
+      <div class="segment${expanded ? ' segment--open' : ''}">
+        <div class="segment__head">
+          <span class="segment__num numeric">${clock}</span>
+          <span class="segment__label">
+            On foot — ${where}
+            <small class="faint">${escapeHtml(units.distance(leg.distance_m))}${climb}</small>
+          </span>
+        </div>
+        ${
+          walkUrl
+            ? `<a class="btn" href="${escapeHtml(walkUrl)}" target="_blank" rel="noopener">
+                Walking directions
+              </a>`
+            : ''
+        }
       </div>
     `;
   }
 
   const operator = transit.operatorById(state.ctx, leg.service.operator);
+  const mode = `${escapeHtml(MODE_LABEL[leg.service.mode] || leg.service.mode)}${
+    leg.service.line ? ` ${escapeHtml(leg.service.line)}` : ''
+  }`;
+  const head = `
+    <span class="segment__num numeric">${clock}</span>
+    <span class="segment__label">
+      ${mode} — ${where}
+      <small class="faint">${escapeHtml(operator?.name || leg.service.operator)}</small>
+    </span>
+  `;
+
+  if (!expanded) {
+    return `
+      <div class="segment segment--transit" data-service="${escapeHtml(leg.serviceId)}"
+        role="button" tabindex="0" title="Show details for this service">
+        ${head}
+      </div>
+    `;
+  }
+
+  const fromPlace = transit.placeById(state.ctx, leg.from);
+  const boardName = fromPlace?.stopName || fromPlace?.name || transit.placeName(state.ctx, leg.from);
+  const walkToStop = links.walkDirectionsUrl(fromPlace);
+  const actions = links.legActions(state.ctx, leg, {
+    date: readValue('journey-date'),
+    time: transit.formatTime(leg.departMinutes),
+  });
+
   return `
-    <div class="segment segment--transit" data-service="${escapeHtml(leg.serviceId)}"
-      role="button" tabindex="0" title="Show details for this service">
-      <span class="segment__num numeric">${clock}</span>
-      <span class="segment__label">
-        ${escapeHtml(MODE_LABEL[leg.service.mode] || leg.service.mode)}${
-          leg.service.line ? ` ${escapeHtml(leg.service.line)}` : ''
-        } — ${where}
-        <small class="faint">${escapeHtml(operator?.name || leg.service.operator)}</small>
-      </span>
+    <div class="segment segment--transit segment--open">
+      <div class="segment__head" data-service="${escapeHtml(leg.serviceId)}"
+        role="button" tabindex="0" title="Show the full timetable">
+        ${head}
+      </div>
+      <div class="segment__board" data-place="${escapeHtml(leg.from)}"
+        role="button" tabindex="0">
+        Board at ${escapeHtml(boardName)}
+        ${fromPlace?.address ? `<small class="faint">${escapeHtml(fromPlace.address)}</small>` : ''}
+      </div>
+      <div class="row row--tight segment__actions">
+        ${
+          walkToStop
+            ? `<a class="btn" href="${escapeHtml(walkToStop)}" target="_blank" rel="noopener">
+                Walk to stop
+              </a>`
+            : ''
+        }
+        ${actions.map(renderLegAction).join('')}
+      </div>
     </div>
+  `;
+}
+
+/**
+ * One outbound action for an expanded ride, labelled by what it actually does.
+ *
+ * The prefilled booking is the only one that earns a primary button: a front
+ * page that still asks for from, to and date looking like a completed booking
+ * is the original complaint about this page.
+ */
+function renderLegAction(action) {
+  const primary = action.role === 'book' && action.tier === 'prefilled';
+  const label =
+    action.role === 'directions'
+      ? 'Ride in Maps'
+      : action.tier === 'prefilled'
+        ? 'Book'
+        : action.tier === 'route'
+          ? 'Timetable'
+          : action.label;
+  return `
+    <a class="btn${primary ? ' btn--primary' : ''}" href="${escapeHtml(action.href)}"
+      target="_blank" rel="noopener" title="${escapeHtml(action.detail || action.label)}">
+      ${escapeHtml(label)}
+    </a>
   `;
 }
 
@@ -859,18 +961,31 @@ function renderPlaceDetail(place) {
 }
 
 /**
- * Coordinates plus a wayfinding link.
+ * Coordinates plus a wayfinding link for each maps app the phone might have.
  *
- * A geo: URI opens whatever map app the phone already has, including offline
- * ones, which matters more here than a link to a website that needs signal.
+ * `geo:` opens whatever is installed, including an offline app, which is why it
+ * keeps the wording "Open in maps". Google and Apple sit next to it because
+ * `geo:` does nothing on a desktop, and a pin you cannot open is not a pin.
+ * An address with no coordinates still produces the two website links, which is
+ * what lets hotel doors stay unguessed in the data.
  */
 function coordRow(place) {
-  if (place.lat == null) return '';
-  const pair = `${place.lat.toFixed(5)}, ${place.lon.toFixed(5)}`;
+  const maps = links.mapsUrls(place);
+  if (!maps) return '';
+  const pair =
+    maps.hasCoords && place.lat != null
+      ? `${Number(place.lat).toFixed(5)}, ${Number(place.lon).toFixed(5)}`
+      : place.address || '';
   return `
     <div class="row row--tight">
-      <span class="mono faint">${escapeHtml(pair)}</span>
-      <a class="btn btn--sm" href="geo:${place.lat},${place.lon}">Open in maps</a>
+      ${pair ? `<span class="mono faint">${escapeHtml(pair)}</span>` : ''}
+      <a class="btn btn--sm" href="${escapeHtml(maps.google)}" target="_blank" rel="noopener">Google</a>
+      <a class="btn btn--sm" href="${escapeHtml(maps.apple)}" target="_blank" rel="noopener">Apple</a>
+      ${
+        maps.geo
+          ? `<a class="btn btn--sm" href="${escapeHtml(maps.geo)}">Open in maps</a>`
+          : ''
+      }
     </div>
   `;
 }
@@ -937,16 +1052,32 @@ function renderServiceDetail(service) {
         <strong>Departures from ${escapeHtml(
           transit.placeName(state.ctx, service.stops[0].place)
         )}</strong>
-        <p class="numeric" style="margin:.25rem 0 0">
-          ${departures.map((time) => transit.formatTime(time)).join(' · ') || '—'}
-        </p>
+        <div class="row row--tight" style="margin:.35rem 0 0">
+          ${
+            departures.length
+              ? departures
+                  .map((minutes) => {
+                    const clock = transit.formatTime(minutes);
+                    return `
+                      <button type="button" class="btn btn--sm numeric"
+                        data-set-time="${escapeHtml(clock)}"
+                        title="Plan leaving after ${escapeHtml(clock)}">
+                        ${escapeHtml(clock)}
+                      </button>
+                    `;
+                  })
+                  .join('')
+              : '<span class="faint">—</span>'
+          }
+        </div>
         ${
           service.frequency
             ? `<small class="faint">
                 Every ${escapeHtml(String(service.frequency.everyMinutes))} minutes,
                 ${escapeHtml(service.frequency.first)} to ${escapeHtml(service.frequency.last)}.
+                Tap a time to plan leaving after it.
               </small>`
-            : ''
+            : '<small class="faint">Tap a time to plan leaving after it.</small>'
         }
       </div>
 
