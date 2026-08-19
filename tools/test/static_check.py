@@ -49,6 +49,7 @@ SHARED_MODULES = [
     "assets/js/core/schedule.js",
     "assets/js/core/money.js",
     "assets/js/core/transit.js",
+    "assets/js/core/links.js",
 ]
 
 ID_ATTR = re.compile(r"""\bid\s*=\s*["']([A-Za-z][\w:-]*)["']""")

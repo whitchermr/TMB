@@ -144,10 +144,10 @@
     "variant": "shortcut",
     "label": "With shortcuts",
     "optional": false,
-    "stage": "Courmayeur → La Fouly",
+    "stage": "Courmayeur → Champex-Lac",
     "file": "data/route/legs/day-04-shortcut.json",
     "hikingDistance_m": 14029.9,
-    "transitDistance_m": 17573.8,
+    "transitDistance_m": 32461.1,
     "pointCount": 540,
     "stats": {
       "distance_m": 14029.9,
@@ -168,69 +168,23 @@
     "variant": "classic",
     "label": "Classic TMB",
     "optional": false,
-    "stage": "Courmayeur → La Fouly",
+    "stage": "Courmayeur → Champex-Lac",
     "file": "data/route/legs/day-04-classic.json",
-    "hikingDistance_m": 31603.7,
+    "hikingDistance_m": 46491.0,
     "transitDistance_m": 0.0,
-    "pointCount": 1217,
+    "pointCount": 1778,
     "stats": {
-      "distance_m": 31603.7,
-      "gain_m": 1969,
-      "loss_m": 1577,
-      "minElevation_m": 1208,
+      "distance_m": 46491.0,
+      "gain_m": 2536,
+      "loss_m": 2271,
+      "minElevation_m": 1055,
       "maxElevation_m": 2530,
       "startElevation_m": 1208,
-      "endElevation_m": 1603
+      "endElevation_m": 1476
     },
     "elevationSource": {
-      "ign-rgealti": 908,
+      "ign-rgealti": 1469,
       "swisstopo-alti3d": 309
-    }
-  },
-  {
-    "dayId": "day-05",
-    "variant": "shortcut",
-    "label": "With shortcuts",
-    "optional": false,
-    "stage": "La Fouly → Champex-Lac",
-    "file": "data/route/legs/day-05-shortcut.json",
-    "hikingDistance_m": 14887.3,
-    "transitDistance_m": 0.0,
-    "pointCount": 563,
-    "stats": {
-      "distance_m": 14887.3,
-      "gain_m": 567,
-      "loss_m": 694,
-      "minElevation_m": 1055,
-      "maxElevation_m": 1605,
-      "startElevation_m": 1603,
-      "endElevation_m": 1476
-    },
-    "elevationSource": {
-      "ign-rgealti": 563
-    }
-  },
-  {
-    "dayId": "day-05",
-    "variant": "classic",
-    "label": "Classic TMB",
-    "optional": false,
-    "stage": "La Fouly → Champex-Lac",
-    "file": "data/route/legs/day-05-classic.json",
-    "hikingDistance_m": 14887.3,
-    "transitDistance_m": 0.0,
-    "pointCount": 563,
-    "stats": {
-      "distance_m": 14887.3,
-      "gain_m": 567,
-      "loss_m": 694,
-      "minElevation_m": 1055,
-      "maxElevation_m": 1605,
-      "startElevation_m": 1603,
-      "endElevation_m": 1476
-    },
-    "elevationSource": {
-      "ign-rgealti": 563
     }
   },
   {

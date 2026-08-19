@@ -151,40 +151,57 @@ const PAGES = {
     expect: ['brief', 'brief-foot'],
     contains: [
       ['brief', 'Day 1', 'a numbered hiking day'],
-      ['brief', 'Day 7', 'the last hiking day'],
+      ['brief', 'Day 6', 'the last hiking day'],
       ['brief', 'Scenery and photo stops', 'the scenery section'],
       ['brief', 'Tonight', 'the lodging block'],
     ],
     // One elevation profile per hiking day, drawn as inline SVG.
-    minSvg: 7,
+    minSvg: 6,
   },
   transit: {
-    // Day 5 is La Fouly to Champex-Lac, which is the realistic "skip a day"
-    // query and needs a change at Orsières, so the handover from the day page
-    // and a multi-leg journey are both exercised in one load.
-    label: 'transit.html?day=day-05',
+    // Day 4 is Courmayeur to Champex-Lac, the longest day and the realistic
+    // "skip a day" query. Getting round it by vehicle needs every change the
+    // search allows, so this exercises the handover from the day page and a
+    // multi-leg journey through Orsières in one load. `changes=3` is explicit
+    // because the default of 2 is genuinely not enough for this pair.
+    label: 'transit.html?day=day-04',
     file: 'transit.html',
     module: '../../assets/js/pages/transit.js',
-    url: 'https://example.test/transit.html?day=day-05',
+    url: 'https://example.test/transit.html?day=day-04&changes=3',
     expect: [
       'from-place',
       'to-place',
       'journey-summary',
       'journeys',
       'on-demand',
-      'day-shortcuts',
+      'trip-board',
+      'board-summary',
       'provenance',
       'map-legend',
     ],
     wantsMap: true,
     contains: [
-      ['from-place', 'La Fouly', 'the day-5 origin, prefilled from the query string'],
-      ['to-place', 'Champex', 'the day-5 destination'],
+      ['from-place', 'Courmayeur', 'the day-4 origin, prefilled from the query string'],
+      ['to-place', 'Champex', 'the day-4 destination'],
       ['from-place', 'Geneva', 'the airport as a pickable origin'],
       ['journeys', 'Orsières', 'the change on the way to Champex'],
       ['journeys', 'change', 'the number of changes on a journey'],
       ['journey-summary', 'Fastest', 'the summary stats'],
       ['provenance', 'transit-notes', 'where the provenance is written down'],
+      // The board is the way into the page now, so the things that make a row
+      // worth reading are asserted rather than just its presence.
+      ['trip-board', 'Skip the walk', 'the skip option on a walking day'],
+      ['trip-board', 'Hôtel Arolla', 'the hotel for the off-trail Chapieux night'],
+      ['trip-board', 'Bourg-Saint-Maurice', 'and where that bed actually is'],
+      ['trip-board', 'Ride to bed', 'the ride that reaches it'],
+      ['trip-board', 'last 18:20', 'with the deadline for catching it'],
+      ['trip-board', 'To the start', 'the morning bus down to the day-1 trailhead'],
+      ['trip-board', 'per vehicle', 'a taxi quote kept in per-vehicle terms'],
+      ['board-summary', 'way round', 'the count of days that can be skipped'],
+      // A deadline resting on an unverified timetable has to say so on its face,
+      // not in a tooltip nobody hovers on a phone.
+      ['trip-board', 'unverified', 'a deadline flagged as resting on an unverified timetable'],
+      ['board-summary', 'unverified', 'and counted in the header so it is not missed'],
     ],
     interact: interactTransit,
   },
@@ -477,9 +494,15 @@ function interactDay(document) {
 function interactDayTransit(document) {
   const params = (element) => new URLSearchParams(element.getAttribute('href').split('?')[1] || '');
 
+  // Read the day's own ends out of the itinerary rather than restating them, so
+  // that reshaping the trip cannot leave this passing against a stale pair.
+  const viewing = JSON.parse(readFile('data/itinerary.json')).days.find(
+    (day) => day.id === 'day-04'
+  );
+
   const skip = params(document.getElementById('skip-day'));
-  ok(skip.get('from') === 'courmayeur', 'skipping the day starts where the day starts');
-  ok(skip.get('to') === 'la-fouly', 'and ends where it ends');
+  ok(skip.get('from') === viewing.from, 'skipping the day starts where the day starts');
+  ok(skip.get('to') === viewing.to, 'and ends where it ends', `expected ${viewing.to}`);
   ok(/^\d{4}-\d{2}-\d{2}$/.test(skip.get('date') || ''), 'on the date of the day itself');
 
   const leg = document.getElementById('segments').querySelector('a');

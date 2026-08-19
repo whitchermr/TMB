@@ -21,6 +21,7 @@
 
 import { haversine } from './geo.js';
 import { MODELS } from './schedule.js';
+import { toBase } from './money.js';
 
 /** Minutes to allow when changing from one vehicle to another at a stop. */
 export const MIN_TRANSFER_MINUTES = 5;
@@ -59,7 +60,14 @@ const DEFAULT_PACE = { model: 'naismith', flatSpeedKmh: 4 };
  * ships as an empty placeholder until the pipeline has run, and a missing one
  * must fall back to the curated patterns rather than empty the graph.
  */
-export function context({ transit, anchors = {}, stays = null, schedules = null, pace = null }) {
+export function context({
+  transit,
+  anchors = {},
+  stays = null,
+  schedules = null,
+  pace = null,
+  rates = null,
+}) {
   const scheduleIndex = new Map(
     (schedules?.services || []).map((entry) => [entry.serviceId, entry])
   );
@@ -112,6 +120,8 @@ export function context({ transit, anchors = {}, stays = null, schedules = null,
     sources: schedules?.sources || [],
     generatedAt: schedules?.generatedAt || null,
     pace: pace || DEFAULT_PACE,
+    rates,
+    stays,
   };
 }
 
@@ -526,6 +536,256 @@ export function onDemandBetween(ctx, from, to) {
       ),
       operatorRecord: operatorById(ctx, option.operator),
     }));
+}
+
+/* ------------------------------------------------------------------ */
+/* fares                                                              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * What one journey costs per person, in the base currency.
+ *
+ * Legs are priced in euros on one side of the massif and francs on the other, so
+ * a total means nothing until it is converted — and `null` rather than a wrong
+ * number when there is no rate table to convert with, because a figure that
+ * silently added CHF to EUR would be believed.
+ */
+export function journeyFare(ctx, journey) {
+  if (!journey) return { total: null, free: false, parts: [] };
+  const parts = journey.fares || [];
+  if (journey.free) return { total: 0, free: true, parts };
+  if (!parts.length || !ctx?.rates) return { total: null, free: false, parts };
+  return {
+    total: parts.reduce((sum, fare) => sum + toBase(fare.amount, fare.currency, ctx.rates), 0),
+    free: false,
+    parts,
+  };
+}
+
+/**
+ * The cheapest per-person figure across a set of journeys, as a "from" price.
+ *
+ * Free counts as a real answer of zero rather than as missing data: the Chamonix
+ * valley buses genuinely are free with the Carte d'Hôte, and that is the single
+ * most useful thing the board can say about getting to the trailhead.
+ */
+function fromFareOf(ctx, journeyList) {
+  const priced = journeyList
+    .map((journey) => journeyFare(ctx, journey))
+    .filter((fare) => fare.total != null);
+  if (!priced.length) return null;
+  return priced.reduce((low, fare) => (fare.total < low.total ? fare : low), priced[0]);
+}
+
+/**
+ * The cheapest on-demand quote for a pair, kept per vehicle.
+ *
+ * Never divided by the group size. A taxi is quoted for the car, and dividing by
+ * six would produce a per-person number that no longer holds the moment four
+ * people take it — so it is carried separately and labelled separately all the
+ * way to the screen rather than being folded into `fromFare`.
+ */
+function onDemandFareOf(ctx, options) {
+  const quotes = options
+    .flatMap((option) => option.quotedFares || [])
+    .filter((fare) => fare.amount > 0);
+  if (!quotes.length || !ctx?.rates) return null;
+  const cheapest = quotes.reduce(
+    (low, fare) =>
+      toBase(fare.amount, fare.currency, ctx.rates) < toBase(low.amount, low.currency, ctx.rates)
+        ? fare
+        : low,
+    quotes[0]
+  );
+  return {
+    amount: cheapest.amount,
+    currency: cheapest.currency,
+    total: toBase(cheapest.amount, cheapest.currency, ctx.rates),
+    upTo: cheapest.upTo || null,
+    basis: cheapest.basis || 'per vehicle',
+    perVehicle: true,
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* the trip board                                                     */
+/* ------------------------------------------------------------------ */
+
+/** Where the group actually sleeps on a given night, which is not always the stop. */
+export function bedOf(ctx, day) {
+  if (!day?.stayAt) return null;
+  const stop = (ctx.stays?.stops || []).find((entry) => entry.stopId === day.stayAt) || null;
+  const option = stop?.options?.find((entry) => entry.id === stop.bookedOptionId) || null;
+  const placeId = option?.atPlaceId || day.stayAt;
+  return {
+    stopId: day.stayAt,
+    placeId,
+    option,
+    stop,
+    // The two nights this is true of are the reason the board exists.
+    offTrail: placeId !== day.stayAt,
+  };
+}
+
+/** Bound on the departure walk below, so a bad frequency cannot spin. */
+const MAX_DEPARTURE_PROBES = 80;
+
+/**
+ * When the first vehicle of a journey leaves, which is the thing with a timetable.
+ *
+ * A journey that opens with a road walk can be started at any minute of the day —
+ * the walk up from Trient to the Forclaz does not have departures — so it is the
+ * bus at the top that is scarce, and it is the bus that has to be counted.
+ */
+function firstRideDeparture(journey) {
+  const ride = journey.legs.find((leg) => leg.kind === 'ride');
+  return ride ? ride.departMinutes : journey.departMinutes;
+}
+
+/**
+ * The latest you can set off and still make the first vehicle.
+ *
+ * `journeys()` reports a walk-first journey as leaving at whatever time it was
+ * asked about and then waiting at the stop, which is true but useless as a
+ * deadline — asked at 06:00 it says 06:00 for a bus at 09:09. Someone standing in
+ * Trient wants the opposite end of that: walk up to the Forclaz by 08:07 and the
+ * bus is there. So the leading walks are subtracted from the vehicle's time.
+ */
+function setOffMinutes(journey) {
+  const rideIndex = journey.legs.findIndex((leg) => leg.kind === 'ride');
+  if (rideIndex < 0) return journey.departMinutes;
+  const leadingWalk = journey.legs
+    .slice(0, rideIndex)
+    .reduce((sum, leg) => sum + (leg.arriveMinutes - leg.departMinutes), 0);
+  return journey.legs[rideIndex].departMinutes - leadingWalk;
+}
+
+/**
+ * Every distinct way of making this trip today, in departure order.
+ *
+ * One search will not do. `journeys()` answers "leaving after this time, what
+ * arrives soonest", so its results cluster at the front of the day and their
+ * latest departure is not the day's last. Reporting that as a deadline is worse
+ * than reporting nothing: it read as 10:50 for the last navette down from Les
+ * Chapieux, when in fact it runs until the evening — and someone would have
+ * abandoned a day's walking before lunch on the strength of it.
+ *
+ * So this steps through the day, each time asking what leaves next. The step is
+ * past the first *vehicle*, not past the journey's start, because stepping one
+ * minute past a walk start just finds the same bus again: that counted 80
+ * imaginary departures a minute apart and still never reached the last one.
+ */
+function walkDepartures(ctx, from, to, date, time, maxTransfers) {
+  const all = [];
+  let cursor = parseTime(time);
+
+  for (let probe = 0; probe < MAX_DEPARTURE_PROBES; probe += 1) {
+    if (cursor == null || cursor >= 1440) break;
+    const found = journeys(ctx, { from, to, date, time: formatTime(cursor), maxTransfers });
+    if (!found.length) break;
+
+    // The next vehicle out, which is not necessarily the first result: those are
+    // ranked by arrival, so a later bus that overtakes can come first.
+    const nextVehicle = Math.min(...found.map(firstRideDeparture));
+    all.push(...found.filter((journey) => firstRideDeparture(journey) === nextVehicle));
+    cursor = nextVehicle + 1;
+  }
+
+  return all;
+}
+
+/**
+ * One ride shape: how to get from A to B on a date, and the last chance to do it.
+ */
+function connection(ctx, from, to, date, time, maxTransfers) {
+  if (!from || !to || from === to || !date) return null;
+  const found = journeys(ctx, { from, to, date, time, maxTransfers });
+  const options = onDemandBetween(ctx, from, to);
+  const everyDeparture = walkDepartures(ctx, from, to, date, time, maxTransfers);
+  const lastOut = everyDeparture.reduce(
+    (latest, journey) =>
+      !latest || setOffMinutes(journey) > setOffMinutes(latest) ? journey : latest,
+    null
+  );
+
+  return {
+    from,
+    to,
+    date,
+    journeys: found,
+    count: found.length,
+    // Latest times you could set off, which is what "how skippable is this day"
+    // actually means to someone deciding whether to risk it. Set-off rather than
+    // the vehicle's own time, because on the legs that begin with a walk up to a
+    // col the two differ by the best part of an hour.
+    departures: [...new Set(everyDeparture.map(setOffMinutes))].sort((a, b) => a - b),
+    fastestMinutes: found.length ? Math.min(...found.map((j) => j.totalMinutes)) : null,
+    fromFare: fromFareOf(ctx, everyDeparture.length ? everyDeparture : found),
+    onDemand: options,
+    onDemandFare: onDemandFareOf(ctx, options),
+    lastDeparture: lastOut ? setOffMinutes(lastOut) : null,
+    // The deadline's own trustworthiness, not the row's. These genuinely differ:
+    // the quickest way down from Trient is a published pattern, while the last one
+    // of the day is an unconfirmed PostBus — so a chip taken from the fastest
+    // journey would put a reassuring label on the one number that can strand
+    // somebody. Whatever is said about the deadline has to come from the journey
+    // that sets it.
+    lastDepartureConfidence: lastOut ? worstConfidence(lastOut.legs) : null,
+    lastDepartureJourney: lastOut,
+    confidence: found.length ? worstConfidence(found) : null,
+    // What the chip says. Three states, because "no bus" and "a taxi will do it"
+    // are different answers and collapsing them would hide the expensive one.
+    reach: found.length ? 'scheduled' : options.length ? 'on-demand' : 'none',
+  };
+}
+
+/**
+ * The whole trip, one row per day, answering "can this day be skipped and what
+ * does it cost" and "is tonight's bed somewhere a vehicle has to reach".
+ *
+ * Built from the calendar rather than the itinerary so that every row already
+ * knows its real date — a service that only runs on weekdays, or a season that
+ * has not opened, has to be judged against the actual day, not a generic one.
+ *
+ * A day carries up to three connections, deliberately the same shape:
+ *   toTrail  last night's bed to where today's walking starts
+ *   skip     the walk itself, replaced by vehicles
+ *   toBed    where today's walking ends to tonight's bed
+ *
+ * `toTrail` exists because the group sleeps in Chamonix and starts walking at Les
+ * Houches, so hiking day 1 opens with a bus. That is the same shape as the
+ * Chapieux night pointing the other way, so it is modelled the same way instead
+ * of being special-cased in the page.
+ */
+export function dayOptions(ctx, calendar, { time = '06:00', maxTransfers = 3 } = {}) {
+  return calendar.map((day, index) => {
+    const previous = index > 0 ? calendar[index - 1] : null;
+    const lastNight = previous ? bedOf(ctx, previous) : null;
+    const bed = bedOf(ctx, day);
+    const start = day.from || null;
+    const end = day.to || day.stayAt || null;
+
+    return {
+      day,
+      bed,
+      hikeNumber: day.hikeNumber,
+      // Morning: only when last night's bed is not where today starts.
+      toTrail:
+        start && lastNight && lastNight.placeId !== start
+          ? connection(ctx, lastNight.placeId, start, day.date, time, maxTransfers)
+          : null,
+      // The skip itself, only meaningful on a day there is a walk to skip.
+      skip:
+        day.kind === 'hike' && start && day.to
+          ? connection(ctx, start, day.to, day.date, time, maxTransfers)
+          : null,
+      // Evening: only when tonight's bed is not where today ends.
+      toBed:
+        bed && end && bed.placeId !== end
+          ? connection(ctx, end, bed.placeId, day.date, time, maxTransfers)
+          : null,
+    };
+  });
 }
 
 /* ------------------------------------------------------------------ */

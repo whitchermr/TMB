@@ -29,7 +29,8 @@
       "stage": "Les Houches → Les Contamines",
       "from": "les-houches",
       "to": "les-contamines",
-      "stayAt": "les-contamines"
+      "stayAt": "les-contamines",
+      "note": "We sleep in Chamonix the night before, so the day opens with Chamonix Bus line 1 down to Les Houches — free with the Carte d'Hôte."
     },
     {
       "id": "day-02",
@@ -62,21 +63,11 @@
       "id": "day-04",
       "kind": "hike",
       "legId": "day-04",
-      "stage": "Courmayeur → La Fouly",
+      "stage": "Courmayeur → Champex-Lac",
       "from": "courmayeur",
-      "to": "la-fouly",
-      "stayAt": "la-fouly",
-      "note": "Val Ferret bus to Arnouvaz, then over Grand Col Ferret into Switzerland."
-    },
-    {
-      "id": "day-05",
-      "kind": "hike",
-      "legId": "day-05",
-      "stage": "La Fouly → Champex-Lac",
-      "from": "la-fouly",
       "to": "champex-lac",
       "stayAt": "champex-lac",
-      "note": "Gentlest day. Valley walking through Swiss hamlets."
+      "note": "No La Fouly night, so this is the old day 4 and day 5 in one. The classic line is 48 km over the Grand Col Ferret; the shortcut rides the Val Ferret bus to Arnouvaz, walks the col to La Fouly, then takes the bus on through Orsières."
     },
     {
       "id": "day-06",
@@ -99,11 +90,19 @@
       "note": "Over Col de Balme to Le Tour, then Chamonix Bus line 1 back to town."
     },
     {
+      "id": "rest-02",
+      "kind": "rest",
+      "label": "Chamonix",
+      "stayAt": "chamonix",
+      "note": "Second of the two nights back in the valley. Nothing planned beyond a long lunch.",
+      "includeInBudget": false
+    },
+    {
       "id": "depart",
       "kind": "travel",
-      "label": "Chamonix → home",
+      "label": "Chamonix → Annecy",
       "stayAt": null,
-      "note": "Buffer day for celebrating and flying out.",
+      "note": "On to the Annecy apartment.",
       "includeInBudget": false
     }
   ]

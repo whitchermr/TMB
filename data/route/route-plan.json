@@ -27,7 +27,7 @@
     "les-contamines": { "name": "Les Contamines-Montjoie", "lat": 45.82109, "lon": 6.72751, "country": "FR", "isStageStop": true },
     "les-chapieux": { "name": "Les Chapieux", "lat": 45.69668, "lon": 6.73358, "country": "FR", "isStageStop": true },
     "courmayeur": { "name": "Courmayeur", "lat": 45.78742, "lon": 6.97306, "country": "IT", "isStageStop": true, "acceptOffset_m": 450, "note": "The main itinerary passes above the town rather than through the centre, so the leg boundary sits at the trail's closest approach (~390 m north)." },
-    "la-fouly": { "name": "La Fouly", "lat": 45.93312, "lon": 7.09897, "country": "CH", "isStageStop": true },
+    "la-fouly": { "name": "La Fouly", "lat": 45.93312, "lon": 7.09897, "country": "CH", "isStageStop": true, "note": "Still a stage stop on the trail and the midpoint of day 4, but no longer a night — the group walks or rides through it." },
     "champex-lac": { "name": "Champex-Lac", "lat": 46.03058, "lon": 7.11682, "country": "CH", "isStageStop": true },
     "trient": { "name": "Trient", "lat": 46.05595, "lon": 6.99537, "country": "CH", "isStageStop": true },
     "le-tour": { "name": "Le Tour", "lat": 46.00269, "lon": 6.94593, "country": "FR", "isStageStop": true, "onMainRoute": false, "note": "Reached via the Le Tour variant relation, not the main itinerary — the main route stays high over the Aiguillette des Posettes toward Tré-le-Champ." },
@@ -112,9 +112,10 @@
     },
     {
       "id": "day-04",
-      "stage": "Courmayeur → La Fouly",
+      "stage": "Courmayeur → Champex-Lac",
       "from": "courmayeur",
-      "to": "la-fouly",
+      "to": "champex-lac",
+      "note": "One calendar day because there is no La Fouly night booked. The two halves used to be day 4 and day 5; walked end to end it is the longest stage of the trip by a wide margin, which is what the variant toggle is for.",
       "variants": {
         "shortcut": {
           "label": "With shortcuts",
@@ -126,32 +127,21 @@
               "mode": "bus",
               "note": "Val Ferret bus (SVAP/Arriva, Alta Valle timetable) up to Arnouvaz"
             },
-            { "type": "hike", "from": "arnouvaz", "to": "la-fouly" }
+            { "type": "hike", "from": "arnouvaz", "to": "la-fouly" },
+            {
+              "type": "transit",
+              "from": "la-fouly",
+              "to": "champex-lac",
+              "mode": "bus",
+              "note": "TMR post bus down the Swiss Val Ferret and back up to Champex, changing at Orsières"
+            }
           ],
           "plannedTotals": { "distance_km": 13, "gain_m": 500, "loss_m": 950, "approximate": true }
         },
         "classic": {
           "label": "Classic TMB",
-          "segments": [{ "type": "hike", "from": "courmayeur", "to": "la-fouly" }],
-          "plannedTotals": { "distance_km": 32.9, "gain_m": 2053, "loss_m": 1666, "approximate": true }
-        }
-      }
-    },
-    {
-      "id": "day-05",
-      "stage": "La Fouly → Champex-Lac",
-      "from": "la-fouly",
-      "to": "champex-lac",
-      "variants": {
-        "shortcut": {
-          "label": "With shortcuts",
-          "segments": [{ "type": "hike", "from": "la-fouly", "to": "champex-lac" }],
-          "plannedTotals": { "distance_km": 15.3, "gain_m": 592, "loss_m": 794 }
-        },
-        "classic": {
-          "label": "Classic TMB",
-          "segments": [{ "type": "hike", "from": "la-fouly", "to": "champex-lac" }],
-          "plannedTotals": { "distance_km": 15.3, "gain_m": 592, "loss_m": 794 }
+          "segments": [{ "type": "hike", "from": "courmayeur", "to": "champex-lac" }],
+          "plannedTotals": { "distance_km": 48.2, "gain_m": 2645, "loss_m": 2460, "approximate": true }
         }
       }
     },

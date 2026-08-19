@@ -28,9 +28,19 @@
       </div>
 
       <div class="stack">
+        <section class="card card--accent">
+          <div class="card__head">
+            <h2>The trip, day by day</h2>
+            <small class="faint" id="board-summary"></small>
+          </div>
+          <div class="card__body card__body--flush">
+            <div id="trip-board"></div>
+          </div>
+        </section>
+
         <section class="card">
           <div class="card__head">
-            <h2>Plan a journey</h2>
+            <h2>Custom search</h2>
             <small class="faint" id="journey-context"></small>
           </div>
           <div class="card__body">
@@ -69,9 +79,10 @@
                 </select>
               </div>
             </div>
-            <div class="row row--tight" id="day-shortcuts" style="margin-top: 0.6rem"></div>
           </div>
         </section>
+
+        <div id="journeys-anchor"></div>
 
         <div class="split split--sticky">
           <div class="stack">

@@ -18,6 +18,53 @@ Regenerate everything with `./tools/run-pipeline.sh`.
 The fetched loop is a single continuous closed ring: 736 member ways, 16,999
 vertices, 166.01 km. No manual stitching or gap-filling was required.
 
+## Where the dates come from
+
+`settings.trip.startDate` and the shape of `itinerary.json` are set from the
+group's confirmed hotel bookings, not the other way round. When the two disagreed,
+the bookings won: they are paid for.
+
+Reconciling them changed three things about the trip:
+
+- **The trip starts Fri 2 Jul 2027**, a day later than planned. That is the arrival
+ day, so hiking day 1 is Sat 3 Jul.
+- **There is no La Fouly night.** The old days 4 and 5 are one calendar day,
+ `day-04`, running Courmayeur to Champex-Lac — 48 km walked end to end, which is
+ what the shortcut variant is for. Leg ids deliberately skip `day-05` rather than
+ renumbering, so waypoint `dayId`s, leg filenames and any shared link keep meaning
+ what they used to.
+- **There are two nights back in Chamonix** at the end rather than one.
+
+Each booking URL in the sheet has its dates in the query string, which makes them
+an independent check on all of the above rather than a restatement of it:
+
+| Night | Hotel | Dates in the booking URL |
+|---|---|---|
+| Jul 3 | Chalet Nant Rouge | `start_at=2027-07-03&end_at=2027-07-04` |
+| Jul 4 | Hôtel Arolla | `begindate=07/04/2027`, `numnight=1` |
+| Jul 5–6 | Gran Baita | `gg=05&mm=07&aa=2027`, `notti_1=2` |
+| Jul 7 | Le Rendez-vous | `Arrival=2027-7-7&Departure=2027-7-8` |
+| Jul 8 | Martigny Boutique-Hôtel | none — homepage only |
+| Jul 9–10 | La Folie Douce | `start:2027-07-09;end:2027-07-11`, three rooms of two |
+
+A test checks every booking link against the nights its stop is occupied, in
+whichever format that booking engine uses, and requires a link with no date in it
+to say so in its note — so "no date found" can never quietly stand in for "wrong
+date found". The Martigny link is the only one of those, and it is the only booking
+that cannot be re-opened without retyping the dates.
+
+The prices in the sheet are per room of two, which the `nb_adults`, `nbpax` and
+`tot_adulti` parameters confirm; `stays.json` stores them per person per night.
+Courmayeur's "$650 total" is one room for two nights, so $162.50 each per night —
+the reading that divides it across the whole group gives $54 a night for a
+four-star spa hotel in July, which settles it.
+
+**Hotel coordinates are absent unless verified.** Only Martigny's were confirmed
+(against the OSM hotel way); the rest carry a postal address and no `lat`/`lon`,
+because an unverified guess would put a marker in the wrong street and be believed.
+A maps link searches the address perfectly well, so the only thing lost is the
+walk-to-the-door estimate, which needs real coordinates to mean anything.
+
 ## Loop orientation
 
 The direction OSM stores the relation in is arbitrary, so `split_legs.py` does

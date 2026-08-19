@@ -51,13 +51,16 @@ PATHS=(
   "assets/js/pages/packing.js" "assets/js/pages/transit.js"
   "data/settings.json" "data/itinerary.json" "data/waypoints.json"
   "data/stays.json" "data/people.json" "data/expenses.json" "data/rates.json"
+  "assets/js/core/links.js"
   "data/packing.json" "data/transit.json" "data/transit-schedules.json"
   "data/route/anchors.json" "data/route/legs/index.json"
   "data/route/tmb-main.geojson" "data/route/variants/index.json"
   "sw.js" "manifest.webmanifest"
 )
 
-for day in 01 02 03 04 05 06 07; do
+# No 05: day-05 was folded into day-04 when the La Fouly night was dropped, so
+# the leg ids skip a number.
+for day in 01 02 03 04 06 07; do
   PATHS+=("data/route/legs/day-$day-shortcut.json" "data/route/legs/day-$day-classic.json")
 done
 PATHS+=("data/route/legs/day-06-arpette.json")

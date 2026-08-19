@@ -11,130 +11,155 @@
     "dinner and breakfast are included, which is the norm in refuges and changes",
     "how much food money to budget separately.",
     "",
-    "status: idea | contacted | held | booked | rejected"
+    "status: idea | contacted | held | booked | rejected",
+    "",
+    "`nights` is an optional override. Leave it out and it is derived by counting",
+    "the itinerary days that sleep here, which is what should normally happen.",
+    "",
+    "Location and contact fields, all optional:",
+    "  address     postal address, as the hotel writes it. Enough on its own to",
+    "              open a maps app, so it is the fallback when lat/lon are absent.",
+    "  lat, lon    door coordinates. Present ONLY where they were verified against",
+    "              a source — an unverified guess would put a marker in the wrong",
+    "              street and be believed. Absent is fine: the page falls back to",
+    "              searching the address, and only skips the walk-to-the-door",
+    "              estimate, which needs real coordinates to mean anything.",
+    "  atPlaceId   the transit place the bed is actually at, when that is NOT the",
+    "              trail stop this entry belongs to. Two of these nights sleep in",
+    "              a different town from the one the day ends in, and this is what",
+    "              lets the transit page work out the ride to bed instead of",
+    "              asserting the hotel sits where it does not. Absent means the bed",
+    "              is at the stop, which is the normal case.",
+    "  checkIn,    local times as the hotel states them. checkIn matters for the",
+    "  checkOut    off-trail beds: it is the deadline the day's walking has to fit",
+    "              inside, and it is what the last usable shuttle is measured",
+    "              against.",
+    "  phone       in +CC format, so a tel: link works from a phone."
   ],
 
   "stops": [
     {
       "stopId": "chamonix",
       "label": "Chamonix (before and after)",
-      "nights": 1,
       "includeInBudget": false,
-      "note": "Excluded from the on-trail budget by agreement. Carte d'Hôte from any valley hotel makes the buses free.",
-      "bookedOptionId": null,
-      "options": []
+      "note": "Three nights in total: the arrival on Jul 2, then Jul 9 and 10 after finishing. Nights are derived from the itinerary rather than stored. The arrival night has a confirmation email but no hotel recorded, so the option below covers the two at the end only — that is why its price is left at zero rather than guessed. Excluded from the on-trail budget by agreement, and the Carte d'Hôte from any valley hotel makes the buses free.",
+      "bookedOptionId": "cx-folie-douce",
+      "options": [
+        {
+          "id": "cx-folie-douce",
+          "name": "La Folie Douce Hôtel Chamonix",
+          "type": "hotel",
+          "pricePerPerson": 0,
+          "currency": "USD",
+          "halfBoard": false,
+          "status": "booked",
+          "url": "https://www.hotelsone.com/chamonix-mont-blanc-hotels-fr/la-folie-douce-hotel-chamonix.html?q=lbl:g_738965720768;rmcnf:3[2,0],[2,0],[2,0];sort:0_desc;dsti:28903371;dstt:8;dsts:La%2BFolie%2BDouce%2BH%C3%B4tel%2BChamonix;uid:5db7da52-1a9c-4e6f-876e-8bacb01bf2b6;frm:1;start:2027-07-09;end:2027-07-11;cur:USD;rad:0;sf:1",
+          "note": "Three rooms of two for Jul 9 and 10, which is what the booking link asks for. No price was recorded in the sheet, so this contributes nothing to the budget — and Chamonix is excluded from it anyway."
+        }
+      ]
     },
     {
       "stopId": "les-contamines",
       "label": "Les Contamines-Montjoie",
-      "nights": 1,
-      "bookedOptionId": null,
+      "bookedOptionId": "lc-nant-rouge",
       "options": [
         {
-          "id": "lc-1",
-          "name": "Hotel in the village",
+          "id": "lc-nant-rouge",
+          "name": "Chalet Nant Rouge",
           "type": "hotel",
-          "pricePerPerson": 95,
+          "address": "132 chemin du Baptieu, 74170 Les Contamines-Montjoie, France",
+          "phone": "+33 4 57 44 19 85",
+          "pricePerPerson": 76.5,
           "currency": "EUR",
           "halfBoard": false,
-          "status": "idea",
-          "url": "",
-          "note": "Village has several small hotels. Walk-in is realistic midweek but not in July."
+          "status": "booked",
+          "url": "https://chaletnantrouge.thais-hotel.com/direct-booking/extras?start_at=2027-07-03&end_at=2027-07-04&room_types=12&rates=1&nb_adults=2&nb_children=0&lang=en&source=googleFreeLink",
+          "note": "In the hamlet of Le Baptieu, in the village and on the trail. Sheet price was EUR 153 for a room of two for the night, so half that per person. Booked for Jul 3."
         }
       ]
     },
     {
       "stopId": "les-chapieux",
-      "label": "Les Chapieux",
-      "nights": 1,
-      "bookedOptionId": null,
+      "label": "Les Chapieux (bed is down the valley in Bourg-Saint-Maurice)",
+      "note": "The trail day ends at Les Chapieux but nobody sleeps there. The bed is 13 km down the valley and the navette is the only way to it, so the last departure is a hard deadline rather than a convenience.",
+      "bookedOptionId": "ch-arolla",
       "options": [
         {
-          "id": "ch-1",
-          "name": "Auberge de la Nova",
-          "type": "refuge",
-          "pricePerPerson": 70,
-          "currency": "EUR",
-          "halfBoard": true,
-          "status": "idea",
-          "url": "",
-          "note": "Effectively the only option in the hamlet, and where the navette ticket machine is. Books out months ahead for July — this is the highest-risk night of the trip."
+          "id": "ch-arolla",
+          "name": "Hôtel Arolla",
+          "type": "hotel",
+          "atPlaceId": "bourg-saint-maurice",
+          "address": "192 Av. du Centenaire, 73700 Bourg-Saint-Maurice, France",
+          "checkIn": "17:00",
+          "checkOut": "10:00",
+          "pricePerPerson": 45.5,
+          "currency": "USD",
+          "halfBoard": false,
+          "status": "booked",
+          "url": "https://secure.reservit.com/fo/booking/2/93743/availability?specialMode=default&begindate=07%2F04%2F2027&partid=3243&tmonth=07&tyear=2027&hotelid=93743&numnight=1&m=booking&nbpax=2&langcode=EN&enddate=07%2F05%2F2027&fyear=2027&custid=2&fmonth=07&fday=04&currency=USD&tday=05",
+          "note": "Not in Les Chapieux: 13 km down the valley in Bourg-Saint-Maurice, reached by the navette the sheet notes as a 40 minute shuttle for about $10. Ride back up the next morning to resume the walk. Sheet price was $91 for a room of two for the night. Booked for Jul 4."
         }
       ]
     },
     {
       "stopId": "courmayeur",
       "label": "Courmayeur (2 nights, includes the rest day)",
-      "nights": 2,
-      "bookedOptionId": null,
+      "bookedOptionId": "cm-gran-baita",
       "options": [
         {
-          "id": "cm-1",
-          "name": "Four-star resort and spa",
+          "id": "cm-gran-baita",
+          "name": "Gran Baita Luxury Alpine Resort",
           "type": "hotel",
-          "pricePerPerson": 180,
-          "currency": "EUR",
+          "address": "Strada Larzey 2, 11013 Courmayeur (AO), Italy",
+          "phone": "+39 0165 844040",
+          "pricePerPerson": 162.5,
+          "currency": "USD",
           "halfBoard": false,
-          "status": "idea",
-          "url": "",
-          "note": "The planned rest-day splurge. Two nights, so it carries double weight in the budget."
-        }
-      ]
-    },
-    {
-      "stopId": "la-fouly",
-      "label": "La Fouly",
-      "nights": 1,
-      "bookedOptionId": null,
-      "options": [
-        {
-          "id": "lf-1",
-          "name": "Village hotel or gîte",
-          "type": "hotel",
-          "pricePerPerson": 110,
-          "currency": "CHF",
-          "halfBoard": true,
-          "status": "idea",
-          "url": "",
-          "note": "First Swiss night — prices step up here."
+          "status": "booked",
+          "url": "https://book.blastness.com/results?id_albergo=11153&dc=5562147&id_stile=&lingua_int=ita&gg=05&mm=07&aa=2027&notti_1=2&tot_camere=1&tot_adulti=2&_gfc_cli=17870149912951912",
+          "note": "The rest-day splurge — four star, with the spa. Sheet said $650 total; the booking link is one room, two adults, two nights, so that is $162.50 per person per night. Booked for Jul 5 and 6."
         }
       ]
     },
     {
       "stopId": "champex-lac",
       "label": "Champex-Lac",
-      "nights": 1,
-      "bookedOptionId": null,
+      "bookedOptionId": "cxl-rendez-vous",
       "options": [
         {
-          "id": "cx-1",
-          "name": "Lakeside hotel",
+          "id": "cxl-rendez-vous",
+          "name": "Le Rendez-vous",
           "type": "hotel",
-          "pricePerPerson": 120,
-          "currency": "CHF",
+          "address": "Route du Lac 14, 1938 Champex-Lac, Switzerland",
+          "pricePerPerson": 125,
+          "currency": "USD",
           "halfBoard": false,
-          "status": "idea",
-          "url": "",
-          "note": "Proper resort village with choice. Good place to be for an evening lake shot."
+          "status": "booked",
+          "url": "https://bookingengine.mylighthouse.com/v2/le-rendez-vous-les-valettes/Rooms/Select?Arrival=2027-7-7&Departure=2027-7-8&Room=&Rate=&Package=&DiscountCode=",
+          "note": "On the lake and on the trail, despite the booking engine's slug reading les-valettes — that is the operator's tenant name, not the address. Sheet price was $250 for a room of two. Booked for Jul 7."
         }
       ]
     },
     {
       "stopId": "trient",
-      "label": "Trient",
-      "nights": 1,
-      "bookedOptionId": null,
+      "label": "Trient (bed is over the col in Martigny)",
+      "note": "Like Les Chapieux, the day ends at a hamlet the group does not sleep in. Walk up to Col de la Forclaz and take the PostBus down; the return the next morning has to land back at the col early enough to walk the Bovine.",
+      "bookedOptionId": "tr-martigny-boutique",
       "options": [
         {
-          "id": "tr-1",
-          "name": "Gîte in Trient",
-          "type": "gite",
-          "pricePerPerson": 85,
-          "currency": "CHF",
-          "halfBoard": true,
-          "status": "idea",
-          "url": "",
-          "note": "Tiny hamlet, very limited beds. Col de la Forclaz just above is the fallback."
+          "id": "tr-martigny-boutique",
+          "name": "Martigny Boutique-Hôtel",
+          "type": "hotel",
+          "atPlaceId": "martigny",
+          "address": "Rue des Vorziers 7, 1920 Martigny, Switzerland",
+          "lat": 46.10772,
+          "lon": 7.08354,
+          "pricePerPerson": 104,
+          "currency": "USD",
+          "halfBoard": false,
+          "status": "booked",
+          "url": "http://www.martigny-hotel.ch/",
+          "note": "Not in Trient: down over Col de la Forclaz in Martigny, a few minutes' walk from the station. The link is the hotel's homepage with no dates in it, so a booking has to be re-entered by hand — unlike the others, this URL cannot be checked against the night it is for. Sheet price was $208 for a room of two. Booked for Jul 8."
         }
       ]
     }

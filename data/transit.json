@@ -377,7 +377,7 @@
       "website": "https://global.flixbus.com/bus-routes/bus-courmayeur-chamonix",
       "bookingUrl": "https://global.flixbus.com/bus-routes/bus-courmayeur-chamonix",
       "hours": "Roughly 06:00 to 22:30, several operators sharing the route",
-      "note": "The tunnel coach is sold by FlixBus, BlaBlaCar Bus, Infobus and SAVDA/Arriva under different brands on the same road. Book ahead in July; it is a small vehicle and it fills."
+      "note": "The tunnel coach is sold by FlixBus, BlaBlaCar Bus, Infobus and SAVDA/Arriva under different brands on the same road. Book ahead in July; it is a small vehicle and it fills. No deeplink: FlixBus prefills a search from numeric city ids, and the only ids findable for Chamonix and Courmayeur came from a 2020 capture with nothing to confirm which city each one is. A wrong id would search between two arbitrary cities and look like it worked, so the per-service route pages are used instead."
     },
     {
       "id": "tmr",
@@ -387,6 +387,12 @@
       "email": "voyages@tmrsa.ch",
       "website": "https://www.tmrsa.ch/en/timetables/",
       "bookingUrl": "https://www.sbb.ch",
+      "deeplink": {
+        "template": "https://www.sbb.ch/en/kaufen/pages/fahrplan/fahrplan.xhtml?von={from}&nach={to}&datum={date|DD.MM.YYYY}&zeit={time}&suche=true",
+        "verifiedOn": "2026-08-19",
+        "source": "https://company.sbb.ch/content/dam/internet/corporate/downloads/de/sbb-als-geschaeftspartner/dienstleistungen/fahrplanintegration/Deep_Linking_SBB_Fahrplan.pdf.sbbdownload.pdf",
+        "note": "SBB's own deep-linking guide for business partners. Checked against the documentation, not opened in a browser — see docs/transit-notes.md."
+      },
       "hours": "Booking office weekday business hours",
       "note": "Runs the Mont-Blanc Express, the St-Bernard Express and the Entremont bus network. Reservation required 72 hours ahead for groups of 10 or more, and for bicycles."
     },
@@ -396,6 +402,12 @@
       "country": "CH",
       "website": "https://www.postauto.ch",
       "bookingUrl": "https://www.sbb.ch",
+      "deeplink": {
+        "template": "https://www.sbb.ch/en/kaufen/pages/fahrplan/fahrplan.xhtml?von={from}&nach={to}&datum={date|DD.MM.YYYY}&zeit={time}&suche=true",
+        "verifiedOn": "2026-08-19",
+        "source": "https://company.sbb.ch/content/dam/internet/corporate/downloads/de/sbb-als-geschaeftspartner/dienstleistungen/fahrplanintegration/Deep_Linking_SBB_Fahrplan.pdf.sbbdownload.pdf",
+        "note": "Same template as the other Swiss operators: the national timetable covers the PostBus whoever drives it."
+      },
       "note": "Shares the Trient valley and Forclaz stops with TMR. Everything Swiss is searchable and bookable on sbb.ch regardless of which company runs the vehicle."
     },
     {
@@ -405,6 +417,12 @@
       "phone": "+41848444066",
       "website": "https://www.sbb.ch",
       "bookingUrl": "https://www.sbb.ch",
+      "deeplink": {
+        "template": "https://www.sbb.ch/en/kaufen/pages/fahrplan/fahrplan.xhtml?von={from}&nach={to}&datum={date|DD.MM.YYYY}&zeit={time}&suche=true",
+        "verifiedOn": "2026-08-19",
+        "source": "https://company.sbb.ch/content/dam/internet/corporate/downloads/de/sbb-als-geschaeftspartner/dienstleistungen/fahrplanintegration/Deep_Linking_SBB_Fahrplan.pdf.sbbdownload.pdf",
+        "note": "The one deep link in this file that fills in both ends, the date and the time. It is why the Swiss half of the trip is the easy half to book."
+      },
       "hours": "Rail service desk 06:00–22:00 daily",
       "note": "The Swiss main line along Lake Geneva to Martigny. Everything Swiss is searchable on sbb.ch whoever runs the vehicle, which is why it is the booking link on most Swiss services here."
     },

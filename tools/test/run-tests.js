@@ -67,6 +67,7 @@ import * as sun from '../../assets/js/core/sun.js';
 import * as money from '../../assets/js/core/money.js';
 import * as sync from '../../assets/js/core/sync.js';
 import * as transit from '../../assets/js/core/transit.js';
+import * as links from '../../assets/js/core/links.js';
 
 const legIndex = json('data/route/legs/index.json');
 const anchors = json('data/route/anchors.json').anchors;
@@ -200,8 +201,20 @@ ok(schedule.addDays('2026-12-31', 1) === '2027-01-01', 'rolls over a year bounda
 
 const calendar = schedule.buildCalendar(itinerary, settings.trip.startDate);
 const hikeDays = calendar.filter((d) => d.kind === 'hike');
-ok(hikeDays.length === 7, 'seven hiking days', `got ${hikeDays.length}`);
-ok(calendar.filter((d) => d.kind === 'rest').length === 1, 'one rest day');
+ok(hikeDays.length === 6, 'six hiking days', `got ${hikeDays.length}`);
+ok(calendar.filter((d) => d.kind === 'rest').length === 2, 'two rest days');
+// The La Fouly night was never booked, so nothing sleeps there and its half of
+// the walk is the back end of day 4. Asserted because dropping a night is easy
+// to do in the itinerary and easy to forget in stays.json, and the two
+// disagreeing would show a stop nobody stays at.
+ok(
+  !itinerary.days.some((d) => d.stayAt === 'la-fouly'),
+  'no night is spent at La Fouly'
+);
+ok(
+  !stays.stops.some((stop) => stop.stopId === 'la-fouly'),
+  'and stays.json does not offer lodging there'
+);
 
 // The itinerary opens with a travel day, so `startDate` is the arrival day and
 // hiking starts the day after it. Asserted against the setting rather than a
@@ -210,14 +223,14 @@ ok(
   hikeDays[0].date === schedule.addDays(settings.trip.startDate, 1),
   `day 1 falls the day after arrival (${hikeDays[0].date})`
 );
-// 2 July 2027 is the date the group chose to start *walking*. It is asserted as a
-// literal because it is a decision, not a derivation: the arrival day in
-// settings.json has to stay one day behind it, and this is what catches someone
-// setting the arrival to the walking date and moving the whole trip.
-ok(hikeDays[0].date === '2027-07-02', `day 1 falls on ${hikeDays[0].date}, as planned`);
+// 3 July 2027 is the date the group starts *walking*, fixed by the booked hotel
+// nights rather than derived. It is asserted as a literal because the arrival day
+// in settings.json has to stay one day behind it, and this is what catches
+// someone setting the arrival to the walking date and moving the whole trip.
+ok(hikeDays[0].date === '2027-07-03', `day 1 falls on ${hikeDays[0].date}, as planned`);
 ok(
-  calendar.find((d) => d.kind === 'rest').date === '2027-07-05',
-  'the Courmayeur rest day lands on Jul 5'
+  calendar.find((d) => d.kind === 'rest').date === '2027-07-06',
+  'the Courmayeur rest day lands on Jul 6'
 );
 ok(
   hikeDays[hikeDays.length - 1].date === '2027-07-09',
@@ -287,12 +300,22 @@ ok(
   `naismith ${round(timing.totalHours)} h vs tobler ${round(tobler.totalHours)} h`
 );
 
-// A day with more climbing over less ground must be slower per kilometre.
-const day05 = leg('day-05', 'classic');
-const day05Timing = schedule.legDuration(day05, pace);
-const day03PerKm = timing.movingHours / (day03.stats.distance_m / 1000);
-const day05PerKm = day05Timing.movingHours / (day05.stats.distance_m / 1000);
-ok(day03PerKm > day05PerKm, 'the steeper day costs more time per kilometre');
+// A day with more climbing over less ground must be slower per kilometre. Day 2
+// climbs 72 m/km and day 6 only 50, which is a wide enough gap that the ordering
+// is a property of the model rather than an accident of two similar days. The
+// comparison used to be day 3 against day 5; day 3 became the gentlest leg on the
+// trip once day 5 was folded into day 4, so both ends of it had to change.
+const steepPerKm = (dayId) => {
+  const climb = leg(dayId, 'classic');
+  return (
+    schedule.legDuration(climb, pace).movingHours / (climb.stats.distance_m / 1000)
+  );
+};
+ok(
+  steepPerKm('day-02') > steepPerKm('day-06'),
+  'the steeper day costs more time per kilometre',
+  `${round(steepPerKm('day-02'))} vs ${round(steepPerKm('day-06'))} h/km`
+);
 
 /* ------------------------------------------------------------------ */
 describe('schedule: arrival times along a day');
@@ -322,7 +345,7 @@ describe('schedule: trip totals');
 
 const allLegs = hikeDays.map((day) => leg(day.legId, 'classic'));
 const totals = schedule.tripTotals(allLegs);
-ok(totals.days === 7, 'totals cover seven days');
+ok(totals.days === 6, 'totals cover six days');
 // The classic legs are consecutive slices of a 166.01 km closed loop.
 near(totals.distance_m / 1000, 166.0, 1.5, 'classic legs sum to the full loop length');
 ok(totals.gain_m > 9000 && totals.gain_m < 12000, 'total ascent is in the right range',
@@ -512,9 +535,21 @@ ok(
 
 const courmayeur = derived.find((entry) => entry.stopId === 'courmayeur');
 ok(courmayeur !== undefined, 'Courmayeur lodging is present');
-// Two nights at 180 EUR per person for four people.
-near(courmayeur.amount, 180 * 2 * people.people.length, 0.01,
-  'Courmayeur charges two nights for everyone');
+// The rule under test is nights x heads, not the nightly rate, so both the rate
+// and the night count are read back from the data. Restating the rate as a
+// literal only meant the test had to be edited every time a price was agreed.
+const courmayeurStop = stays.stops.find((stop) => stop.stopId === 'courmayeur');
+const courmayeurRate = courmayeurStop.options.find(
+  (option) => option.id === courmayeurStop.bookedOptionId
+).pricePerPerson;
+const courmayeurNights = itinerary.days.filter((day) => day.stayAt === 'courmayeur').length;
+ok(courmayeurNights === 2, 'Courmayeur is two nights', `got ${courmayeurNights}`);
+near(
+  courmayeur.amount,
+  courmayeurRate * courmayeurNights * people.people.length,
+  0.01,
+  'Courmayeur charges two nights for everyone'
+);
 
 const combined = [...expensesFile.expenses, ...derived];
 const realBalances = money.balances(combined, people, rates);
@@ -546,7 +581,7 @@ near(
 /* ------------------------------------------------------------------ */
 describe('data integrity');
 
-ok(legIndex.length === 15, 'fifteen leg files are indexed', `got ${legIndex.length}`);
+ok(legIndex.length === 13, 'thirteen leg files are indexed', `got ${legIndex.length}`);
 ok(
   legIndex.every((entry) => entry.stats && entry.stats.distance_m > 0),
   'every indexed leg has statistics'
@@ -775,6 +810,78 @@ const stayTargets = itinerary.days.map((d) => d.stayAt).filter(Boolean);
 ok(
   stayTargets.every((target) => stopIds.has(target)),
   'every overnight stop has a stays entry'
+);
+
+// Every booking URL in the sheet has its dates baked into the query string. That
+// makes them silently wrong the moment the itinerary moves — which it just did —
+// and a link that reopens the booking on the wrong night is worse than no link,
+// because it looks like it worked. So each one is checked against the night it is
+// actually for, in whichever format its booking engine happens to use.
+const dateTokens = (isoDate) => {
+  const [y, m, d] = isoDate.split('-');
+  return [
+    isoDate,
+    `${y}-${Number(m)}-${Number(d)}`, // unpadded, as Lighthouse writes it
+    `${m}/${d}/${y}`,
+    `${m}%2F${d}%2F${y}`, // Reservit, url-encoded
+    `gg=${d}&mm=${m}&aa=${y}`, // Blastness, split across three parameters
+  ];
+};
+
+// Every night the stop is occupied, not just the first. Chamonix is occupied on
+// the arrival and again at the end under two separate bookings, so requiring the
+// first night would fail a link that is perfectly correct for the night it covers.
+// A shift in the itinerary still moves all of them, so this stays sensitive to
+// the regression it is here for.
+const nightsAt = (stopId) =>
+  calendar.filter((entry) => entry.stayAt === stopId).map((entry) => entry.date);
+
+const bookedWithUrl = stays.stops
+  .map((stop) => ({
+    stop,
+    option: stop.options.find((entry) => entry.id === stop.bookedOptionId),
+  }))
+  .filter(({ option }) => option && option.url);
+
+ok(bookedWithUrl.length > 0, 'there are booking links to check');
+
+const staleLinks = bookedWithUrl.filter(({ stop, option }) => {
+  const nights = nightsAt(stop.stopId);
+  if (!nights.length) return true;
+  const carriesDate = nights
+    .flatMap(dateTokens)
+    .some((token) => option.url.includes(token));
+  // A homepage with no dates in it cannot go stale, but it has to say so, so that
+  // "no date found" can never quietly stand in for "wrong date found".
+  if (!carriesDate) return !/no dates in it|cannot be checked/i.test(option.note || '');
+  return false;
+});
+ok(
+  staleLinks.length === 0,
+  'every booking link carries the date of a night it is for',
+  staleLinks.map(({ stop }) => `${stop.stopId} (${nightsAt(stop.stopId).join(' ')})`).join(', ')
+);
+
+// The two nights that sleep somewhere other than the stop they belong to are the
+// reason the transit page exists, so losing the pointer would quietly break it.
+const offTrailBeds = stays.stops
+  .flatMap((stop) => stop.options.map((option) => ({ stop, option })))
+  .filter(({ option }) => option.atPlaceId);
+ok(offTrailBeds.length === 2, 'two beds are away from their trail stop',
+  `got ${offTrailBeds.length}`);
+ok(
+  offTrailBeds.every(({ option }) =>
+    transitFile.places.some((place) => place.id === option.atPlaceId)
+  ),
+  'and each names a place the transit planner knows',
+  offTrailBeds
+    .filter(({ option }) => !transitFile.places.some((p) => p.id === option.atPlaceId))
+    .map(({ option }) => option.atPlaceId)
+    .join(', ')
+);
+ok(
+  offTrailBeds.every(({ stop, option }) => option.atPlaceId !== stop.stopId),
+  'and none of them is just restating its own stop'
 );
 
 // Every leg must be internally consistent: arrays of matching length, and
@@ -1010,6 +1117,7 @@ const transitCtx = transit.context({
   stays,
   schedules: transitSchedules,
   pace: settings.pace,
+  rates,
 });
 
 // The trip is in July 2027 and almost every timetable here is a 2026 season
@@ -1073,17 +1181,19 @@ ok(
   transit.formatTime(navetteHop[0].departMinutes)
 );
 
-// The whole point of the feature: a walking day replaced by vehicles. Day 5 is
-// La Fouly to Champex-Lac, which needs a change at Orsières.
-const skipDayFive = transit.journeys(transitCtx, {
+// The whole point of the feature: a walking day replaced by vehicles. The back
+// half of day 4 is La Fouly to Champex-Lac, which needs a change at Orsières —
+// and it is also the shortcut variant's own last segment, so this doubles as a
+// check that the route plan is not promising a bus that does not exist.
+const skipToChampex = transit.journeys(transitCtx, {
   from: 'la-fouly',
   to: 'champex-lac',
   date: JULY,
   time: '08:00',
 });
-ok(skipDayFive.length > 0, 'day 5 can be skipped by bus');
+ok(skipToChampex.length > 0, 'the back half of day 4 can be ridden by bus');
 ok(
-  skipDayFive[0].legs.some((leg) => leg.to === 'orsieres'),
+  skipToChampex[0].legs.some((leg) => leg.to === 'orsieres'),
   'and the itinerary changes at Orsières'
 );
 
@@ -1101,7 +1211,7 @@ ok(
   'using the Mont-Blanc Express for part of it'
 );
 
-const allJourneys = [navetteHop, skipDayFive, trientHome].flat();
+const allJourneys = [navetteHop, skipToChampex, trientHome].flat();
 ok(
   allJourneys.every((journey) => journey.arriveMinutes > journey.departMinutes),
   'no journey arrives before it departs'
@@ -1189,11 +1299,11 @@ const unreachable = lodgingStops.filter(
 ok(unreachable.length === 0, 'every lodging stop is reachable from Geneva airport', unreachable.join(', '));
 
 // Every hiking day has to be skippable, which is the whole point of the page.
-// Day 4 is the hard one: Courmayeur to La Fouly crosses the Grand Col Ferret and
-// no vehicle goes over it, so the only way round is Italy to France through the
-// tunnel, France to Switzerland by train, and back up the Val Ferret by bus. It
-// needs three changes and it is the case most likely to break silently when a
-// service is edited.
+// Day 4 is the hard one: Courmayeur to Champex-Lac crosses the Grand Col Ferret
+// and no vehicle goes over it, so the only way round is Italy to France through
+// the tunnel, France to Switzerland by train, and back up through Orsières. It
+// needs every change the search is allowed and it is the case most likely to
+// break silently when a service is edited.
 const unskippable = itinerary.days
   .filter((day) => day.from && day.to)
   .filter(
@@ -1430,6 +1540,325 @@ ok(
   transit.onDemandBetween(transitCtx, 'trient', 'les-lanchettes').length === 0,
   'no taxi is invented for a pair nobody covers'
 );
+
+/* ------------------------------------------------------------------ */
+describe('transit: the trip board');
+
+const board = transit.dayOptions(transitCtx, calendar, { time: '06:00' });
+ok(board.length === calendar.length, 'the board has a row for every day of the trip');
+
+const boardFor = (id) => board.find((row) => row.day.id === id);
+
+// Every walking day has to offer some way round it, or the board is telling
+// someone there is no alternative when there is one.
+const noWayRound = board.filter(
+  (row) => row.skip && row.skip.reach === 'none'
+);
+ok(
+  noWayRound.length === 0,
+  'every walking day has either a service or a taxi that covers it',
+  noWayRound.map((row) => row.day.id).join(', ')
+);
+ok(
+  board.filter((row) => row.skip).length === hikeDays.length,
+  'and only the walking days carry a skip option'
+);
+
+// Day 1 starts at Les Houches but the night before is spent in Chamonix, so the
+// day opens with a bus. Modelled as the same shape as an off-trail bed pointing
+// the other way, which is what keeps it out of the page as a special case.
+const dayOne = boardFor('day-01');
+ok(dayOne.toTrail !== null, 'day 1 needs a ride to the trailhead from Chamonix');
+ok(
+  dayOne.toTrail.from === 'chamonix' && dayOne.toTrail.to === 'les-houches',
+  'from where we slept to where we start walking'
+);
+ok(dayOne.toTrail.count > 0, 'and there is a way to do it');
+
+// The Chapieux night: the bed is 13 km down the valley and the navette is the
+// only way to it, so a last departure that does not exist is a real trap.
+const chapieux = boardFor('day-02');
+ok(chapieux.bed.offTrail === true, 'the Chapieux night sleeps away from the trail stop');
+ok(chapieux.bed.placeId === 'bourg-saint-maurice', 'down in Bourg-Saint-Maurice');
+ok(chapieux.toBed !== null, 'so the board carries a ride to bed');
+ok(chapieux.toBed.count > 0, 'and there is a service that makes it');
+ok(
+  chapieux.toBed.lastDeparture != null,
+  'with a last departure called out',
+  transit.formatTime(chapieux.toBed.lastDeparture)
+);
+// The deadline has to be the real last one, not the latest among an
+// earliest-arrival search's results. Those cluster at the start of the day, and
+// taking their maximum reported the last navette down as 10:50 — a figure that
+// would have someone abandoning a day's walking before lunch for no reason.
+ok(
+  chapieux.toBed.lastDeparture > transit.parseTime('12:00'),
+  'and it is an afternoon deadline, not a morning artefact of the search',
+  transit.formatTime(chapieux.toBed.lastDeparture)
+);
+ok(
+  chapieux.toBed.departures.length > 1 &&
+    chapieux.toBed.departures[chapieux.toBed.departures.length - 1] ===
+      chapieux.toBed.lastDeparture,
+  'the enumerated departures end at that deadline'
+);
+const allConnections = board
+  .flatMap((row) => [row.toTrail, row.skip, row.toBed])
+  .filter((entry) => entry?.departures?.length);
+ok(
+  allConnections.every((entry) =>
+    entry.departures.every((minutes, i) => i === 0 || minutes > entry.departures[i - 1])
+  ),
+  'departures are listed once each, in order'
+);
+
+// A journey that opens with a road walk can be set off on at any minute, so
+// enumerating by set-off time counted 80 imaginary departures a minute apart and
+// never reached the real last bus. Nothing in these valleys runs minute by
+// minute, so a one-minute gap means the walk is being counted as a timetable.
+const minuteByMinute = allConnections.filter((entry) =>
+  entry.departures.some((minutes, i) => i > 0 && minutes - entry.departures[i - 1] < 5)
+);
+ok(
+  minuteByMinute.length === 0,
+  'no connection mistakes a flexible walk for a timetable',
+  minuteByMinute.map((entry) => `${entry.from}>${entry.to} (${entry.departures.length})`).join(', ')
+);
+
+// The Trient night is the same shape over a different col, and the morning after
+// has to come back up before the Bovine can be walked.
+const trientNight = boardFor('day-06');
+ok(trientNight.bed.placeId === 'martigny', 'the Trient night sleeps in Martigny');
+ok(trientNight.toBed?.count > 0, 'reachable from Trient the evening it is booked');
+// This bed is reached by walking up to the col and riding down, so its deadline is
+// set by the last PostBus rather than by how late someone will start walking — and
+// it has to be late enough to follow a full day on the trail, or the booking is
+// unusable and nobody would find that out until the evening they arrived.
+ok(
+  trientNight.toBed.lastDeparture > transit.parseTime('12:00'),
+  'and still reachable after a full day of walking',
+  transit.formatTime(trientNight.toBed.lastDeparture)
+);
+// How much to trust the deadline has to be read off the journey that sets it, not
+// off the row. On this leg the two genuinely disagree — the quickest way down is a
+// 2026 pattern while the last one of the day is a published 2027 timetable — so a
+// chip taken from the fastest journey would describe the wrong service, in either
+// direction, on the one number that can leave somebody stranded.
+ok(
+  transit.CONFIDENCE.includes(trientNight.toBed.lastDepartureConfidence),
+  'the deadline carries a confidence of its own',
+  String(trientNight.toBed.lastDepartureConfidence)
+);
+ok(
+  trientNight.toBed.lastDepartureConfidence !== trientNight.toBed.confidence,
+  'and here it differs from the row it sits on, which is the case worth having',
+  `deadline ${trientNight.toBed.lastDepartureConfidence} vs row ${trientNight.toBed.confidence}`
+);
+ok(
+  board
+    .flatMap((row) => [row.toTrail, row.skip, row.toBed])
+    .filter((entry) => entry?.lastDeparture != null)
+    .every(
+      (entry) =>
+        entry.lastDepartureConfidence ===
+        transit.worstConfidence(entry.lastDepartureJourney.legs)
+    ),
+  'every deadline is described by its own journey'
+);
+
+// Both off-trail beds turn out to be reached on published or patterned timetables,
+// and the uncertainty is concentrated in the optional day-skips instead. Asserted
+// because it is the reassuring half of the picture and a regression that moved a
+// bed onto an unverified service would otherwise pass quietly.
+const shakyBeds = board.filter(
+  (row) => row.bed?.offTrail && row.toBed?.lastDepartureConfidence === 'estimate'
+);
+ok(
+  shakyBeds.length === 0,
+  'no bed depends on an unverified timetable to reach it',
+  shakyBeds.map((row) => row.day.id).join(', ')
+);
+ok(
+  boardFor('day-07').toTrail?.from === 'martigny',
+  'and the next morning starts by coming back from it'
+);
+
+// Cross-reference: every off-trail bed, on its own date, with a real deadline.
+const strandedNights = board.filter(
+  (row) => row.bed?.offTrail && (!row.toBed || row.toBed.count === 0)
+);
+ok(
+  strandedNights.length === 0,
+  'every off-trail bed is reachable from its own trailhead on its own date',
+  strandedNights.map((row) => `${row.day.id} -> ${row.bed.placeId}`).join(', ')
+);
+ok(
+  board.filter((row) => row.bed?.offTrail).length === 2,
+  'and there are exactly the two of them the bookings describe'
+);
+
+// Fares: the per-person figure and the per-vehicle quote must never be the same
+// number, because averaging a taxi over the group invents a price that stops
+// being true the moment a different number of people get in.
+const withBoth = board
+  .flatMap((row) => [row.toTrail, row.skip, row.toBed])
+  .filter((entry) => entry && entry.fromFare && entry.onDemandFare);
+ok(withBoth.length > 0, 'some connection offers both a fare and a quote');
+ok(
+  withBoth.every((entry) => entry.onDemandFare.perVehicle === true),
+  'an on-demand quote is always labelled per vehicle'
+);
+ok(
+  withBoth.every((entry) => !('perVehicle' in entry.fromFare)),
+  'and a per-person fare is never marked that way'
+);
+ok(
+  board
+    .flatMap((row) => [row.toTrail, row.skip, row.toBed])
+    .filter((entry) => entry?.fromFare)
+    .every((entry) => entry.fromFare.total != null && entry.fromFare.total >= 0),
+  'a from-price is a real number or absent, never a mixed-currency sum'
+);
+
+// The ride to the trailhead is priced at the cash fare, because that is what it
+// costs; the Carte d'Hote that makes it free is a condition of the hotel booking,
+// not a property of the bus, and the data is right to record the fare.
+ok(
+  dayOne.toTrail.fromFare && dayOne.toTrail.fromFare.total > 0,
+  'the ride to the trailhead carries its cash fare'
+);
+ok(
+  dayOne.toTrail.fromFare.total < 10,
+  'a plausible one for a valley bus',
+  String(dayOne.toTrail.fromFare.total)
+);
+
+// Zero still has to survive as an answer in its own right, so that a genuinely
+// free shuttle is reported as free rather than as having no price known.
+ok(
+  transit.journeyFare(transitCtx, { free: true, fares: [] }).total === 0,
+  'a free journey reports zero rather than nothing'
+);
+// And a total is withheld entirely when there is no rate table, rather than
+// adding francs to euros and returning a number that looks fine.
+ok(
+  transit.journeyFare(
+    { rates: null },
+    { free: false, fares: [{ amount: 5, currency: 'CHF' }] }
+  ).total === null,
+  'with no rates to convert with, no total is claimed'
+);
+
+/* ------------------------------------------------------------------ */
+describe('links: deeplinks and maps');
+
+// The failure this is guarding against is a link that opens successfully and
+// searches for the wrong thing, which no amount of looking at the page reveals.
+ok(
+  links.formatDateFor('2027-07-04', 'DD.MM.YYYY') === '04.07.2027',
+  'a date is reformatted for the operator that wants it that way'
+);
+ok(links.formatDateFor('not-a-date') === null, 'an unparseable date yields nothing');
+ok(
+  links.expandTemplate('x?a={from}', { from: 'Arp Nouvaz' }) === 'x?a=Arp%20Nouvaz',
+  'a value with a space in it is encoded'
+);
+// Returning null rather than a URL with a literal "{to}" in it: a half-expanded
+// template is a broken link that looks like a working one.
+ok(
+  links.expandTemplate('x?a={from}&b={to}', { from: 'A' }) === null,
+  'a template with nothing to put in a token expands to nothing at all'
+);
+
+const templated = transitFile.operators.filter((operator) => operator.deeplink?.template);
+ok(templated.length > 0, 'at least one operator documents a deep link');
+ok(
+  templated.every((operator) => {
+    const url = links.expandTemplate(operator.deeplink.template, {
+      from: 'Martigny',
+      to: 'Orsières',
+      date: '2027-07-08',
+      time: '09:15',
+      line: '1',
+    });
+    return url && !/[{}]/.test(url);
+  }),
+  'every operator template expands with no token left behind',
+  templated
+    .filter((operator) => {
+      const url = links.expandTemplate(operator.deeplink.template, {
+        from: 'A',
+        to: 'B',
+        date: '2027-07-08',
+        time: '09:15',
+        line: '1',
+      });
+      return !url || /[{}]/.test(url);
+    })
+    .map((operator) => operator.id)
+    .join(', ')
+);
+ok(
+  templated.every((operator) => /^\d{4}-\d{2}-\d{2}$/.test(operator.deeplink.verifiedOn || '')),
+  'and records the date it was last checked'
+);
+
+ok(links.isBareHomepage('https://www.sbb.ch'), 'a bare host counts as a homepage');
+ok(links.isBareHomepage('https://www.sbb.ch/'), 'trailing slash and all');
+ok(
+  !links.isBareHomepage('https://global.flixbus.com/bus-routes/bus-courmayeur-chamonix'),
+  'but a route page does not'
+);
+
+// The complaint this whole module exists to answer: being sent to a front page
+// and having to re-enter the two places and the date already chosen here. Every
+// ride leg has to offer at least one thing that arrives filled in.
+const everyRideLeg = [navetteHop, skipToChampex, trientHome]
+  .flat()
+  .flatMap((journey) => journey.legs)
+  .filter((leg) => leg.kind === 'ride');
+ok(everyRideLeg.length > 0, 'there are ride legs to check');
+const unhelpful = everyRideLeg.filter((leg) => {
+  const actions = links.legActions(transitCtx, leg, { date: JULY, time: '09:00' });
+  return !actions.some((action) => action.tier === 'prefilled');
+});
+ok(
+  unhelpful.length === 0,
+  'no ride leg is left with an unfilled front page as its only action',
+  unhelpful.map((leg) => leg.serviceId).join(', ')
+);
+
+// The Swiss legs are the ones that can be booked outright, so the deep link has
+// to survive the trip through legActions and still carry the date.
+const swissLeg = everyRideLeg.find((leg) => leg.service.operator === 'tmr');
+ok(swissLeg !== undefined, 'a Swiss leg is present to check');
+const swissBooking = links.bookingUrl(transitCtx, swissLeg, { date: JULY, time: '09:00' });
+ok(swissBooking?.tier === 'prefilled', 'a TMR leg books through a prefilled search');
+ok(
+  swissBooking.href.includes('04.07.2027'),
+  'carrying the date in the format that operator asks for',
+  swissBooking.href
+);
+
+const withCoords = links.mapsUrls({ name: 'Trient', lat: 46.05595, lon: 6.99537 });
+ok(withCoords.google.includes('46.05595'), 'a place with coordinates maps to its point');
+ok(withCoords.geo?.startsWith('geo:'), 'and offers a geo: link for an offline map app');
+// A hotel whose door was never surveyed still has to be one tap from directions,
+// which is what lets lat/lon stay absent instead of being guessed.
+const addressOnly = links.mapsUrls({
+  name: 'Hôtel Arolla',
+  address: '192 Av. du Centenaire, 73700 Bourg-Saint-Maurice, France',
+});
+ok(addressOnly.google.includes('Centenaire'), 'a place with only an address still maps');
+ok(addressOnly.geo === null, 'but cannot offer a geo: point it does not have');
+ok(addressOnly.hasCoords === false, 'and says so');
+ok(links.mapsUrls(null) === null, 'nothing maps to nothing');
+
+ok(
+  links.telUrl('+33 4 79 07 01 78') === 'tel:+33479070178',
+  'a phone number is stripped to something dialable'
+);
+ok(links.telUrl('') === null, 'and a missing one produces no link');
 
 /* ------------------------------------------------------------------ */
 

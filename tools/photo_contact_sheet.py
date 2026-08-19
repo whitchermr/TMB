@@ -25,14 +25,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs" / "photo-review.html"
 
+# Keyed by leg id, labelled by the walking-day number the site displays. Those
+# two stopped matching when the La Fouly night was dropped: day-05 was folded
+# into day-04, so the ids now skip a number and the labels do not.
 DAY_LABELS = {
     "day-01": "Day 1 — Les Houches to Les Contamines",
     "day-02": "Day 2 — Les Contamines to Les Chapieux",
     "day-03": "Day 3 — Les Mottets to Courmayeur",
-    "day-04": "Day 4 — Courmayeur to La Fouly",
-    "day-05": "Day 5 — La Fouly to Champex",
-    "day-06": "Day 6 — Champex to Trient",
-    "day-07": "Day 7 — Trient to Chamonix",
+    "day-04": "Day 4 — Courmayeur to Champex, via La Fouly",
+    "day-06": "Day 5 — Champex to Trient",
+    "day-07": "Day 6 — Trient to Chamonix",
 }
 
 

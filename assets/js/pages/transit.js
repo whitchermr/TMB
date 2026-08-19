@@ -5,6 +5,7 @@ import * as units from '../core/units.js';
 import * as schedule from '../core/schedule.js';
 import * as money from '../core/money.js';
 import * as transit from '../core/transit.js';
+import * as links from '../core/links.js';
 import * as mapUi from '../ui/map.js';
 import { escapeHtml } from '../ui/map.js';
 import { mountChrome, showLoadError, onRefresh } from '../ui/nav.js';
@@ -77,6 +78,7 @@ function buildContext(anchors, schedules) {
     stays: store.get('stays'),
     schedules,
     pace: store.get('settings').pace,
+    rates: store.get('rates'),
   });
 }
 
@@ -222,6 +224,25 @@ function wireControls() {
       state.selected = 0;
       pushUrl();
       render();
+      return;
+    }
+    // A board row loads its own pair into the planner. Changes go to 3 because
+    // several of these pairs genuinely need three vehicles, and a row that
+    // advertised a connection the search below then failed to find would be
+    // worse than no row at all.
+    const plan = event.target.closest?.('[data-plan-from]');
+    if (plan) {
+      setValue('from-place', plan.dataset.planFrom);
+      setValue('to-place', plan.dataset.planTo);
+      setValue('journey-date', plan.dataset.planDate);
+      setValue('journey-time', '06:00');
+      setValue('max-transfers', '3');
+      state.selected = 0;
+      state.detail = null;
+      pushUrl();
+      render();
+      document.getElementById('journey-context').textContent = plan.dataset.planLabel;
+      document.getElementById('journeys-anchor')?.scrollIntoView({ behavior: 'smooth' });
     }
   });
 }
@@ -235,7 +256,7 @@ function render() {
   state.journeys = transit.journeys(state.ctx, options);
   if (state.selected >= state.journeys.length) state.selected = 0;
 
-  renderShortcuts();
+  renderBoard();
   renderSummary(options);
   renderJourneys(options);
   renderOnDemand(options);
@@ -246,37 +267,204 @@ function render() {
 }
 
 /**
- * One button per walking day, prefilled to skip it.
+ * One row per day of the trip: how to skip the walk, and how to reach the bed.
  *
- * This is the reason the page exists, so it should not be hidden behind two
- * dropdowns: the realistic question is "can I skip Thursday", not "what leaves
- * La Fouly at 09:15".
+ * This replaced a row of numbered buttons that only made sense if you already
+ * knew what you were looking for. The realistic question is "can I skip Thursday,
+ * and what does it cost" — so the answer is on the row, and the two dropdowns
+ * below are for the case this board does not cover rather than the way in.
  */
-function renderShortcuts() {
-  const days = state.calendar.filter((day) => day.kind === 'hike' && day.from && day.to);
-  document.getElementById('day-shortcuts').innerHTML = [
-    '<span class="faint" style="font-size:.8rem">Skip a day:</span>',
-    ...days.map(
-      (day) => `
-        <button class="btn btn--sm" data-set-place="${escapeHtml(day.from)}"
-          data-set-field="from-place" data-skip-day="${escapeHtml(day.id)}">
-          ${escapeHtml(String(day.hikeNumber))}
-        </button>
-      `
-    ),
-  ].join('');
+function renderBoard() {
+  const board = transit.dayOptions(state.ctx, state.calendar, { time: '06:00' });
+  const skippable = board.filter((row) => row.skip?.reach === 'scheduled').length;
+  const walking = board.filter((row) => row.skip).length;
+  // Counted in the header because an unverified deadline buried on one row of
+  // eleven is a thing nobody goes looking for until the evening it matters.
+  const unverified = board
+    .flatMap((row) => [row.toTrail, row.skip, row.toBed])
+    .filter(
+      (entry) => entry?.confidence === 'estimate' || entry?.lastDepartureConfidence === 'estimate'
+    ).length;
 
-  // The button only sets the origin, so wire the rest of the day onto it here
-  // rather than inventing more data attributes.
-  document.querySelectorAll('[data-skip-day]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const day = state.calendar.find((entry) => entry.id === button.dataset.skipDay);
-      if (!day) return;
-      setValue('to-place', day.to);
-      setValue('journey-date', day.date);
-      document.getElementById('journey-context').textContent = `Skipping ${day.stage}`;
-    });
-  });
+  document.getElementById('board-summary').textContent = [
+    `${skippable} of ${walking} walking days have a way round`,
+    unverified ? `${unverified} rest on unverified timetables` : null,
+    'tap a row to plan it',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
+  document.getElementById('trip-board').innerHTML = board.map(renderBoardRow).join('');
+}
+
+function renderBoardRow(row) {
+  const { day } = row;
+  // The arrival is Day 0 rather than "Travel": the group counts the trip from the
+  // night it lands, so day 1 is the first day of walking and the numbering here
+  // has to match the way people already talk about it.
+  const label = day.hikeNumber
+    ? `Day ${day.hikeNumber}`
+    : day.kind === 'rest'
+      ? 'Rest day'
+      : day.index === 0
+        ? 'Day 0'
+        : 'Travel';
+
+  return `
+    <div class="board-row" data-day="${escapeHtml(day.id)}">
+      <div class="board-row__head">
+        <span class="board-row__day">${escapeHtml(label)}</span>
+        <span class="board-row__date numeric">${escapeHtml(schedule.formatDate(day.date))}</span>
+      </div>
+      <div class="board-row__stage">${escapeHtml(day.stage || day.label || '')}</div>
+      ${row.toTrail ? connectionRow('To the start', row.toTrail, day) : ''}
+      ${row.skip ? connectionRow('Skip the walk', row.skip, day) : ''}
+      ${renderBed(row, day)}
+    </div>
+  `;
+}
+
+/**
+ * One tappable connection, carrying the numbers that decide whether to use it.
+ *
+ * The last departure is on the face of it rather than a click away, because it is
+ * the only figure here that can strand someone: a walking day is a decision made
+ * in the morning against a deadline in the evening.
+ */
+function connectionRow(label, connection, day) {
+  const rates = store.get('rates');
+  const quote = connection.onDemandFare;
+
+  const chips = [];
+  if (connection.reach === 'scheduled') {
+    chips.push(
+      `<span class="chip">${connection.departures.length} departure${
+        connection.departures.length === 1 ? '' : 's'
+      }</span>`
+    );
+    chips.push(
+      `<span class="chip">${escapeHtml(transit.formatDuration(connection.fastestMinutes))}</span>`
+    );
+    if (connection.fromFare) {
+      chips.push(
+        `<span class="chip">${
+          connection.fromFare.total === 0
+            ? 'Free'
+            : `from ${escapeHtml(money.formatBase(connection.fromFare.total, rates))}`
+        }</span>`
+      );
+    }
+    // The deadline is the one number here that can strand somebody, so when it
+    // rests on an unverified timetable it says so on its face rather than in a
+    // tooltip. The Martigny bed is reached on a PostBus pattern nobody has
+    // confirmed for 2027, and a confident-looking 19:07 would be trusted.
+    if (connection.lastDeparture != null) {
+      const shaky = connection.lastDepartureConfidence === 'estimate';
+      chips.push(
+        `<span class="chip ${shaky ? 'chip--danger' : 'chip--warm'}" title="${escapeHtml(
+          shaky
+            ? 'This deadline comes from an unverified timetable. Check with the operator before relying on it.'
+            : 'The last departure that still gets there today.'
+        )}">
+          last ${escapeHtml(transit.formatTime(connection.lastDeparture))}${
+            shaky ? ' — unverified' : ''
+          }
+        </span>`
+      );
+    }
+    if (connection.confidence) {
+      chips.push(
+        `<span class="chip ${CONFIDENCE_CHIP[connection.confidence] || ''}" title="${escapeHtml(
+          transit.CONFIDENCE_LABELS[connection.confidence] || ''
+        )}">${escapeHtml(
+          transit.CONFIDENCE_LABELS[connection.confidence] || connection.confidence
+        )}</span>`
+      );
+    }
+  } else if (connection.reach === 'on-demand') {
+    chips.push('<span class="chip chip--warm">No timetable — ring for a ride</span>');
+  } else {
+    chips.push('<span class="chip chip--danger">No road link on file</span>');
+  }
+
+  // Per vehicle, kept visibly apart from the per-person fare above: a taxi split
+  // six ways and a bus ticket are not the same kind of number, and showing them
+  // in the same units would make the taxi look like the cheap option.
+  if (quote) {
+    chips.push(
+      `<span class="chip chip--info">taxi ${escapeHtml(
+        money.formatMoney(quote.amount, quote.currency, rates)
+      )} per vehicle${quote.upTo ? ` (up to ${quote.upTo})` : ''}</span>`
+    );
+  }
+
+  return `
+    <button class="board-conn" type="button"
+      data-plan-from="${escapeHtml(connection.from)}"
+      data-plan-to="${escapeHtml(connection.to)}"
+      data-plan-date="${escapeHtml(connection.date)}"
+      data-plan-label="${escapeHtml(`${label} — ${day.stage || day.label || day.id}`)}">
+      <span class="board-conn__label">
+        ${escapeHtml(label)}
+        <small class="faint">${escapeHtml(
+          transit.placeName(state.ctx, connection.from)
+        )} → ${escapeHtml(transit.placeName(state.ctx, connection.to))}</small>
+      </span>
+      <span class="row row--tight board-conn__chips">${chips.join('')}</span>
+    </button>
+  `;
+}
+
+/**
+ * Tonight's bed, and the ride to it when it is not where the day ends.
+ *
+ * Two of these nights are in a different town from the trail stop they serve, so
+ * the hotel is named on the row rather than left to the Stays page — the ride and
+ * the reason for the ride belong together.
+ */
+function renderBed(row, day) {
+  if (!row.bed) return '';
+  const option = row.bed.option;
+  const detail = [];
+  if (row.bed.offTrail) {
+    detail.push(`down in ${transit.placeName(state.ctx, row.bed.placeId)}`);
+  }
+  if (option?.checkIn) detail.push(`check-in ${option.checkIn}`);
+
+  return `
+    <div class="board-row__bed">
+      <span class="board-row__bed-name">
+        ${escapeHtml(option ? option.name : 'No hotel recorded')}
+        ${detail.length ? `<small class="faint">${escapeHtml(detail.join(' · '))}</small>` : ''}
+      </span>
+      ${option ? bedLinks(option) : ''}
+    </div>
+    ${row.toBed ? connectionRow('Ride to bed', row.toBed, day) : ''}
+  `;
+}
+
+/** Directions, a phone number and the booking, for the hotel on this row. */
+function bedLinks(option) {
+  const maps = links.mapsUrls(option);
+  const tel = links.telUrl(option.phone);
+  const parts = [];
+
+  if (maps) {
+    parts.push(
+      `<a class="btn btn--sm" href="${escapeHtml(maps.google)}" target="_blank" rel="noopener">Map</a>`
+    );
+  }
+  if (tel) {
+    parts.push(`<a class="btn btn--sm" href="${escapeHtml(tel)}">Call</a>`);
+  }
+  if (option.url) {
+    parts.push(
+      `<a class="btn btn--sm" href="${escapeHtml(
+        option.url
+      )}" target="_blank" rel="noopener">Booking</a>`
+    );
+  }
+  return parts.length ? `<span class="row row--tight">${parts.join('')}</span>` : '';
 }
 
 function renderSummary({ from, to, date }) {

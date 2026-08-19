@@ -15,7 +15,7 @@
  * domain root or under a GitHub Pages project subpath like /TMB/.
  */
 
-const VERSION = 'v4';
+const VERSION = 'v5';
 const SHELL_CACHE = `tmb-shell-${VERSION}`;
 const DATA_CACHE = `tmb-data-${VERSION}`;
 const TILE_CACHE = 'tmb-tiles'; // unversioned: tiles do not change with releases
@@ -69,6 +69,7 @@ const SHELL = [
   'assets/js/core/money.js',
   'assets/js/core/sync.js',
   'assets/js/core/transit.js',
+  'assets/js/core/links.js',
   'assets/js/ui/nav.js',
   'assets/js/ui/map.js',
   'assets/js/ui/elevation.js',
@@ -106,7 +107,10 @@ const DATA = [
   'data/route/variants/index.json',
 ];
 
-const DAY_IDS = ['day-01', 'day-02', 'day-03', 'day-04', 'day-05', 'day-06', 'day-07'];
+// No day-05: with the La Fouly night dropped, its half of the walk is the back
+// end of day-04. The numbering is deliberately left with a gap so that leg file
+// names, waypoint dayIds and any shared link keep meaning what they used to.
+const DAY_IDS = ['day-01', 'day-02', 'day-03', 'day-04', 'day-06', 'day-07'];
 
 /* ------------------------------------------------------------------ */
 /* install and activate                                               */

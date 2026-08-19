@@ -3,9 +3,9 @@
   "trip": {
     "name": "Tour du Mont Blanc",
     "base": "Chamonix-Mont-Blanc",
-    "startDate": "2027-07-01",
-    "startDateNote": "This is the arrival day, the first entry in the itinerary — not the first day of walking. Arriving Thu Jul 1 2027 puts hiking day 1 on Fri Jul 2, the Courmayeur rest day on Mon Jul 5, and the last hiking day on Fri Jul 9.",
-    "notes": "7 hiking days plus one rest day in Courmayeur. Shuttles cover the sections we are skipping."
+    "startDate": "2027-07-02",
+    "startDateNote": "This is the arrival day, the first entry in the itinerary — not the first day of walking. Arriving Fri Jul 2 2027 puts hiking day 1 on Sat Jul 3, the Courmayeur rest day on Tue Jul 6, and the last hiking day on Fri Jul 9. Set from the booked hotel nights, which are the group's confirmed record.",
+    "notes": "6 hiking days plus one rest day in Courmayeur, then two nights back in Chamonix. Shuttles cover the sections we are skipping, and two nights sleep off the trail — see docs/transit-notes.md."
   },
   "units": "imperial",
   "defaultVariant": "shortcut",

@@ -131,21 +131,116 @@ changes, because that is the promise the "Skip this day" link on each day page
 makes. What it does not assert is that doing so is pleasant, and for two days it
 very much is not.
 
-| Day | By public transport | Verdict |
-|---|---|---|
-| 1, 4, 5, 6, 7 | Under two hours, one or no changes | Easy |
-| 2 — Les Contamines to Les Chapieux | Y84 to Le Fayet, train to Bourg-Saint-Maurice, navette up. About 8 hours. | Call the taxi |
-| 3 — Les Chapieux to Courmayeur | Navette down, train to Le Fayet, train to Chamonix, tunnel coach. About 10 hours. | Call the taxi |
+Figures below are what `transit.dayOptions()` computes for the booked dates, so
+they will move if the itinerary does. "Set off by" is the latest departure that
+still arrives the same day.
 
-Both hard days cross a range the road goes the long way round, so the loop by rail
+| Day | By public transport | Fastest | Set off by | Verdict |
+|---|---|---|---|---|
+| 1 — Les Houches to Les Contamines | Bus into Chamonix, train to Le Fayet, Y84 up | 3 h 40 | 17:40 | Doable |
+| 2 — Les Contamines to Les Chapieux | Y84 to Le Fayet, train to Bourg-Saint-Maurice, navette up | 8 h 15 | 09:00 | Call the taxi |
+| 3 — Les Chapieux to Courmayeur | Navette down, train to Le Fayet, train to Chamonix, tunnel coach | 10 h 25 | 10:50 | Call the taxi |
+| 4 — Courmayeur to Champex-Lac | Tunnel coach, Mont-Blanc Express, St-Bernard Express, bus up | 7 h 37 | 10:35 | Three changes, all morning |
+| 5 — Champex-Lac to Trient | Bus to Orsières, train to Martigny, train to Le Châtelard, bus | 3 h 40 | 11:47 | Doable |
+| 6 — Trient to Chamonix | Bus to Le Châtelard, Mont-Blanc Express | 1 h 36 | 16:58 | Easy |
+
+Days 2 and 3 cross a range the road goes the long way round, so the loop by rail
 is genuinely most of a day. Taxi Aarthur covers both, and both pairs are listed as
 on-demand options so the phone number is next to the timetable rather than buried
 somewhere else.
 
 Adding the Le Fayet to Bourg-Saint-Maurice train is what made day 2 possible at
 all; before it, the graph had no way round the Beaufortain and the page said there
-was none. It is worth knowing that the two hardest days to skip are day 2 and day
-3, since the group's abridged plan may cut that section anyway.
+was none.
+
+Day 4 joined this list when the La Fouly night was dropped and the old days 4 and
+5 became one. Walked end to end it is 48 km, and got round by vehicle it is three
+changes that all have to happen before lunch — which is the argument for the
+shortcut variant rather than for either extreme.
+
+The deadlines on days 1 to 4 all rest on services marked `estimate`, so they are
+the figures to re-check before travelling. Both **beds** off the trail, by
+contrast, are reached on published or patterned timetables — a test asserts that,
+because it is the half of the picture that would strand someone if it changed.
+
+## Sleeping somewhere other than where the day ends
+
+Two nights are not in the place the day's walking finishes, and the ride to them
+is not optional:
+
+| Night | Day ends at | Bed is at | How | Set off by |
+|---|---|---|---|---|
+| Jul 4 | Les Chapieux | Bourg-Saint-Maurice, 13 km down the valley | Navette, ~45 min, about €10 | 18:20 |
+| Jul 8 | Trient | Martigny, over Col de la Forclaz | Walk up to the col, PostBus down | 19:07 |
+
+There is a third leg of the same shape pointing the other way: the group sleeps in
+Chamonix the night before day 1 and starts walking at Les Houches, so the first
+morning opens with Chamonix Bus line 1. `dayOptions()` models all three
+identically — `toTrail` in the morning, `toBed` in the evening — rather than
+special-casing the arrival, because they are the same problem and the page should
+not have to know which is which.
+
+Two things about these numbers are easy to get wrong, and both were got wrong
+first:
+
+- **A deadline is not the latest result of one search.** `journeys()` answers
+ "leaving after this time, what arrives soonest", so its results cluster at the
+ front of the day. Taking their maximum reported the last navette down from Les
+ Chapieux as 10:50 rather than 18:20 — a figure that would have someone
+ abandoning a day's walking before lunch for no reason. The departures are
+ enumerated by stepping through the day instead.
+- **Step past the vehicle, not past the set-off.** A leg that begins with a road
+ walk can be started at any minute, so stepping one minute past a walk start
+ finds the same bus again: that counted 80 imaginary departures a minute apart on
+ the Trient leg and still never reached the last one. What is scarce is the bus,
+ so that is what the enumeration steps over — and what is reported is the latest
+ time you could set off and still make it, which on that leg is a full hour
+ earlier than the bus itself.
+
+The confidence shown against a deadline is read off the journey that sets the
+deadline, not off the row. On the Trient leg these genuinely disagree: the quickest
+way down is a 2026 pattern while the last one of the day is a published 2027
+timetable. Describing the deadline with the fastest journey's confidence would put
+the wrong label — in either direction — on the one number that can leave somebody
+stranded.
+
+## Booking deep links
+
+`assets/js/core/links.js` expands templates stored next to the operator in
+`data/transit.json`, rather than building URLs in the page. These rot: a renamed
+query parameter still opens, still looks right, and quietly searches for the wrong
+thing. Keeping them in data means a rotted link is a one-line fix, and each
+carries the date it was last checked.
+
+| Operator | Prefills | Notes |
+|---|---|---|
+| CFF/SBB, TMR, PostAuto | From, to, date, time | SBB's partner deep-linking guide. Covers the eight Swiss services, whoever drives the vehicle. |
+| FlixBus | Nothing | See below. |
+| Everyone else | Nothing | Operator or route page, plus a Maps link that does know both ends. |
+
+`expandTemplate()` returns nothing at all rather than a URL with a literal
+`{to}` left in it, because a half-expanded template is a broken link that looks
+like a working one and would be shipped by anyone who only glanced at the page.
+
+**Why FlixBus has no template.** It prefills from numeric city ids, and the only
+ids findable for Chamonix and Courmayeur came from a 2020 URL capture with nothing
+to confirm which city each one is. A wrong id searches between two arbitrary cities
+and looks like it worked, so the two tunnel-coach services point at their own
+verified route pages instead. If someone confirms the ids from a live search, the
+template can be added to the operator and nothing else needs to change.
+
+**Why every leg gets a Maps link too.** Half the `booking.url` values in the data
+are company front pages, which are not an action: they leave the reader to
+re-enter the two places and the date they had already chosen. `legActions()`
+therefore always offers transit directions alongside, since those are prefilled
+even when the operator offers nothing, and a test asserts no ride leg is left with
+an unfilled front page as its only option. `isBareHomepage()` is what tells the two
+apart.
+
+The Maps links deliberately carry no departure time: the documented Google Maps URL
+parameters do not include one, and the undocumented parameter that does is a base64
+blob that would break silently. Better to open on the right pair and let the reader
+set the time than to look precise and not be.
 
 ## Coordinates corrected by the feed
 
@@ -224,7 +319,15 @@ seasonal timetable will be republished before then.
 7. **Sanity-check the fares.** They are recorded for budgeting, not as a promise,
    and the Carte d'Hôte discount changed between 2025 and 2026 — the caveat on
    `chamonix-bus-1` explains what to expect.
-8. **Save the pages offline.** The service worker caches `transit.html` and both
+8. **Open one SBB deep link and check it lands filled in.** The template is taken
+   from SBB's partner documentation but could not be opened from the machine it
+   was added on, so `verifiedOn` means "checked against the documentation", not
+   "seen working". One tap settles it, and a failure is a one-line data fix.
+9. **Re-check the two ride-to-bed deadlines on the ground.** 18:20 down from Les
+   Chapieux and 19:07 out of Trient are the two times on this trip that can leave
+   somebody without the room they paid for. Both come from timetables the group did
+   not publish.
+10. **Save the pages offline.** The service worker caches `transit.html` and both
    data files, but only after the page has been visited once on that device. Do
    it on hotel wifi, not in the Val Ferret.
 
